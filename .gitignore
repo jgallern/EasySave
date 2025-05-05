@@ -1,0 +1,18 @@
+# Ignorer les fichiers et dossiers générés par Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignorer les fichiers de sauvegarde internes
+**/.vs/
+**/.vs/**
+
+# Ignorer tous les fichiers d’index de backup
+*.vsidx
+
+# Dossiers de build courants
+bin/
+obj/
+
