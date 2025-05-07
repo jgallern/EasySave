@@ -6,9 +6,6 @@ on:
         - opened
     branches: 
         - main
-  push:
-    branches:
-        - workflow-discord-notify
 
 jobs:
   notify:
