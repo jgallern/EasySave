@@ -1,4 +1,4 @@
-name: PR-notifier
+﻿name: PR-notifier
 
 on:
   pull_request:
@@ -6,28 +6,25 @@ on:
         - opened
     branches: 
         - main
+  push:
+    branches:
+        - workflow-discord-notify
 
 jobs:
-  build:
+  notify:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Notify Team
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      run: |
+        pr_title="${{ github.event.pull_request.title }}"
+        pr_url="${{ github.event.pull_request.html_url }}"
+        pr_user="${{ github.event.pull_request.user.login }}"
+        pr_body="${{ github.event.pull_request.body }}"
 
-    - name: Install .NET 9 SDK (preview)
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'
-
-    - name: Restore dependencies
-      run: dotnet restore FISE_A3_SE_GALLERNE.sln
-
-    - name: Build solution
-      run: dotnet publish FISE_A3_SE_GALLERNE.sln --configuration Release --no-restore
-
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: WPF-Build
-        path: 'bin/Release/net9.0-windows/win-x64/publish/'
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"username\": \"GitHub Bot\", \"content\": \"📣 New Pull Request into **main** !\n**Titre**: $pr_title\n**Description**: $pr_body\n**Auteur**: @$pr_user\n🔗 $pr_url\"}" \
+             $DISCORD_WEBHOOK_URL
