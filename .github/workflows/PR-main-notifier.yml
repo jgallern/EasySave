@@ -26,5 +26,5 @@ jobs:
 
         curl -H "Content-Type: application/json" \
              -X POST \
-             -d "{\"username\": \"GitHub Bot\", \"content\": \"📣 New Pull Request into **main** !\n**Titre**: $pr_title\n**Description**: $pr_body\n**Auteur**: @$pr_user\n🔗 $pr_url\"}" \
+             -d "{\"username\": \"GitHub Bot\", \"content\": \"@everyone\n📣 New Pull Request into **main** !\n**Titre**: $pr_title\n**Description**: $pr_body\n**Auteur**: @$pr_user\n🔗 $pr_url\"}" \
              $DISCORD_WEBHOOK_URL
