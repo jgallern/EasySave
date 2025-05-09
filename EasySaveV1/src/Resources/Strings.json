@@ -1,0 +1,6 @@
+{
+    "welcome_message": "Welcome! You can execute these diferent functionalities (enter the number e.g. '1'): ",
+    "manage_jobs": "Manage Jobs",
+    "execute_backup": "Run Backup",
+    "exit": "Exit"
+}

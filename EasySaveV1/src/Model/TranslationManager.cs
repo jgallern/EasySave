@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace BackUp.ViewModel
 {
@@ -10,6 +11,7 @@ namespace BackUp.ViewModel
     {
         private readonly string _resourcesPath;
         private readonly string _appConfigPath;
+        public List<string> language_list { get; }
         private Dictionary<string, string> _language;
         private Dictionary<string, string> _translations;
         
@@ -17,8 +19,9 @@ namespace BackUp.ViewModel
         {
             _appConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "env\\appconfig.json");
             _resourcesPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-            Console.WriteLine($"Directory : {_resourcesPath}"); // Affichage ici, dans le constructeur
             LoadAppConfigLanguage();
+            List<string> availableLanguages = GetAvailableLanguages();
+            Console.WriteLine("Available languages: " + string.Join(", ", availableLanguages));
             LoadTranslations(_language["Language"]);
         }
 
@@ -30,24 +33,14 @@ namespace BackUp.ViewModel
 
         public void SaveAppConfig()
         {
-            Console.WriteLine($"Language selected : {_language["Language"]}");
-            Console.WriteLine("Saving app config to: " + _appConfigPath); // debug
             string json = JsonConvert.SerializeObject(_language, Formatting.Indented);
-            Console.WriteLine("New json: " + json); // debug
             File.WriteAllText(_appConfigPath, json);
         }
         public void ChangeLanguage(string language)
         {
-            try
-            {
-                _language["Language"] = language;
-                SaveAppConfig();
-                LoadTranslations(language);
-            }
-            catch
-            {
-                Console.Write("An error occured while changing language.");
-            }
+            _language["Language"] = language;
+            SaveAppConfig();
+            LoadTranslations(language);
         }
 
         public void LoadTranslations(string language)
@@ -61,21 +54,56 @@ namespace BackUp.ViewModel
             }
             else
             {
-                Console.WriteLine("Error Json not found");
-                _translations = new Dictionary<string, string>(); // Charger des valeurs par défaut si fichier manquant.
+                filePath = Path.Combine(_resourcesPath, $"Strings.json");
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    _translations = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                }
             }
         }
 
         public string GetTranslation(string key)
         {
-            try
+            return _translations.TryGetValue(key, out string translation) ? translation : GetDefaultTranslation(key);
+        }
+
+        public List<string> GetAvailableLanguages()
+        {
+            List<string> languages = new List<string>();
+
+            if (Directory.Exists(_resourcesPath))
             {
-                return _translations.TryGetValue(key, out var translation) ? translation : key;
+                string[] files = Directory.GetFiles(_resourcesPath, "Strings.*.json");
+
+                foreach (string file in files)
+                {
+                    string fileName = Path.GetFileName(file);
+                    Match match = Regex.Match(fileName, @"^Strings\.([a-zA-Z\-]+)\.json$");
+
+                    if (match.Success)
+                    {
+                        string langCode = match.Groups[1].Value;
+                        languages.Add(langCode);
+                    }
+                }
             }
-            catch
+
+            return languages;
+        }
+
+        public string GetDefaultTranslation(string key)
+        {
+            string filePath = Path.Combine(_resourcesPath, $"Strings.json");
+
+            if (File.Exists(filePath))
             {
-                Console.WriteLine("Cannot translate the element.");
-                return _translations.TryGetValue(key, out var translation) ? translation : key;
+                string json = File.ReadAllText(filePath);
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>(json).TryGetValue(key, out string default_value) ? default_value : key;
+            }
+            else
+            {
+                return key;
             }
         }
     }
