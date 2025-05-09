@@ -40,13 +40,30 @@ namespace Model
         public void UpdateJob(string nom, BackUpJob updatedJob)
         {
             var jobs = LoadJobs();
-            var index = jobs.FindIndex(j => j.Nom == nom);
+            var index = jobs.FindIndex(j => j.Name == nom);
             if (index == -1)
                 throw new ArgumentException($"Aucun job trouvé avec le nom '{nom}'.");
 
             jobs[index] = updatedJob;
             SaveJobs(jobs);
         }
+
+        public int GetAvailableID()
+        {
+            var jobs = LoadJobs();
+            List<int> TakenID = jobs.Select(job => job.ID).ToList();
+            int id = 1;
+            while (TakenID.Contains(id))
+            {
+                id++;
+            }
+            if (id > 6)
+            {
+                id = 0;
+            }
+            return id;
+        }
+}
 
         public void DeleteJob(string nom)
         {
