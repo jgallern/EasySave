@@ -3,28 +3,33 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
-using System.Resources;
 using View;
-
 using System.IO;
 using System.Text.Json;
-using ViewModel;
+using BackUp.ViewModel;
+using Model;
+using System.Resources;
+using System.Transactions;
 
 public class Program
 {
     public static void Main()
     {
+        Console.Write("================== TESTS ===================");
+        TestTranslationManager.Run();
+        /*
         Console.Write("Loading AppConfig ...");
-        var config = ConfigurationService.Load();
+        var configManager = new ConfigManager("./env/jobs.json", "./env/appconfig.json");
+        var config = configManager.LoadAppConfig();
         CultureInfo.CurrentUICulture = new CultureInfo(config.Language);
 
         var services = new ServiceCollection();
-        services.AddLocalization(options => options.ResourcesPath = "Resources");
+        services.AddSingleton(new TranslationManager(config.Language));
 
         var provider = services.BuildServiceProvider();
 
-        var stringLocalizer = provider.GetRequiredService<IStringLocalizer<Resources.Strings>>();
-        ILocalizer localizer = new ViewModel.Localizer(stringLocalizer);
+        var translationManager = provider.GetRequiredService<TranslationManager>();
+        ILocalizer localizer = new Localizer(translationManager);
 
         Run(localizer);
         var view = new MainView(localizer);
@@ -34,24 +39,8 @@ public class Program
     {
         Console.WriteLine("Hello, World!");
         IView obj = new MainView(localizer);
-        obj.Run();
+        obj.Run();*/
     }
 }
-
-
-public class AppConfig
-{
-    public string Language { get; set; } = "en";
-}
-
-public static class ConfigurationService
-{
-    public static AppConfig Load()
-    {
-        var json = File.ReadAllText("AppConfig.json");
-        return JsonSerializer.Deserialize<AppConfig>(json);
-    }
-}
-
 
 

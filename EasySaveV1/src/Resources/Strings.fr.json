@@ -1,0 +1,6 @@
+{
+    "welcome_message": "Bienvenue! Vous avez le choix entre ces fonctionnalités (entrez le numéro correspondant ex: '1'): ",
+    "manage_jobs": "Gérer les jobs",
+    "execute_backup": "Exécuter la sauvegarde",
+    "exit": "Quitter"
+}

@@ -15,9 +15,9 @@ namespace BackUp.ViewModel
         }
         public string GetTranslation(string key)
         {
-
+            return "";
         }
-        public void Run()
+        public void Run(string key)
         {
             // Afficher un message traduit dans la console
             Console.WriteLine(GetTranslation(key));

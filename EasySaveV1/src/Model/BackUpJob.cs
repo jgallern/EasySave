@@ -1,7 +1,7 @@
 namespace Model
 {
-	public class BackUpJob : IJobs
-	{
+	public class BackUpJob
+	{/*
 		public string Name { get; set; }
 		public string FileSource { get; set; }
 		public string FileTarget { get; set; }
@@ -27,12 +27,12 @@ namespace Model
 
 		public void DeleteJob(ConfigManager config)
 		{
-			jsonManager.Deletejob(this);
+			config.DeleteJob(this);
 		}
 
 		public void AlterJob(ConfigManager config)
 		{
 
-		}
+		}*/
 	}
 }

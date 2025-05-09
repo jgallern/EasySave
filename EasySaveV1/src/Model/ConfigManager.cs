@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Model
 {
     public class ConfigManager
@@ -8,11 +10,10 @@ namespace Model
         public ConfigManager(string filePath)
         {
             this.filePath = filePath;
-
-            if (!File.Exists(filePath))
-                SaveJobs(new List<BackUpJob>());
+            //if (!File.Exists(filePath))
+            //  SaveJobs(new List<BackUpJob>());
         }
-
+        /*
         private List<BackUpJob> LoadJobs()
         {
             string json = File.ReadAllText(filePath);
@@ -40,7 +41,7 @@ namespace Model
         public void UpdateJob(string nom, BackUpJob updatedJob)
         {
             var jobs = LoadJobs();
-            var index = jobs.FindIndex(j => j.Nom == nom);
+            var index = jobs.FindIndex(j => j.Name == nom);
             if (index == -1)
                 throw new ArgumentException($"Aucun job trouvé avec le nom '{nom}'.");
 
@@ -48,15 +49,16 @@ namespace Model
             SaveJobs(jobs);
         }
 
-        public void DeleteJob(string nom)
+        public void DeleteJob(BackUpJob job)
         {
             var jobs = LoadJobs();
-            int removed = jobs.RemoveAll(j => j.Nom == nom);
+            int removed = jobs.RemoveAll(j => j.Name == job.Name);
             if (removed == 0)
-                throw new ArgumentException($"Aucun job trouvé avec le nom '{nom}'.");
+                throw new ArgumentException($"Aucun job trouvé avec le nom '{job.Name}'.");
 
             SaveJobs(jobs);
         }
 
+        */
     }
 }

@@ -1,5 +1,5 @@
 using View;
-using ViewModel;
+using BackUp.ViewModel;
 using Microsoft.Extensions.Localization;
 
 public class MainView : IView
@@ -23,7 +23,7 @@ public class MainView : IView
             Console.WriteLine($"3. Version");
             Console.WriteLine($"4. {_localizer["exit"]}");
             Console.Write("> ");
-
+            
             string choice = Console.ReadLine();
             Console.WriteLine($"DEBUG: you entered -> '{choice}'");
             switch (choice)
