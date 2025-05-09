@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Model
 {
     public class ConfigManager
@@ -37,12 +39,12 @@ namespace Model
             SaveJobs(jobs);
         }
 
-        public void UpdateJob(string nom, BackUpJob updatedJob)
+        public void UpdateJob(int Id, BackUpJob updatedJob)
         {
             var jobs = LoadJobs();
-            var index = jobs.FindIndex(j => j.Name == nom);
+            var index = jobs.FindIndex(j => j.Id == Id);
             if (index == -1)
-                throw new ArgumentException($"Aucun job trouvé avec le nom '{nom}'.");
+                throw new ArgumentException($"Aucun job avec L'ID '{Id}'.");
 
             jobs[index] = updatedJob;
             SaveJobs(jobs);
@@ -63,14 +65,18 @@ namespace Model
             }
             return id;
         }
-}
+        
+        public void ReorganiseIndex()
+        {
+            
+        }
 
-        public void DeleteJob(string nom)
+        public void DeleteJob(int Id)
         {
             var jobs = LoadJobs();
-            int removed = jobs.RemoveAll(j => j.Nom == nom);
+            int removed = jobs.RemoveAll(j => j.Id == Id);
             if (removed == 0)
-                throw new ArgumentException($"Aucun job trouvé avec le nom '{nom}'.");
+                throw new ArgumentException($"Aucun job avec L'ID '{Id}'.");
 
             SaveJobs(jobs);
         }
