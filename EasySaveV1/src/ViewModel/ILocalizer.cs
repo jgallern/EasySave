@@ -9,5 +9,7 @@ namespace BackUp.ViewModel
     public interface ILocalizer
     {
         string this[string key] { get; }
+        void ChangeLanguage(string languageCode);
+        List<string> GetAvailableLanguages();
     }
 }

@@ -20,8 +20,8 @@ namespace BackUp.ViewModel
             _appConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "env\\appconfig.json");
             _resourcesPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
             LoadAppConfigLanguage();
-            List<string> availableLanguages = GetAvailableLanguages();
-            Console.WriteLine("Available languages: " + string.Join(", ", availableLanguages));
+            List<string> language_list = GetAvailableLanguages();
+            Console.WriteLine("Available languages: " + string.Join(", ", language_list));
             LoadTranslations(_language["Language"]);
         }
 
@@ -42,6 +42,12 @@ namespace BackUp.ViewModel
             SaveAppConfig();
             LoadTranslations(language);
         }
+
+        public string GetCurrentLanguage()
+        {
+            return _language.TryGetValue("Language", out string lang) ? lang : "en";
+        }
+
 
         public void LoadTranslations(string language)
         {

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace BackUp.ViewModel
 {
-    public class TextTranslationCommand : ICommand
-    {
+    public class TextTranslationCommand 
+    {/*
         private readonly TextTranslationCommand _text_translation;
         public TextTranslationCommand(TextTranslationCommand text_translation)
         {
@@ -22,6 +22,6 @@ namespace BackUp.ViewModel
             // Afficher un message traduit dans la console
             Console.WriteLine(GetTranslation(key));
         }
-
+        */
     }
 }

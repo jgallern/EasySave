@@ -1,7 +1,9 @@
 namespace BackUp.ViewModel
 {
-	interface ICommand
+	public interface ICommand
 	{
-
-	}
+        bool CanExecute(object parameter);
+        void Execute(object parameter);
+        event EventHandler CanExecuteChanged;
+    }
 }

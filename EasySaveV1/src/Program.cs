@@ -15,32 +15,46 @@ public class Program
 {
     public static void Main()
     {
-        Console.Write("================== TESTS ===================");
-        TestTranslationManager.Run();
-        /*
-        Console.Write("Loading AppConfig ...");
-        var configManager = new ConfigManager("./env/jobs.json", "./env/appconfig.json");
-        var config = configManager.LoadAppConfig();
-        CultureInfo.CurrentUICulture = new CultureInfo(config.Language);
+        Console.Write("Loading AppConfig language...\n");
 
-        var services = new ServiceCollection();
-        services.AddSingleton(new TranslationManager(config.Language));
+        // Création du TranslationManager pour lire la langue dans appconfig.json
+        var translationManager = new TranslationManager();
 
-        var provider = services.BuildServiceProvider();
+        // Définir la culture de l'application en fonction du fichier appconfig
+        string language = translationManager.GetCurrentLanguage();
+        CultureInfo.CurrentUICulture = new CultureInfo(language);
+        CultureInfo.CurrentCulture = new CultureInfo(language);
+    /*
+    // Configuration du conteneur d'injection de dépendances
+    var services = new ServiceCollection();
+    services.AddSingleton(translationManager);
+    services.AddSingleton<ILocalizer, Localizer>();
+    services.AddSingleton<MainViewModel>();
+    services.AddSingleton<MainView>();
 
-        var translationManager = provider.GetRequiredService<TranslationManager>();
-        ILocalizer localizer = new Localizer(translationManager);
+    var provider = services.BuildServiceProvider();
 
-        Run(localizer);
-        var view = new MainView(localizer);
-        view.Run();
+    // Résolution des dépendances
+    var view = provider.GetRequiredService<MainView>();
+    */
+    MainViewModel viewModel = new MainViewModel(translationManager);
+    ILocalizer localizer = new Localizer(translationManager);
+        // Exécution de la vue principale
+        Run(viewModel, localizer);
     }
-    public static void Run(ILocalizer localizer)
+    public static void Run(MainViewModel viewModel, ILocalizer localizer)
     {
         Console.WriteLine("Hello, World!");
-        IView obj = new MainView(localizer);
-        obj.Run();*/
+        IView obj = new MainView(viewModel, localizer);
+        obj.Run();
     }
+
+
+    /* //---------------------- TESTS -------------------------
+    Console.Write("================== TESTS ===================");
+    TestTranslationManager.Run();
+    */
 }
+
 
 
