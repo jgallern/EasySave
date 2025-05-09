@@ -5,7 +5,7 @@ namespace Model
         private const int MaxJobs = 5;
         private readonly string filePath;
 
-        public Json(string filePath)
+        public ConfigManager(string filePath)
         {
             this.filePath = filePath;
 
