@@ -29,6 +29,7 @@ namespace BackUp.Model
 
 		public void DeleteJob(ConfigManager config)
 		{
+			Id = config.FindJobId(this);
 			config.DeleteJob(Id);
 		}
 
