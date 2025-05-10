@@ -1,4 +1,4 @@
-namespace Model
+namespace BackUp.Model
 {
 	public class BackUpJob : IJobs
 	{
@@ -8,7 +8,7 @@ namespace Model
 		public string FileTarget { get; set; }
 		public BackupType Type { get; set; }
 
-		BackUpJob(string Name, string SourceDir,string TargetDir,BackupType Type)
+		public BackUpJob(string Name, string SourceDir, string TargetDir,BackupType Type)
 		{
 			this.Name = Name;
 			this.FileSource = SourceDir;

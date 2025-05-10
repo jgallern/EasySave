@@ -1,4 +1,4 @@
-namespace Model
+namespace BackUp.Model
 {
     public enum BackupType
     {

@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Model
+namespace BackUp.Model
 {
     public class ConfigManager
     {
