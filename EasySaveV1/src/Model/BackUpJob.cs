@@ -2,6 +2,7 @@ namespace Model
 {
 	public class BackUpJob : IJobs
 	{
+		public int Id { get; set; }
 		public string Name { get; set; }
 		public string FileSource { get; set; }
 		public string FileTarget { get; set; }
@@ -9,10 +10,10 @@ namespace Model
 
 		BackUpJob(string Name, string SourceDir,string TargetDir,BackupType Type)
 		{
-			Name = Name;
-			SourceDir = SourceDir;
-			TargetDir = TargetDir;
-			Type = Type;
+			this.Name = Name;
+			this.FileSource = SourceDir;
+			this.FileTarget= TargetDir;
+			this.Type = Type;
 		}
 
 		public void Run()
@@ -22,17 +23,18 @@ namespace Model
 
 		public void CreateJob(ConfigManager config)
 		{
+			Id = config.GetAvailableID();
 	        config.AddJob(this);
 		}
 
 		public void DeleteJob(ConfigManager config)
 		{
-			jsonManager.Deletejob(this);
+			config.DeleteJob(Id);
 		}
 
 		public void AlterJob(ConfigManager config)
 		{
-
+			config.UpdateJob(Id,this);	
 		}
 	}
 }
