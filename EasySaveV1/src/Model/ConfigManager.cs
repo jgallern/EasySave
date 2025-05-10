@@ -53,7 +53,7 @@ namespace Model
         public int GetAvailableID()
         {
             var jobs = LoadJobs();
-            List<int> TakenID = jobs.Select(job => job.ID).ToList();
+            List<int> TakenID = jobs.Select(job => job.Id).ToList();
             int id = 1;
             while (TakenID.Contains(id))
             {
