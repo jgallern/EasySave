@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BackUp.Model;
 
 namespace BackUp.ViewModel
 {
     public class MainViewModel
     {
-        private readonly TranslationManager _translationManager;
+        private readonly ILocalizer _localizer;
 
         public ICommand ChangeLanguageCommand { get; }
 
-        public MainViewModel(TranslationManager translationManager)
+        public MainViewModel(ILocalizer localizer)
         {
-            _translationManager = translationManager;
+            _localizer = localizer;
 
             ChangeLanguageCommand = new RelayCommand<string>(lang =>
             {
-                _translationManager.LoadTranslations(lang);
-                _translationManager.SaveAppConfig();
+                _localizer.ChangeLanguage(lang);
             });
         }
 
-        public List<string> GetAvailableLanguages() => _translationManager.GetAvailableLanguages();
-        public void ChangeLanguage(string  language) => _translationManager.ChangeLanguage(language);
-        public string GetCurrentLanguage() => _translationManager.GetCurrentLanguage();
-        public string GetTranslation(string key) => _translationManager.GetTranslation(key);
+        public List<string> GetAvailableLanguages() => _localizer.GetAvailableLanguages();
+        public string GetCurrentLanguage() => _localizer.GetCurrentLanguage();
+        public string GetTranslation(string key) => _localizer[key];
     }
+
 }

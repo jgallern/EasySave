@@ -10,6 +10,7 @@ namespace BackUp.ViewModel
     {
         string this[string key] { get; }
         void ChangeLanguage(string languageCode);
+        string GetCurrentLanguage();
         List<string> GetAvailableLanguages();
     }
 }

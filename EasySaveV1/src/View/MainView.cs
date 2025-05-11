@@ -1,91 +1,76 @@
-using View;
 using BackUp.ViewModel;
-using Microsoft.Extensions.Localization;
+using System;
 using BackUp.View;
 
-public class MainView : IView
+namespace BackUp.View
 {
-    private readonly ILocalizer _localizer;
-    private readonly ViewHelper _viewhelper;
-    private readonly MainViewModel _viewModel;
-
-    public MainView(MainViewModel viewModel, ILocalizer localizer)
+    public class MainView : IView
     {
-        _localizer = localizer;
-        _viewModel = viewModel;
-        _viewhelper = new ViewHelper(viewModel); // Instanciation du helper
+        private readonly ILocalizer _localizer;
+        private readonly MainViewModel _viewModel;  // Injection du ViewModel
+        private readonly LanguageSelectionView _languageSelectionView;
+        private readonly ExecuteBackUpView _ExecuteBackUpView;  // Injection du ViewModel
 
-    }
 
-    public void Run()
-    {
-        int selectedIndex = 0;  // Indice du menu principal
-        bool isLanguageSelected = false; // Indique si l'on est sur "Language"
-
-        // Initialisation des éléments du menu
-        string[] menuItems = GetMenuItems();
-
-        ConsoleKey key;
-        do
+        public MainView(ILocalizer localizer)
         {
-            Console.Clear();
-            _viewhelper.DisplayHeader(isLanguageSelected); // Passer un bool pour savoir si on est sur "Language"
-            Console.WriteLine(_viewModel.GetTranslation("welcome_message"));
-            Console.WriteLine();
+            _localizer = localizer;
+            _viewModel = new MainViewModel(_localizer);  // Injection du ViewModel
+            _languageSelectionView = new LanguageSelectionView(_viewModel);
+            _ExecuteBackUpView = new ExecuteBackUpView(_viewModel);
 
-            // Affichage du menu
-            for (int i = 0; i < menuItems.Length; i++)
-            {
-                if (i == selectedIndex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"> {menuItems[i]}");
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.WriteLine($"  {menuItems[i]}");
-                }
-            }
+        }
 
-            // Si on est sur "Language", on permet de naviguer et changer la langue
-            if (isLanguageSelected)
-            {
-                _viewhelper.DisplayLanguageSelection();
-            }
+        public void Run()
+        {
+            int selectedIndex = 0;  // Indice du menu principal
+            bool _languageChanged = false; // Indique si l'on est sur "Language"
 
-            key = Console.ReadKey(true).Key;
+            // Initialisation des éléments du menu
+            string[] menuItems = GetMenuItems();
 
-            // Si on est sur "Language" et que l'utilisateur appuie sur les flèches, on change la langue
-            if (isLanguageSelected)
+            ConsoleKey key;
+            do
             {
-                if (key == ConsoleKey.UpArrow || key == ConsoleKey.DownArrow)
+                Console.Clear();
+                DisplayHeader();
+                Console.WriteLine(_localizer["welcome_message"]);
+                Console.WriteLine();
+
+                // Affichage du menu
+                for (int i = 0; i < menuItems.Length; i++)
                 {
-                    _viewhelper.DisplayLanguageSelection();
+                    if (i == selectedIndex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"> {menuItems[i]}");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"  {menuItems[i]}");
+                    }
                 }
-                else if (key == ConsoleKey.Enter)
+
+                key = Console.ReadKey(true).Key;
+
+                // Si l'utilisateur appuie sur Tab, on passe à la sélection de la langue
+                if (key == ConsoleKey.Tab)
                 {
-                    isLanguageSelected = false;  // Revenir au menu principal après avoir changé la langue
-                    menuItems = GetMenuItems(); // Mettre à jour les éléments du menu
+                    _languageSelectionView.Run();
+                    if (_languageSelectionView.GetLanguageChanged())
+                    {
+                        // Si la langue a changé, on met à jour les éléments du menu
+                        DisplayHeader();
+                        menuItems = GetMenuItems();
+                    }
                 }
-                else if (key == ConsoleKey.Tab) // Si l'utilisateur appuie sur Tab, on revient au menu principal
-                {
-                    isLanguageSelected = false;
-                }
-            }
-            else
-            {
+
                 if (key == ConsoleKey.UpArrow && selectedIndex > 0)
                     selectedIndex--;
                 else if (key == ConsoleKey.DownArrow && selectedIndex < menuItems.Length - 1)
                     selectedIndex++;
-
-                // Si on est sur "Language" dans le header, on active le changement de langue avec Tab
-                if (key == ConsoleKey.Tab)
-                {
-                    isLanguageSelected = true; // Passer à la sélection de langue
-                }
-
+                
                 if (key == ConsoleKey.Enter)
                 {
                     // Actions selon le menu sélectionné
@@ -98,6 +83,7 @@ public class MainView : IView
                         case 1:
                             Console.WriteLine("case 2 - execute backup");
                             Console.ReadKey();
+                            _ExecuteBackUpView.Run();
                             break;
                         case 2:
                             Environment.Exit(0);
@@ -106,20 +92,32 @@ public class MainView : IView
                             break;
                     }
                 }
-            }
 
-        } while (true);
-    }
+            } while (true);
+        }
 
-    private string[] GetMenuItems()
-    {
-        return new string[]
+        private string[] GetMenuItems()
         {
-            _viewModel.GetTranslation("manage_jobs"),
-            _viewModel.GetTranslation("execute_backup"),
-            _viewModel.GetTranslation("exit")
-        };
+            // Utilisation de MainViewModel pour obtenir les éléments du menu
+            return new string[]
+            {
+                _viewModel.GetTranslation("manage_jobs"),
+                _viewModel.GetTranslation("execute_backup"),
+                _viewModel.GetTranslation("exit")
+            };
+        }
+
+
+        private void DisplayHeader()
+        {
+            string version = "1.0.0"; // Version à personnaliser
+            string languageText = $"Language: {_viewModel.GetCurrentLanguage()}";
+
+            Console.WriteLine($"================ EasySave ================ Version: {version} | {languageText}");
+
+            // Affichage du "Language" comme sélectionnable si on y est
+
+            Console.WriteLine($"  {_viewModel.GetTranslation("select_language")}");
+        }
     }
-
-
 }

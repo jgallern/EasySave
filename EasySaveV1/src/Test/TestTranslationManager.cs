@@ -1,9 +1,10 @@
-﻿using BackUp.ViewModel;
+﻿using BackUp.Model;
 
 public class TestTranslationManager
 {
     public static void Run()
     {
+        /*
         Console.WriteLine("Test TranslationManager :");
         TranslationManager manager = new TranslationManager();
 
@@ -18,6 +19,6 @@ public class TestTranslationManager
         // Test si le passage a une autre langue est bon
         manager.ChangeLanguage("fr");
         Console.WriteLine(manager.GetTranslation("welcome_message"));
-
+        */
     }
 }

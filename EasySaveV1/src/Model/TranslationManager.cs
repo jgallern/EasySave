@@ -5,25 +5,38 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace BackUp.ViewModel
+namespace BackUp.Model
 {
     public class TranslationManager
     {
+        private static TranslationManager _instance;
+        private static readonly object _lock = new object();
+
         private readonly string _resourcesPath;
         private readonly string _appConfigPath;
-        public List<string> language_list { get; }
-        private Dictionary<string, string> _language;
+        private Dictionary<string, string> _language = new();
         private Dictionary<string, string> _translations;
-        
-        public TranslationManager()
+
+        private TranslationManager()
         {
             _appConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "env\\appconfig.json");
             _resourcesPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+
             LoadAppConfigLanguage();
-            List<string> language_list = GetAvailableLanguages();
-            Console.WriteLine("Available languages: " + string.Join(", ", language_list));
-            LoadTranslations(_language["Language"]);
+            LoadTranslations(GetCurrentLanguage());
         }
+
+        public static TranslationManager Instance
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _instance ??= new TranslationManager();
+                }
+            }
+        }
+
 
         public void LoadAppConfigLanguage()
         {

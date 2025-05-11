@@ -1,6 +1,6 @@
-using View;
+using BackUp.View;
 
-namespace View
+namespace BackUp.View
 {
     public class ManageBackUpView : IView
     {
