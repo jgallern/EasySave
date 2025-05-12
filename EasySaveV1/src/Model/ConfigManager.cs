@@ -5,22 +5,54 @@ namespace BackUp.Model
 {
     public class ConfigManager
     {
+        private static ConfigManager? _instance;
+        private static readonly object _lock = new object();
+
         private const int MaxJobs = 5;
         private readonly string filePath;
 
-        public ConfigManager(string filePath)
+        private ConfigManager(string filePath)
         {
             this.filePath = filePath;
-
             if (!File.Exists(filePath))
                 SaveJobs(new List<BackUpJob>());
         }
 
+        public static ConfigManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    throw new InvalidOperationException("ConfigManager n'a pas encore été initialisé.");
+                return _instance;
+            }
+        }
+
+        public static void Initialize(string filePath)
+        {
+            lock (_lock)
+            {
+                if (_instance == null)
+                    _instance = new ConfigManager(filePath);
+            }
+        }
+
         private List<BackUpJob> LoadJobs()
         {
-            string json = File.ReadAllText(filePath);
-            return JsonConvert.DeserializeObject<List<BackUpJob>>(json) ?? new List<BackUpJob>();
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                if (string.IsNullOrWhiteSpace(json)) return new List<BackUpJob>();
+                List<BackUpJob> jobs = JsonConvert.DeserializeObject<List<BackUpJob>>(json) ?? new List<BackUpJob>();
+                return jobs;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors du chargement des jobs : {ex.Message}");
+                return new List<BackUpJob>();
+            }
         }
+
 
         private void SaveJobs(List<BackUpJob> jobs)
         {
@@ -60,7 +92,7 @@ namespace BackUp.Model
 
         public int GetAvailableID()
         {
-             List<BackUpJob> jobs = LoadJobs();
+            List<BackUpJob> jobs = LoadJobs();
             List<int> TakenID = jobs.Select(job => job.Id).ToList();
             int id = 1;
             while (TakenID.Contains(id))
