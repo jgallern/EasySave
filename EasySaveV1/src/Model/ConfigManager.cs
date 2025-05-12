@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
+using System;
 
-namespace Model
+namespace BackUp.Model
 {
     public class ConfigManager
     {
@@ -13,7 +14,6 @@ namespace Model
             //if (!File.Exists(filePath))
             //  SaveJobs(new List<BackUpJob>());
         }
-        /*
         private List<BackUpJob> LoadJobs()
         {
             string json = File.ReadAllText(filePath);
@@ -30,35 +30,75 @@ namespace Model
 
         public void AddJob(BackUpJob job)
         {
-            var jobs = LoadJobs();
+            List<BackUpJob> jobs = LoadJobs();
             if (jobs.Count >= MaxJobs)
-                throw new InvalidOperationException("Le nombre maximum de jobs (5) a ÈtÈ atteint.");
+                throw new InvalidOperationException("Le nombre maximum de jobs (5) a √©t√© atteint.");
+            foreach (IJobs savedjob in jobs)
+            {
+                if (savedjob.Name  == job.Name | (savedjob.FileSource == job.FileSource && savedjob.FileTarget == job.FileTarget && savedjob.Type == job.Type))
+                {
+                    throw new Exception("Ce job est d√©ja enregistr√© dans la config");
+                }
+            }
 
             jobs.Add(job);
             SaveJobs(jobs);
         }
 
-        public void UpdateJob(string nom, BackUpJob updatedJob)
+        public void UpdateJob(int Id, BackUpJob updatedJob)
         {
-            var jobs = LoadJobs();
-            var index = jobs.FindIndex(j => j.Name == nom);
+            List<BackUpJob> jobs = LoadJobs();
+            int index = jobs.FindIndex(j => j.Id == Id);
             if (index == -1)
-                throw new ArgumentException($"Aucun job trouvÈ avec le nom '{nom}'.");
+                throw new ArgumentException($"Aucun job avec L'ID '{Id}'.");
 
             jobs[index] = updatedJob;
             SaveJobs(jobs);
         }
 
-        public void DeleteJob(BackUpJob job)
+        public int GetAvailableID()
         {
-            var jobs = LoadJobs();
-            int removed = jobs.RemoveAll(j => j.Name == job.Name);
-            if (removed == 0)
-                throw new ArgumentException($"Aucun job trouvÈ avec le nom '{job.Name}'.");
+             List<BackUpJob> jobs = LoadJobs();
+            List<int> TakenID = jobs.Select(job => job.Id).ToList();
+            int id = 1;
+            while (TakenID.Contains(id))
+            {
+                id++;
+            }
+            if (id > 6)
+            {
+                id = 0;
+            }
+            return id;
+        }
+        
+        public void ReorganiseIndex()
+        {
+            List<BackUpJob> jobs = LoadJobs();
+        }
 
+        public int FindJobId(BackUpJob jobtofind)
+        {
+            List<BackUpJob> jobs = LoadJobs();
+            foreach (BackUpJob job in jobs)
+            {
+                if (job.Name == jobtofind.Name)
+                {
+                    return job.Id;
+                }
+            }
+            throw new Exception($"Id non trouv√© pour le job nomm√© {jobtofind.Name}");
+        }
+
+        public void DeleteJob(int Id)
+        {
+            List<BackUpJob> jobs = LoadJobs();
+            int removed = jobs.RemoveAll(j => j.Id == Id);
+            if (removed == 0)
+                throw new ArgumentException($"Aucun job avec L'ID '{Id}'.");
             SaveJobs(jobs);
         }
 
-        */
+        
     }
 }
