@@ -7,16 +7,32 @@ namespace BackUp.Model
 		public string FileSource { get; set; }
 		public string FileTarget { get; set; }
 		public BackupType Type { get; set; }
+		public ConfigManager config {  get; set; }
 
-		public BackUpJob(string Name, string SourceDir, string TargetDir,BackupType Type)
+		public BackUpJob(string Name, string SourceDir, string TargetDir,BackupType Type, ConfigManager config)
 		{
 			this.Name = Name;
 			this.FileSource = SourceDir;
 			this.FileTarget= TargetDir;
 			this.Type = Type;
+			this.config = config;
+
+			InitializeId();
+        }
+
+		public void InitializeId()
+		{
+            try
+            {
+				Id = config.FindJobId(this);
+			}
+			catch
+			{
+				Id = config.GetAvailableID();
+			}
 		}
 
-		public void Run()
+        public void Run()
 		{
 				
 		}

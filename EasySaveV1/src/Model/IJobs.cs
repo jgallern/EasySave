@@ -8,7 +8,7 @@ namespace BackUp.Model
 
     public interface IJobs
     {
-		int Id { get; set; }
+		int Id { get; }
 		string Name { get; set; }
 		string FileSource { get; set; }
 		string FileTarget { get; set; }
