@@ -1,4 +1,4 @@
-namespace Model
+namespace BackUp.Model
 {
     public enum BackupType
     {
@@ -8,14 +8,17 @@ namespace Model
 
     public interface IJobs
     {
-        string Name { get; set; }
-        string SourceDir { get; set; }
-        string TargetDir { get; set; }
-        BackupType Type { get; set; }
+		int Id { get; }
+		string Name { get; set; }
+		string FileSource { get; set; }
+		string FileTarget { get; set; }
+		BackupType Type { get; set; }
+
+
 
         void Run();
-        void CreateJob();
-        void DeleteJob();
-        void AlterJob();
+        void CreateJob(ConfigManager config);
+        void DeleteJob(ConfigManager config);
+        void AlterJob(ConfigManager config);
     }
 }
