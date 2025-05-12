@@ -23,7 +23,7 @@ namespace BackUp.View
 
                 // --- Header avec la langue actuelle ---
                 Console.WriteLine($"=== EasySave v1.0.0 | Language: {_menuVm.CurrentLanguage} ===\n");
-                Console.WriteLine($"     {_menuVm.SelectLanguageLabel}\n");
+                Console.WriteLine($"     {_menuVm.SelectLabel("select_language")}\n");
                 // --- Menu principal ---
                 for (int i = 0; i < _menuVm.Items.Count; i++)
                 {
@@ -43,7 +43,7 @@ namespace BackUp.View
                     _menuVm.Items[selected].Action();
                 else if (key == ConsoleKey.Tab)
                     _menuVm.NavigateToSettings();
-                    _menuVm.Refresh();
+                    _menuVm.RefreshMenu();
 
             } while (true);
         }

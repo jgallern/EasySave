@@ -14,25 +14,31 @@ namespace BackUp.ViewModel
         {
             _appController = controller;
             _localizer = localizer;
-            Refresh(); // construit les éléments initialement
+            RefreshMenu(); // construit les éléments initialement
         }
 
         public string CurrentLanguage => _localizer.GetCurrentLanguage();
-        public string SelectLanguageLabel => _localizer["select_language"];
+        public string SelectLabel(string id)
+        {
+            return _localizer[id];
+        }
 
-        public void Refresh()
+        public void RefreshMenu()
         {
             Items = new List<MenuItem>
             {
-                new MenuItem(_localizer["manage_jobs"],     () => _appController.RunManageJobs()),
-                new MenuItem(_localizer["execute_backup"],  () => _appController.RunExecuteBackup()),
-                new MenuItem(_localizer["exit"],            () => _appController.Exit())
+                new MenuItem(SelectLabel("manage_jobs"),     () => _appController.RunManageJobs()),
+                new MenuItem(SelectLabel("execute_backup"),  () => _appController.RunExecuteBackup()),
+                new MenuItem(SelectLabel("exit"),            () => _appController.Exit())
             };
         }
 
         public void NavigateToSettings()
         {
             _appController.RunSettings();
+        }
+        public void ExitApp(){
+            _appController.Exit();
         }
 
     }

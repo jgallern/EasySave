@@ -6,6 +6,11 @@ namespace BackUp.View
 {
     public class ExecuteBackUpView : IView
     {
+        public void Run()
+        {
+
+        }
+        /*
         private readonly MainViewModel _viewModel;
         private string _userInput;
         private List<int> _jobs;
@@ -204,7 +209,7 @@ namespace BackUp.View
             }
             return true;
         }
-
+        */
 
     }
 }

@@ -4,9 +4,9 @@ namespace BackUp.ViewModel
     {
         IReadOnlyList<MenuItem> Items { get; }
         string CurrentLanguage { get; }
-        string SelectLanguageLabel { get; }
-
-        void Refresh();
+        
+        string SelectLabel(string id);
+        void RefreshMenu();
         void NavigateToSettings();
 
     }
