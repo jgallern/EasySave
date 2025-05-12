@@ -1,0 +1,117 @@
+classDiagram
+direction LR
+
+namespace ViewModel{
+
+    class ManageJob{
+        + CreateJobCommand() void
+        + ViewJobsCommand() void
+        + ModifyJobCommand() void
+        + DeleteJobCommand() void
+    }
+
+    class ICommand{
+        + execute() bool
+    }
+
+    class RunJob{
+        + RunJobCommand(JobList) void
+    }
+}
+
+<<Interface>> ICommand
+
+ManageJob --|> ICommand
+RunJob --|> ICommand
+
+namespace Model{
+    class IJobs{
+        - executiontype : IExecutionType
+        - name : string
+        - source : string
+        - target : string
+        - type : string
+        + RunJobCommand() void
+        + CreateJobCommand() void
+        + ModifyJobCommand() void
+        + DeleteJobCommand() void
+    }
+
+    class BackUpJob{
+        - backuptype : IBackUpType
+        - name : string
+        - source : string
+        - target : string
+        - type : string
+        + RunJobCommand() void
+        + CreateJobCommand() void
+        + ModifyJobCommand() void
+        + DeleteJobCommand() void
+
+    }
+
+    class IBackUpType{
+        + execute() bool
+    }
+
+    class DifferentialType{
+        + execute() bool
+    }
+
+    class FullType{
+        + execute() bool
+    }
+
+    class BackUpTypeFactory {
+        - type : string
+        + getBackLogType() IBackUpType
+    }
+
+    class DifferentialTypeFactory{
+        + getBackLogType() DifferentialType
+    }
+    
+    class FullTypeFactory{
+        + getBackLogType() FullType
+    }
+
+    class StatusLog{
+        + jobname : string
+        + logpath : string
+        + getInstance() StatusLog
+        + writeLog() void
+    }
+
+    class DailyLog{
+        + filelist : list<IFile>
+        + logpath : string
+        + getInstance() DailyLog
+        + CreateDailyLog() void
+        + AddFileLog(IFile) void
+    }
+
+    class FileLog{
+        
+    }
+
+}
+
+<<Interface>> IJobs
+<<Interface>> IBackUpType
+<<Singleton>> StatusLog
+<<Singleton>> DailyLog
+
+
+
+RunJob --> IJobs
+BackUpJob ..|> IJobs
+
+IBackUpType --o BackUpJob
+DifferentialType ..|> IBackUpType
+FullType ..|> IBackUpType
+
+DifferentialTypeFactory --|> BackUpTypeFactory
+FullTypeFactory --|> BackUpTypeFactory
+BackUpTypeFactory ..> IBackUpType
+
+StatusLog ..|> BackUpJob
