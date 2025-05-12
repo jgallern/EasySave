@@ -23,7 +23,7 @@ namespace BackUp.Model
             get
             {
                 if (_instance == null)
-                    throw new InvalidOperationException("ConfigManager n'a pas encore été initialisé.");
+                    throw new InvalidOperationException("ConfigManager n'a pas encore Ã©tÃ© initialisÃ©.");
                 return _instance;
             }
         }
@@ -66,12 +66,12 @@ namespace BackUp.Model
         {
             List<BackUpJob> jobs = LoadJobs();
             if (jobs.Count >= MaxJobs)
-                throw new InvalidOperationException("Le nombre maximum de jobs (5) a été atteint.");
+                throw new InvalidOperationException("Le nombre maximum de jobs (5) a Ã©tÃ© atteint.");
             foreach (IJobs savedjob in jobs)
             {
                 if (savedjob.Name  == job.Name | (savedjob.FileSource == job.FileSource && savedjob.FileTarget == job.FileTarget && savedjob.Type == job.Type))
                 {
-                    throw new Exception("Ce job est déja enregistré dans la config");
+                    throw new Exception("Ce job est dÃ©ja enregistrÃ© dans la config");
                 }
             }
 
@@ -121,7 +121,7 @@ namespace BackUp.Model
                     return job.Id;
                 }
             }
-            throw new Exception($"Id non trouvé pour le job nommé {jobtofind.Name}");
+            throw new Exception($"Id non trouvÃ© pour le job nommÃ© {jobtofind.Name}");
         }
 
         public void DeleteJob(int Id)
@@ -130,9 +130,9 @@ namespace BackUp.Model
             int removed = jobs.RemoveAll(j => j.Id == Id);
             if (removed == 0)
                 throw new ArgumentException($"Aucun job avec L'ID '{Id}'.");
-
             SaveJobs(jobs);
         }
 
+        
     }
 }

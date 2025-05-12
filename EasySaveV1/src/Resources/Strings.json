@@ -1,0 +1,11 @@
+{
+    "select_language": "Language: (Use Tab to change language)",
+    "welcome_message": "Welcome! You can execute these diferent functionalities: ",
+    "manage_jobs": "Manage Jobs",
+    "execute_backup": "Run Backup",
+    "exit": "Exit",
+    // Select Language View
+    "language_menu": "Select a Language",
+    // Run Job View
+    "run_jobs_menu": "Run BackUp Jobs"
+}
