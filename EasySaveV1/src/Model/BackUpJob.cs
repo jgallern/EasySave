@@ -1,58 +1,45 @@
+using Newtonsoft.Json;
+
 namespace BackUp.Model
 {
 
 	public class BackUpJob : IJobs
 	{
 		public int Id { get; set; }
-		public string Name { get; set; }
-		public string FileSource { get; set; }
-		public string FileTarget { get; set; }
+		public string? Name { get; set; }
+		public string? FileSource { get; set; }
+		public string? FileTarget { get; set; }
 		public BackupType Type { get; set; }
-		public ConfigManager config {  get; set; }
 
-		public BackUpJob(string Name, string SourceDir, string TargetDir,BackupType Type, ConfigManager config)
+		public BackUpJob(string Name, string SourceDir, string TargetDir,BackupType Type)
 		{
 			this.Name = Name;
 			this.FileSource = SourceDir;
 			this.FileTarget= TargetDir;
 			this.Type = Type;
-			this.config = config;
 
-			InitializeId();
         }
-
-		public void InitializeId()
-		{
-            try
-            {
-				Id = config.FindJobId(this);
-			}
-			catch
-			{
-				Id = config.GetAvailableID();
-			}
-		}
 
         public void Run()
 		{
 				
 		}
 
-		public void CreateJob(ConfigManager config)
+		public void CreateJob()
 		{
-			Id = config.GetAvailableID();
-	        config.AddJob(this);
+			Id = ConfigManager.Instance.GetAvailableID();
+	        ConfigManager.Instance.AddJob(this);
 		}
 
-		public void DeleteJob(ConfigManager config)
+		public void DeleteJob()
 		{
-			Id = config.FindJobId(this);
-			config.DeleteJob(Id);
+			Id = ConfigManager.Instance.FindJobId(this);
+			ConfigManager.Instance.DeleteJob(Id);
 		}
 
-		public void AlterJob(ConfigManager config)
+		public void AlterJob()
 		{
-			config.UpdateJob(Id,this);	
+			ConfigManager.Instance.UpdateJob(Id,this);	
 		}
 	}
 }

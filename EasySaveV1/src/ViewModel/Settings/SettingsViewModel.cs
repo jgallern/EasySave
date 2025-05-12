@@ -15,6 +15,7 @@ namespace BackUp.ViewModel
         public SettingsViewModel(ILocalizer localizer)
         {
             _localizer = localizer;
+            //For WPF
             ChangeLanguageCommand = new RelayCommand<string>(lang =>
             {
                 _localizer.ChangeLanguage(lang);
@@ -28,6 +29,7 @@ namespace BackUp.ViewModel
         public ICommand ChangeLanguageCommand { get; }
         public string this[string key] => _localizer[key];
 
+        // For WPF 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

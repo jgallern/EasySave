@@ -9,16 +9,16 @@ namespace BackUp.Model
     public interface IJobs
     {
 		int Id { get; }
-		string Name { get; set; }
-		string FileSource { get; set; }
-		string FileTarget { get; set; }
+		string? Name { get; set; }
+		string? FileSource { get; set; }
+		string? FileTarget { get; set; }
 		BackupType Type { get; set; }
 
 
 
         void Run();
-        void CreateJob(ConfigManager config);
-        void DeleteJob(ConfigManager config);
-        void AlterJob(ConfigManager config);
+        void CreateJob();
+        void DeleteJob();
+        void AlterJob();
     }
 }
