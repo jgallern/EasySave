@@ -1,5 +1,6 @@
 namespace BackUp.Model
 {
+
 	public class BackUpJob : IJobs
 	{
 		public int Id { get; set; }

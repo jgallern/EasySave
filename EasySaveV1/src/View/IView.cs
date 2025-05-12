@@ -1,4 +1,4 @@
-namespace View
+namespace BackUp.View
 {
     public interface IView
     {
