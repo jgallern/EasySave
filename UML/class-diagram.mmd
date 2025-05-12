@@ -47,42 +47,17 @@ namespace Model{
         + DeleteJobCommand() void
     }
 
-    class BackUpJob{
-        - backuptype : IBackUpType
-        - name : string
-        - source : string
-        - target : string
-        - type : string
-        + RunJobCommand() void
-        + CreateJobCommand() void
-        + ModifyJobCommand() void
-        + DeleteJobCommand() void
-
-    }
-
-    class IBackUpType{
-        + execute() bool
-    }
-
-    class DifferentialType{
-        + execute() bool
-    }
-
-    class FullType{
-        + execute() bool
-    }
-
-    class BackUpTypeFactory {
-        - type : string
-        + getBackLogType() IBackUpType
-    }
-
-    class DifferentialTypeFactory{
-        + getBackLogType() DifferentialType
-    }
-    
-    class FullTypeFactory{
-        + getBackLogType() FullType
+    class BackUpJob {
+        + int Id
+        + string Name
+        + string FileSource
+        + string FileTarget
+        + BackupType Type
+        + BackUpJob(string Name, string SourceDir, string TargetDir, BackupType Type)
+        + void Run()
+        + void CreateJob()
+        + void DeleteJob()
+        + void AlterJob()
     }
 
     class StatusLog{
@@ -109,35 +84,36 @@ namespace Model{
         - timestamp : double
         + WriteFileLog() void
     }
-    
-    class IConfigJobs {
-        - backuptype : IBackUpType
-        + createJob() void
-        + showJob() void
-        + detailJob() void
+
+class ConfigManager {
+        - static ConfigManager _instance
+        - static object _lock
+        - const int MaxJobs = 5
+        - string filePath
+        - ConfigManager(string filePath)
+        + static ConfigManager Instance
+        + static void Initialize(string filePath)
+        - List~BackUpJob~ LoadJobs()
+        - void SaveJobs(List~BackUpJob~ jobs)
+        + List~BackUpJob~ GetAllJobs()
+        + void AddJob(BackUpJob job)
+        + void UpdateJob(int Id, BackUpJob updatedJob)
+        + int GetAvailableID()
+        + void ReorganiseIndex()
+        + int FindJobId(BackUpJob jobtofind)
+        + void DeleteJob(int Id)
     }
 }
 
 <<Interface>> IJobs
-<<Interface>> IBackUpType
-<<Interface>> IConfigJobs
 <<Singleton>> StatusLog
 <<Singleton>> DailyLog
 
-
-
 RunJob --> IJobs
-ManageJob --> IConfigJobs
-BackUpJob ..|> IJobs
-
-IBackUpType --o BackUpJob
-DifferentialType ..|> IBackUpType
-FullType ..|> IBackUpType
-
-DifferentialTypeFactory --|> BackUpTypeFactory
-FullTypeFactory --|> BackUpTypeFactory
-BackUpTypeFactory ..> IBackUpType
 
 StatusLog ..|> BackUpJob
 
 DailyLog ..|> FileLog
+
+ConfigManager --> BackUpJob : uses
+BackUpJob ..|> IJobs : implements
