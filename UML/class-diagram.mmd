@@ -1,6 +1,14 @@
 classDiagram
 direction LR
 
+namespace View{
+    class Invoker{
+        - command : ICommand
+        + setCommand(ICommand) void
+        + executeCommand() void
+    }
+}
+
 namespace ViewModel{
 
     class ManageJob{
@@ -11,7 +19,7 @@ namespace ViewModel{
     }
 
     class ICommand{
-        + execute() bool
+        + execute() void
     }
 
     class RunJob{
@@ -20,6 +28,8 @@ namespace ViewModel{
 }
 
 <<Interface>> ICommand
+
+Invoker --> ICommand
 
 ManageJob --|> ICommand
 RunJob --|> ICommand
@@ -91,19 +101,33 @@ namespace Model{
     }
 
     class FileLog{
-        
+        - namejob : string
+        - source : string
+        - target : string
+        - filesize : int
+        - transfertime : double
+        - timestamp : double
+        + WriteFileLog() void
     }
-
+    
+    class IConfigJobs {
+        - backuptype : IBackUpType
+        + createJob() void
+        + showJob() void
+        + detailJob() void
+    }
 }
 
 <<Interface>> IJobs
 <<Interface>> IBackUpType
+<<Interface>> IConfigJobs
 <<Singleton>> StatusLog
 <<Singleton>> DailyLog
 
 
 
 RunJob --> IJobs
+ManageJob --> IConfigJobs
 BackUpJob ..|> IJobs
 
 IBackUpType --o BackUpJob
@@ -115,3 +139,5 @@ FullTypeFactory --|> BackUpTypeFactory
 BackUpTypeFactory ..> IBackUpType
 
 StatusLog ..|> BackUpJob
+
+DailyLog ..|> FileLog
