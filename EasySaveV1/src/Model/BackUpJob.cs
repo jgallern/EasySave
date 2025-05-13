@@ -16,16 +16,20 @@ namespace BackUp.Model
 			this.Name = Name;
 			this.FileSource = SourceDir;
 			this.FileTarget= TargetDir;
-			this.Type = Type;
+            this.Type = Type;
 
         }
 
         public void Run()
-		{
-				
-		}
+        {
+            IBackUpType backupType = Differential ?
+				new BackUpDifferential(Name, FileSource, FileTarget) :
+				new BackUpFull(Name, FileSource, FileTarget);
 
-		public void CreateJob()
+            backupType.Execute();
+        }
+
+        public void CreateJob()
 		{
 			Id = ConfigManager.Instance.GetAvailableID();
 	        ConfigManager.Instance.AddJob(this);

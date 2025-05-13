@@ -1,10 +1,5 @@
 namespace BackUp.Model
 {
-    public enum BackupType
-    {
-        Full,
-        Differential
-    }
 
     public interface IJobs
     {
@@ -12,7 +7,7 @@ namespace BackUp.Model
 		string? Name { get; set; }
 		string? FileSource { get; set; }
 		string? FileTarget { get; set; }
-		BackupType Type { get; set; }
+		bool Differential { get; set; }
 
 
 
