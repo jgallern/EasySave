@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace BackUp.Model
 {
 
@@ -7,52 +9,41 @@ namespace BackUp.Model
 		public string Name { get; set; }
 		public string FileSource { get; set; }
 		public string FileTarget { get; set; }
-		public BackupType Type { get; set; }
-		public ConfigManager config {  get; set; }
+		public bool Differential{ get; set; }
 
-		public BackUpJob(string Name, string SourceDir, string TargetDir,BackupType Type, ConfigManager config)
+		public BackUpJob(string Name, string SourceDir, string TargetDir, bool Differential)
 		{
 			this.Name = Name;
 			this.FileSource = SourceDir;
 			this.FileTarget= TargetDir;
-			this.Type = Type;
-			this.config = config;
+            this.Differential= Differential;
 
-			InitializeId();
         }
 
-		public void InitializeId()
-		{
-            try
-            {
-				Id = config.FindJobId(this);
-			}
-			catch
-			{
-				Id = config.GetAvailableID();
-			}
-		}
-
         public void Run()
+        {
+            IBackUpType backupType = Differential ?
+				new BackUpDifferential(Name, FileSource, FileTarget) :
+				new BackUpFull(Name, FileSource, FileTarget);
+
+            backupType.Execute();
+        }
+
+        public void CreateJob()
 		{
-				
+			Id = ConfigManager.Instance.GetAvailableID();
+	        ConfigManager.Instance.AddJob(this);
 		}
 
-		public void CreateJob(ConfigManager config)
+		public void DeleteJob()
 		{
-			Id = config.GetAvailableID();
-	        config.AddJob(this);
+			Id = ConfigManager.Instance.FindJobId(this);
+			ConfigManager.Instance.DeleteJob(Id);
 		}
 
-		public void DeleteJob(ConfigManager config)
+		public void AlterJob()
 		{
-			Id = config.FindJobId(this);
-			config.DeleteJob(Id);
-		}
-
-		public void AlterJob(ConfigManager config)
-		{
-			config.UpdateJob(Id,this);	
+			ConfigManager.Instance.UpdateJob(Id,this);	
 		}
 	}
 }
