@@ -7,27 +7,31 @@ namespace BackUp.Model
 		public string Name { get; }
 		public string dirSource{ get; }
 		public string dirTarget {  get; }
+        private ILogger _log;
 
-		public BackUpDifferential(string Name, string FileSource, string FileTarget)
+        public BackUpDifferential(string Name, string FileSource, string FileTarget)
 		{
-			this.Name = Name;
+            this._log = Logger.Instance;
+            this.Name = Name;
 			this.dirSource = FileSource;
 			this.dirTarget = FileTarget;
 		}
 
 		public void Execute()
 		{
+            Stopwatch jobTimer = Stopwatch.StartNew();
+            string message;
             try
             {
-                if (!Directory.Exists(this.FileTarget))
+                if (!Directory.Exists(this.dirTarget))
                 {
-                    Directory.CreateDirectory(this.FileTarget);
+                    Directory.CreateDirectory(this.dirTarget);
                 }
 
                 // Crée les dossiers manquants dans la cible
-                foreach (string dirPath in Directory.GetDirectories(FileSource, "*", SearchOption.AllDirectories))
+                foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
                 {
-                    string targetDirPath = dirPath.Replace(FileSource, FileTarget);
+                    string targetDirPath = dirPath.Replace(dirSource, dirTarget);
                     if (!Directory.Exists(targetDirPath))
                     {
                         Directory.CreateDirectory(targetDirPath);
@@ -35,20 +39,20 @@ namespace BackUp.Model
                 }
 
                 // Compare et copie les fichiers modifiés ou nouveaux
-                foreach (string sourceFilePath in Directory.GetFiles(FileSource, "*.*", SearchOption.AllDirectories))
+                foreach (string sourceFile in Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories))
                 {
-                    string targetFilePath = sourceFilePath.Replace(FileSource, FileTarget);
+                    string targetFile = sourceFile.Replace(dirSource, dirTarget);
 
                     bool shouldCopy = false;
 
-                    if (!File.Exists(targetFilePath))
+                    if (!File.Exists(targetFile))
                     {
                         shouldCopy = true; // Nouveau fichier
                     }
                     else
                     {
-                        DateTime sourceLastWrite = File.GetLastWriteTimeUtc(sourceFilePath);
-                        DateTime targetLastWrite = File.GetLastWriteTimeUtc(targetFilePath);
+                        DateTime sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile);
+                        DateTime targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
 
                         if (sourceLastWrite > targetLastWrite)
                         {
@@ -60,30 +64,48 @@ namespace BackUp.Model
                     {
                         Stopwatch watch = Stopwatch.StartNew();
                         Console.WriteLine("ajout");
-                        File.Copy(sourceFilePath, targetFilePath, true);
+                        File.Copy(sourceFile, targetFile, true);
                         watch.Stop();
-                        //ToLogFile(sourceFilePath, watch.ElapsedMilliseconds);
+                        WriteDailyLog(sourceFile, targetFile, watch.ElapsedMilliseconds.ToString());
                     }
                 }
+                jobTimer.Stop();
+                message = "Job Succeed!";
             }
             catch (Exception ex)
             {
+                jobTimer.Stop();
                 Console.WriteLine("Erreur pendant le backup différentiel : " + ex.Message);
+                message = "Erreur pendant le backup différentiel : " + ex.Message.ToString();
             }
+            WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
         }
-        public void ToLogFile(string filePath, string transfertTime)
+
+        public void WriteDailyLog(string sourceFile, string targetFile, string transfertTime)
         {
-            FileInfo fileInfo = new FileInfo(filePath);
+            FileInfo fileInfo = new FileInfo(sourceFile);
             Dictionary<string, object> logEntry = new Dictionary<string, object>
             {
-                { "SourcePath", FileSource },
-                { "TargetPath", FileTarget },
-                { "FileName", Name },
+                { "Name", Name },
+                { "SourcePath", sourceFile },
+                { "TargetPath", targetFile },
                 { "FileSize", fileInfo.Length },
                 { "FileTransferTime", transfertTime},
                 { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") }
             };
-            //LogMachinBidule.AddFileLog("Daily", logEntry);
+            _log.AddLogInfo(LogType.Daily, logEntry);
+        }
+
+        public void WriteStatusLog(double jobTimer, string message)
+        {
+            Dictionary<string, object> logJob = new Dictionary<string, object>
+                {
+                    { "Name", Name },
+                    { "JobTime", jobTimer},
+                    { "Result", message },
+                    { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") }
+                };
+            _log.AddLogInfo(LogType.Status, logJob);
         }
     }
 }

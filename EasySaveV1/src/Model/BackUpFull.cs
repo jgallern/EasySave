@@ -18,7 +18,9 @@ namespace BackUp.Model
 		
 		public void Execute()
 		{
-			try
+            Stopwatch jobTimer = Stopwatch.StartNew();
+            string message;
+            try
 			{
 				if (!Directory.Exists(this.dirTarget)) 
 				{
@@ -36,17 +38,22 @@ namespace BackUp.Model
                     string fileTarget = fileSource.Replace(dirSource, dirTarget);
                     File.Copy(fileSource, fileTarget, true);
                     watch.Stop();
-                    var elapsedMs = watch.ElapsedMilliseconds;
-                    ToLogFile(fileSource, fileTarget, elapsedMs);
+                    double elapsedMs = watch.ElapsedMilliseconds;
+                    WriteDailyLog(fileSource, fileTarget, elapsedMs);
 				}
-			}
-			catch
-			{
-
+                jobTimer.Stop();
+                message = "Job Succeed!";
             }
+			catch (Exception ex)
+            {
+                jobTimer.Stop();
+                Console.WriteLine("Erreur pendant le backup complet : " + ex.Message);
+                message = "Erreur pendant le backup complet : " + ex.Message.ToString();
+            }
+            WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
         }
 
-        public void ToLogFile(string fileSource, string fileTarget, double transfertTime)
+        public void WriteDailyLog(string fileSource, string fileTarget, double transfertTime)
         {
             FileInfo fileInfo = new FileInfo(fileSource);
             Dictionary<string, object> logEntry = new Dictionary<string, object>
@@ -68,9 +75,16 @@ namespace BackUp.Model
 			return fileName; 
 		}
 
-        public bool IsFile(/*File file*/)
-		{
-			return true;
-		}
-	}
+        public void WriteStatusLog(double jobTimer, string message)
+        {
+            Dictionary<string, object> logJob = new Dictionary<string, object>
+                {
+                    { "Name", Name },
+                    { "JobTime", jobTimer},
+                    { "Result", message },
+                    { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") }
+                };
+            _log.AddLogInfo(LogType.Status, logJob);
+        }
+    }
 }
