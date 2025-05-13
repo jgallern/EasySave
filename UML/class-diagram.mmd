@@ -2,14 +2,77 @@ classDiagram
 direction LR
 
 namespace View{
-    class Invoker{
-        - command : ICommand
-        + setCommand(ICommand) void
-        + executeCommand() void
+
+    class SettingsView{
+        - vm : ISettingsViewModel
+        - loc : ILocalizer
+        - languageChanged : bool
+        + SettingsView(ISettingsViewModel)
+        + Run() void
+
     }
+
+    class MenuView{
+        - menuVm : MenuViewModel
+        + MenuView(MenuViewModel)
+        + Run() void
+    }
+
+    class ManageBackUpView{
+        + Run() void
+    }
+
+    class ExecuteBackUpView{
+        + Run() void
+    }
+
+    class DetailsBackUpView{
+        + Run() void
+    }
+
+    class IView{
+        + Run() void
+    }
+
 }
 
+<<Interface>> IView
+
+
 namespace ViewModel{
+
+    class IBackUpService{
+
+    }
+
+    class ExecuteBackUp{
+
+    }
+
+    class ManageBackUp{
+
+    }
+
+    class ICommand{
+
+
+    }
+
+    class RelayCommand{
+
+    }
+
+    class IMenuViewModel
+    class MenuItem
+    class MenuViewModel
+    class AppController
+    class IAppController
+    class ILocalizer
+    class Localizer
+    class ISettingsViewModel
+    class SettingsViewModel
+
+
 
     class ManageJob{
         + CreateJobCommand() void
@@ -29,7 +92,13 @@ namespace ViewModel{
 
 <<Interface>> ICommand
 
-Invoker --> ICommand
+
+SettingsView ..|> IView
+MenuView ..|> IView
+DetailsBackUpView ..|> IView
+ExecuteBackUpView ..|> IView
+ManageBackUpView ..|> IView
+IView --> ICommand
 
 ManageJob --|> ICommand
 RunJob --|> ICommand
@@ -52,40 +121,32 @@ namespace Model{
         + string Name
         + string FileSource
         + string FileTarget
-        + BackupType Type
-        + BackUpJob(string Name, string SourceDir, string TargetDir, BackupType Type)
+        + bool Differential
+        + BackUpJob(string Name, string SourceDir, string TargetDir, bool Differential)
         + void Run()
         + void CreateJob()
         + void DeleteJob()
         + void AlterJob()
     }
 
-    class StatusLog{
+    class ILogger{
+        + GetLogDirectory() string
+        + GetDailyLogDirectory() string
+        + GetDailyLogPath() string 
+        + GetStatusLogPath() string
+        + AddLogInfo(LogType logType, Dictionary<string, object> logEntry) void
+    }
+    
+
+    class Logger{
         + jobname : string
         + logpath : string
-        + getInstance() StatusLog
-        + writeLog() void
+        + setLog() void
+        + getLog() StatusLog
+        + getDailyLog() void
     }
 
-    class DailyLog{
-        + filelist : list<IFile>
-        + logpath : string
-        + getInstance() DailyLog
-        + CreateDailyLog() void
-        + AddFileLog(IFile) void
-    }
-
-    class FileLog{
-        - namejob : string
-        - source : string
-        - target : string
-        - filesize : int
-        - transfertime : double
-        - timestamp : double
-        + WriteFileLog() void
-    }
-
-class ConfigManager {
+    class ConfigManager {
         - static ConfigManager _instance
         - static object _lock
         - const int MaxJobs = 5
@@ -103,28 +164,55 @@ class ConfigManager {
         + int FindJobId(BackUpJob jobtofind)
         + void DeleteJob(int Id)
     }
-        class IBackUpType{
+    
+    class IBackUpType{
         + execute() bool
     }
 
     class DifferentialType{
+        + name : string
+        + FileSource : string
+        + FileTarget : string
         + execute() bool
     }
 
     class FullType{
+        + name : string
+        + FileSource : string
+        + FileTarget : string
         + execute() bool
+    }
+
+    class ITranslationManager{
+        ChangeLanguage(string language) void
+        GetCurrentLanguage() string
+        GetTranslation(string key) string
+        GetAvailableLanguages() List<string>
+    }
+
+    class TranslationManager{
+        - resourcesPath : string
+        - appConfigPath : string
+        - language : Dictionary<string, string>
+        - translations : Dictionary<string, string>
+        + TranslationManager()
+        + LoadAppConfigLanguage() void
+        + SaveAppConfig() void
+        + ChangeLanguage(string language) void
+        + GetCurrentLanguage() string
+        + LoadTranslations(string language) void
+        + GetTranslation(string key) string
+        + GetAvailableLanguages() List<string> 
+        + GetDefaultTranslation(string key) string
+
     }
 }
 
 <<Interface>> IJobs
-<<Singleton>> StatusLog
-<<Singleton>> DailyLog
-
+<<Interface>> ILogger
+<<Singleton>> Logger
+<<Interface>> IBackUpType
 RunJob --> IJobs
-
-StatusLog ..|> BackUpJob
-
-DailyLog ..|> FileLog
 
 ConfigManager <-- BackUpJob : uses
 BackUpJob ..|> IJobs : implements
@@ -132,3 +220,8 @@ BackUpJob ..|> IJobs : implements
 BackUpJob --> IBackUpType : uses at runtime
 IBackUpType <|.. FullType : implements
 IBackUpType <|.. DifferentialType : implements
+
+Logger ..|> ILogger : implements 
+BackUpJob --> ILogger : uses
+
+TranslationManager ..|> ITranslationManager : implements
