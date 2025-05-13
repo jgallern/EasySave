@@ -103,6 +103,17 @@ class ConfigManager {
         + int FindJobId(BackUpJob jobtofind)
         + void DeleteJob(int Id)
     }
+        class IBackUpType{
+        + execute() bool
+    }
+
+    class DifferentialType{
+        + execute() bool
+    }
+
+    class FullType{
+        + execute() bool
+    }
 }
 
 <<Interface>> IJobs
@@ -115,5 +126,9 @@ StatusLog ..|> BackUpJob
 
 DailyLog ..|> FileLog
 
-ConfigManager --> BackUpJob : uses
+ConfigManager <-- BackUpJob : uses
 BackUpJob ..|> IJobs : implements
+
+BackUpJob --> IBackUpType : uses at runtime
+IBackUpType <|.. FullType : implements
+IBackUpType <|.. DifferentialType : implements
