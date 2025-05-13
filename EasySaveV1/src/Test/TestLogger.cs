@@ -9,7 +9,7 @@ public class TestLogger
     public static void Run()
     {
         Console.WriteLine("Test Logger :");
-        Logger log = Logger.Instance;
+        ILogger log = Logger.Instance;
 
         Console.WriteLine("Test Add DailyLogs :");
         Dictionary<string, object> json_content = new Dictionary<string, object>

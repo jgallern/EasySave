@@ -1,23 +1,18 @@
 using System.Text.Json;
 
 namespace BackUp.Model{
-    public enum LogType
-    {
-        Daily,
-        Status
-    }
 
-    public class Logger : ILogger
+    public class DailyLog
     {
-        private static Logger _instance;
+        private static DailyLog _instance;
         private static readonly object _lock = new object();
         private readonly string _logpath;
 
-        private Logger()
+        private DailyLog()
         {
             _logpath = GetLogDirectory();
         }
-        public static Logger Instance { get { lock (_lock) { return _instance ??= new Logger(); } } }
+        public static DailyLog Instance { get { lock (_lock) { return _instance ??= new DailyLog(); } } }
 
         public string GetLogDirectory()
         {
