@@ -5,37 +5,39 @@ namespace BackUp.Model
 	public class BackUpFull : IBackUpType
 	{
 		public string Name { get; }
-		public string FileSource { get; }
-		public string FileTarget {  get; }
-
-		public BackUpFull(string Name, string FileSource, string FileTarget)
+		public string dirSource { get; }
+		public string dirTarget {  get; }
+		private ILogger _log;
+		public BackUpFull(string Name, string dirSource, string dirTarget)
 		{
+			this._log = Logger.Instance;
 			this.Name = Name;
-			this.FileSource = FileSource;
-			this.FileTarget = FileTarget;
+			this.dirSource = dirSource;
+			this.dirTarget = dirTarget;
 		}
 		
 		public void Execute()
 		{
 			try
 			{
-				if (!Directory.Exists(this.FileTarget)) 
+				if (!Directory.Exists(this.dirTarget)) 
 				{
-					Directory.CreateDirectory(this.FileTarget);
+					Directory.CreateDirectory(this.dirTarget);
 				}
-				foreach (string dirPath in Directory.GetDirectories(FileSource, "*", SearchOption.AllDirectories))
+				foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
 				{
 					Console.WriteLine($"creation de la dir : {dirPath}");
-					Directory.CreateDirectory(dirPath.Replace(FileSource, FileTarget));
+					Directory.CreateDirectory(dirPath.Replace(dirSource, dirTarget));
 				}
 
-				foreach (string newPath in Directory.GetFiles(FileSource, "*.*", SearchOption.AllDirectories))
+				foreach (string fileSource in Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories))
 				{
 					var watch = System.Diagnostics.Stopwatch.StartNew();
-                    File.Copy(newPath, newPath.Replace(FileSource, FileTarget), true);
+                    string fileTarget = fileSource.Replace(dirSource, dirTarget);
+                    File.Copy(fileSource, fileTarget, true);
                     watch.Stop();
                     var elapsedMs = watch.ElapsedMilliseconds;
-                    ToLogFile(newPath, elapsedMs);
+                    ToLogFile(fileSource, fileTarget, elapsedMs);
 				}
 			}
 			catch
@@ -44,19 +46,26 @@ namespace BackUp.Model
             }
         }
 
-        public void ToLogFile(string filePath, string transfertTime)
+        public void ToLogFile(string fileSource, string fileTarget, double transfertTime)
         {
-            FileInfo fileInfo = new FileInfo(filePath);
+            FileInfo fileInfo = new FileInfo(fileSource);
             Dictionary<string, object> logEntry = new Dictionary<string, object>
 			{
-			    { "SourcePath", FileSource },
-			    { "TargetPath", FileTarget },
-			    { "FileName", Name },
+                { "FileName", Name },
+				{ "SourcePath", fileSource },
+			    { "TargetPath", fileTarget },
 			    { "FileSize", fileInfo.Length },
 			    { "FileTransferTime", transfertTime},
 			    { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") }
 			};
-			//LogMachinBidule.AddFileLog("Daily", logEntry);
+			_log.AddLogInfo(LogType.Daily, logEntry);
+		}
+
+
+		public string GetFileName(string filePath) 
+		{
+			string fileName = filePath;
+			return fileName; 
 		}
 
         public bool IsFile(/*File file*/)

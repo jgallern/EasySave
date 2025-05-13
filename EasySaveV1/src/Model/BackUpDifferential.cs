@@ -3,14 +3,14 @@ namespace BackUp.Model
 	public class BackUpDifferential : IBackUpType
 	{
 		public string Name { get; }
-		public string FileSource{ get; }
-		public string FileTarget {  get; }
+		public string dirSource{ get; }
+		public string dirTarget {  get; }
 
 		public BackUpDifferential(string Name, string FileSource, string FileTarget)
 		{
 			this.Name = Name;
-			this.FileSource = FileSource;
-			this.FileTarget = FileTarget;
+			this.dirSource = FileSource;
+			this.dirTarget = FileTarget;
 		}
 
 		public void Execute()

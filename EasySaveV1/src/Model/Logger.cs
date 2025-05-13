@@ -26,7 +26,7 @@ namespace BackUp.Model{
             {
                 Directory.CreateDirectory(folder);
             }
-            Console.WriteLine("Log directory", folder);
+            Console.WriteLine(folder);
             Console.ReadKey();
             return folder;
         }

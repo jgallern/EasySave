@@ -10,10 +10,8 @@ public class Program
 {
     public static void Main()
     {
-        //---------------------- TESTS -------------------------
         Console.Write("================== TESTS ===================");
-        TestLogger.Run();
-
+        TestBackUpFull.Run();
         /*
         Console.Write("Loading AppConfig language...\n");
 
@@ -31,6 +29,10 @@ public class Program
     /* //---------------------- TESTS -------------------------
     Console.Write("================== TESTS ===================");
     TestTranslationManager.Run();
+    */
+    /* //---------------------- TESTS -------------------------
+    Console.Write("================== TESTS ===================");
+        TestLogger.Run();
     */
 }
 
