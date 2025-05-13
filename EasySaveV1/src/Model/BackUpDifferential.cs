@@ -1,19 +1,19 @@
-namespace Model
+namespace BackUp.Model
 {
-	public class BackUpDifferential
+	public class BackUpDifferential : IBackUpType
 	{
-		string Name { get; }
-		string FileSource{ get; }
-		string FileTarget {  get; }
+		public string Name { get; }
+		public string FileSource{ get; }
+		public string FileTarget {  get; }
 
-		public BackUpFull(string Name, string FileSource, string FileTarget)
+		public BackUpDifferential(string Name, string FileSource, string FileTarget)
 		{
 			this.Name = Name;
 			this.FileSource = FileSource;
 			this.FileTarget = FileTarget;
 		}
 
-		public bool execute()
+		public void Execute()
 		{
 			try
 			{
@@ -24,13 +24,14 @@ namespace Model
 
 			}
 		}
-		public bool FileHadChanged(File file)
+		public bool FileHadChanged(/*File file*/)
 		{
+			return true;
 
 		}
-		public bool IsFile(File file)
+		public bool IsFile(/*File file*/)
 		{
-			if file 
+			return true;
 		}
 	}
 }

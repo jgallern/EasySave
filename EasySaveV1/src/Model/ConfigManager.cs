@@ -69,7 +69,7 @@ namespace BackUp.Model
                 throw new InvalidOperationException("Le nombre maximum de jobs (5) a été atteint.");
             foreach (IJobs savedjob in jobs)
             {
-                if (savedjob.Name  == job.Name | (savedjob.FileSource == job.FileSource && savedjob.FileTarget == job.FileTarget && savedjob.Type == job.Type))
+                if (savedjob.Name  == job.Name | (savedjob.FileSource == job.FileSource && savedjob.FileTarget == job.FileTarget && savedjob.Differential == job.Differential))
                 {
                     throw new Exception("Ce job est déja enregistré dans la config");
                 }

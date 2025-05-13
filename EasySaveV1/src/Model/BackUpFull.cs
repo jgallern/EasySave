@@ -1,10 +1,12 @@
-namespace Model
+using System.Diagnostics;
+
+namespace BackUp.Model
 {
-	public class BackUpFull
+	public class BackUpFull : IBackUpType
 	{
-		string Name { get; }
-		string FileSource { get; }
-		string FileTarget {  get; }
+		public string Name { get; }
+		public string FileSource { get; }
+		public string FileTarget {  get; }
 
 		public BackUpFull(string Name, string FileSource, string FileTarget)
 		{
@@ -13,29 +15,53 @@ namespace Model
 			this.FileTarget = FileTarget;
 		}
 		
-		public bool execute()
+		public void Execute()
 		{
 			try
 			{
+				if (!Directory.Exists(this.FileTarget)) 
+				{
+					Directory.CreateDirectory(this.FileTarget);
+				}
 				foreach (string dirPath in Directory.GetDirectories(FileSource, "*", SearchOption.AllDirectories))
 				{
+					Console.WriteLine($"creation de la dir : {dirPath}");
 					Directory.CreateDirectory(dirPath.Replace(FileSource, FileTarget));
 				}
 
-				//Copy all the files & Replaces any files with the same name
 				foreach (string newPath in Directory.GetFiles(FileSource, "*.*", SearchOption.AllDirectories))
 				{
-					File.Copy(newPath, newPath.Replace(FileSource, FileTarget), true);
+					var watch = System.Diagnostics.Stopwatch.StartNew();
+                    File.Copy(newPath, newPath.Replace(FileSource, FileTarget), true);
+                    watch.Stop();
+                    var elapsedMs = watch.ElapsedMilliseconds;
+                    ToLogFile(newPath, elapsedMs);
 				}
 			}
 			catch
 			{
 
-			}
+            }
+        }
+
+        public void ToLogFile(string filePath, string transfertTime)
+        {
+            FileInfo fileInfo = new FileInfo(filePath);
+            Dictionary<string, object> logEntry = new Dictionary<string, object>
+			{
+			    { "SourcePath", FileSource },
+			    { "TargetPath", FileTarget },
+			    { "FileName", Name },
+			    { "FileSize", fileInfo.Length },
+			    { "FileTransferTime", transfertTime},
+			    { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") }
+			};
+			//LogMachinBidule.AddFileLog("Daily", logEntry);
 		}
 
-		public bool IsFile(File file)
+        public bool IsFile(/*File file*/)
 		{
+			return true;
 		}
 	}
 }
