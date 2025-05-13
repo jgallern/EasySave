@@ -10,6 +10,11 @@ public class Program
 {
     public static void Main()
     {
+        //---------------------- TESTS -------------------------
+        Console.Write("================== TESTS ===================");
+        TestLogger.Run();
+
+        /*
         Console.Write("Loading AppConfig language...\n");
 
         ILocalizer localizer = Localizer.Instance;
@@ -19,7 +24,7 @@ public class Program
         IAppController appController = new AppController(localizer);
 
         // Lancement de l'application
-        appController.RunApp();
+        appController.RunApp();*/
     }
 
 
