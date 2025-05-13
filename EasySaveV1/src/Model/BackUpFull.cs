@@ -31,11 +31,11 @@ namespace BackUp.Model
 
 				foreach (string newPath in Directory.GetFiles(FileSource, "*.*", SearchOption.AllDirectories))
 				{
-					var watch = System.Diagnostics.Stopwatch.StartNew();
+					Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
                     File.Copy(newPath, newPath.Replace(FileSource, FileTarget), true);
                     watch.Stop();
                     var elapsedMs = watch.ElapsedMilliseconds;
-                    ToLogFile(newPath, elapsedMs);
+                    //ToLogFile(newPath, elapsedMs);
 				}
 			}
 			catch
