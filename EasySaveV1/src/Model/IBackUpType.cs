@@ -1,11 +1,10 @@
-namespace Model
+namespace BackUp.Model
 {
 	public interface IBackUpType
 	{
-		/*
-		public void Execute()
-		{
-
-		}*/
+		string Name { get; }
+		string FileSource{ get; }
+		string FileTarget {  get; }
+		void Execute();
 	}
 }
