@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace BackUp.Model
 {
-    public class TranslationManager
+    public class TranslationManager : ITranslationManager
     {
         private static TranslationManager _instance;
         private static readonly object _lock = new object();
