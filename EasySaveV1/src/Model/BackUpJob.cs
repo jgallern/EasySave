@@ -17,7 +17,6 @@ namespace BackUp.Model
 			this.FileSource = SourceDir;
 			this.FileTarget= TargetDir;
             this.Differential= Differential;
-
         }
 
         public void Run()
@@ -43,6 +42,7 @@ namespace BackUp.Model
 
 		public void AlterJob()
 		{
+			Id = ConfigManager.Instance.FindJobId(this);
 			ConfigManager.Instance.UpdateJob(Id,this);	
 		}
 	}

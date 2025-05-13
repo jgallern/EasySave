@@ -32,7 +32,7 @@ namespace BackUp.Model
 
 				foreach (string fileSource in Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories))
 				{
-					var watch = System.Diagnostics.Stopwatch.StartNew();
+					Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
                     string fileTarget = fileSource.Replace(dirSource, dirTarget);
                     File.Copy(fileSource, fileTarget, true);
                     watch.Stop();
