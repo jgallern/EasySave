@@ -3,8 +3,8 @@ namespace BackUp.Model
 	public interface IBackUpType
 	{
 		string Name { get; }
-		string FileSource{ get; }
-		string FileTarget {  get; }
+		string dirSource{ get; }
+		string dirTarget {  get; }
 		void Execute();
 	}
 }
