@@ -199,6 +199,7 @@ namespace BackUp.View
                                         break;
                                 }
                             }while (key != ConsoleKey.Escape);
+                            break;
                         }
                         else
                         {
