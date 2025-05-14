@@ -1,0 +1,27 @@
+﻿name: PR-notifier
+
+on:
+  pull_request:
+    types: 
+        - opened
+    branches: 
+        - main
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Notify Team
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      run: |
+        pr_title="${{ github.event.pull_request.title }}"
+        pr_url="${{ github.event.pull_request.html_url }}"
+        pr_user="${{ github.event.pull_request.user.login }}"
+        pr_body="${{ github.event.pull_request.body }}"
+
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"username\": \"GitHub Bot\", \"content\": \"@everyone\n📣 New Pull Request into **main** !\n**Titre**: $pr_title\n**Description**: $pr_body\n**Auteur**: @$pr_user\n🔗 $pr_url\"}" \
+             $DISCORD_WEBHOOK_URL

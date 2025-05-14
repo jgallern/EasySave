@@ -16,3 +16,6 @@
 bin/
 obj/
 
+# Ignorer les fichiers de configurations
+**/src/env/backlog.json
+
