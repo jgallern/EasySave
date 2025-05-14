@@ -10,19 +10,16 @@ public class Program
 {
     public static void Main()
     {
-        Console.Write("================== TESTS ===================");
-        TestBackUpFull.Run();
-        /*
         Console.Write("Loading AppConfig language...\n");
 
         ILocalizer localizer = Localizer.Instance;
         CultureInfo.CurrentUICulture = new CultureInfo(localizer.GetCurrentLanguage());
 
         // Création du contrôleur principal
-        IAppController appController = new AppController(localizer);
+        IAppController appController = new AppController();
 
         // Lancement de l'application
-        appController.RunApp();*/
+        appController.RunApp();
     }
 
 
@@ -33,6 +30,10 @@ public class Program
     /* //---------------------- TESTS -------------------------
     Console.Write("================== TESTS ===================");
         TestLogger.Run();
+    */
+    /* //---------------------- TESTS -------------------------
+    Console.Write("================== TESTS ===================");
+        TestBackUpFull.Run();
     */
 }
 

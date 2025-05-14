@@ -7,23 +7,23 @@ namespace BackUp.Model
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string FileSource { get; set; }
-		public string FileTarget { get; set; }
+		public string dirSource { get; set; }
+		public string dirTarget { get; set; }
 		public bool Differential{ get; set; }
 
 		public BackUpJob(string Name, string SourceDir, string TargetDir, bool Differential)
 		{
 			this.Name = Name;
-			this.FileSource = SourceDir;
-			this.FileTarget= TargetDir;
+			this.dirSource = SourceDir;
+			this.dirTarget= TargetDir;
             this.Differential= Differential;
         }
 
         public void Run()
         {
             IBackUpType backupType = Differential ?
-				new BackUpDifferential(Name, FileSource, FileTarget) :
-				new BackUpFull(Name, FileSource, FileTarget);
+				new BackUpDifferential(Name, dirSource, dirTarget) :
+				new BackUpFull(Name, dirSource, dirTarget);
 
             backupType.Execute();
         }
@@ -45,5 +45,11 @@ namespace BackUp.Model
 			Id = ConfigManager.Instance.FindJobId(this);
 			ConfigManager.Instance.UpdateJob(Id,this);	
 		}
-	}
+
+        public static List<BackUpJob> GetAllJobs()
+        {
+            List<BackUpJob> listJobs = ConfigManager.Instance.GetAllJobs();
+			return listJobs;
+        }
+    }
 }
