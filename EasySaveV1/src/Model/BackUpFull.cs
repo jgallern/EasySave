@@ -8,12 +8,12 @@ namespace BackUp.Model
 		public string dirSource { get; }
 		public string dirTarget {  get; }
 		private ILogger _log;
-		public BackUpFull(string Name, string FileSource, string FileTarget)
+		public BackUpFull(string Name, string dirSource, string dirTarget)
 		{
 			this._log = Logger.Instance;
 			this.Name = Name;
-			this.dirSource = FileSource;
-			this.dirTarget = FileTarget;
+			this.dirSource = dirSource;
+			this.dirTarget = dirTarget;
 		}
 		
 		public void Execute()

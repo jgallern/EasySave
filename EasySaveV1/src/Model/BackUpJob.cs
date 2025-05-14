@@ -12,19 +12,19 @@ namespace BackUp.Model
 		public string dirTarget { get; set; }
 		public bool Differential{ get; set; }
 
-		public BackUpJob(string Name, string FileSource, string FileTarget, bool Differential)
+		public BackUpJob(string Name, string dirSource, string dirTarget, bool Differential)
 		{
             this.Name = Name;
-			this.dirSource = FileSource;
-			this.dirTarget= FileTarget;
+			this.dirSource = dirSource;
+			this.dirTarget= dirTarget;
             this.Differential= Differential;
         }
 
 		public BackUpJob()
 		{
 			this.Name = "";
-			this.FileSource = "";
-			this.FileTarget= "";
+			this.dirSource = "";
+			this.dirTarget = "";
             this.Differential= false;
 		}
 

@@ -9,12 +9,12 @@ namespace BackUp.Model
 		public string dirTarget {  get; }
         private ILogger _log;
 
-        public BackUpDifferential(string Name, string FileSource, string FileTarget)
+        public BackUpDifferential(string Name, string dirSource, string dirTarget)
 		{
             this._log = Logger.Instance;
             this.Name = Name;
-			this.dirSource = FileSource;
-			this.dirTarget = FileTarget;
+			this.dirSource = dirSource;
+			this.dirTarget = dirTarget;
 		}
 
 		public void Execute()

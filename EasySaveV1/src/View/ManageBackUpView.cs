@@ -6,11 +6,19 @@ namespace BackUp.View
 
     public class ManageBackUpView : IView
     {
+<<<<<<< HEAD
         private readonly ManageBackUp _vm;
         private readonly IAppController _app;
 
         public ManageBackUpView(ManageBackUp vm, IAppController app)
+=======
+        private readonly IAppController _app;
+        private readonly IManageBackUpServices _vm;
+
+        public ManageBackUpView(IAppController app, IManageBackUpServices vm)
+>>>>>>> bd8348a963d694121cc02e8234319314216cd894
         {
+            _app = app;
             _vm = vm;
             _app = app;
         }
