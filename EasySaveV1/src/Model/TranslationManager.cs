@@ -20,7 +20,8 @@ namespace BackUp.Model
         private TranslationManager()
         {
             _appConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "env\\appconfig.json");
-            Console.WriteLine(_appConfigPath);
+            //Console.WriteLine(_appConfigPath);
+            //Console.ReadKey();
             _resourcesPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
 
             LoadAppConfigLanguage();
@@ -41,7 +42,6 @@ namespace BackUp.Model
 
         public void LoadAppConfigLanguage()
         {
-            Console.WriteLine(_appConfigPath);
             string json = File.ReadAllText(_appConfigPath);
             _language = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
         }

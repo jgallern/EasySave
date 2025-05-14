@@ -73,7 +73,7 @@ namespace BackUp.ViewModel
 
             if (string.IsNullOrWhiteSpace(input))
             {
-                _resultMessage = "❌ Please enter something.";
+                _resultMessage = _app.Translate("no_input");
                 return;
             }
 
@@ -81,7 +81,7 @@ namespace BackUp.ViewModel
             {
                 if (!char.IsDigit(c) && c != ',' && c != '-' && c != '*')
                 {
-                    _resultMessage = "❌ Invalid input. Only digits, ',', '-', and '*' are allowed.";
+                    _resultMessage = _app.Translate("invalid_run_input");
                     return;
                 }
             }
@@ -117,12 +117,12 @@ namespace BackUp.ViewModel
                 }
                 else
                 {
-                    _resultMessage = $"❌ Invalid job number: {single}.";
+                    _resultMessage = _app.Translate("invalid_job_num") + $" {single}.";
                     return;
                 }
             }
 
-            _resultMessage = $"❌ Invalid input: {input.Trim()}."; // Erreur générique si aucune condition n'est remplie
+            _resultMessage = _app.Translate("invalid_input") + $" {input.Trim()}."; // Erreur générique si aucune condition n'est remplie
         }
 
         private void ParseRange(string input)
@@ -131,7 +131,7 @@ namespace BackUp.ViewModel
 
             if (parts.Length != 2)
             {
-                _resultMessage = "❌ Invalid range format.";
+                _resultMessage = _app.Translate("invalid_range");
                 return;
             }
 
@@ -146,7 +146,7 @@ namespace BackUp.ViewModel
 
             if (start > end)
             {
-                _resultMessage = "❌ Invalid range: start > end.";
+                _resultMessage = _app.Translate("start_supp_end");
                 return;
             }
 
@@ -162,13 +162,13 @@ namespace BackUp.ViewModel
             {
                 if (!int.TryParse(job.Trim(), out int jobId))
                 {
-                    _resultMessage += $"❌ Invalid input in list: {job}. ";  // Concaténer les erreurs
+                    _resultMessage += _app.Translate("invalid_input_list") + $" {job}. ";  // Concaténer les erreurs
                     continue;
                 }
 
                 if (!_availableJobs.Contains(jobId))
                 {
-                    _resultMessage += $"❌ Invalid job number in list: {jobId}. "; // Concaténer les erreurs
+                    _resultMessage += _app.Translate("invalid_num_list") + $" {jobId}. "; // Concaténer les erreurs
                     continue;
                 }
 
@@ -184,19 +184,32 @@ namespace BackUp.ViewModel
 
         private string ExecuteJobs()
         {
-            if (_result == null || _result.Count == 0)
+            if (!string.IsNullOrEmpty(_resultMessage) || _result == null)
             {
-                return _resultMessage ?? "No jobs to execute."; // Retourner le message d'erreur si les jobs sont vides
+                return _resultMessage ?? _app.Translate("no_job_config"); // Retourner le message d'erreur si les jobs sont vides
             }
 
             // Exécuter réellement les jobs
             foreach (int jobId in _result)
             {
                 BackUpJob job = BackUpJob.GetJobByID(jobId);
-                job.Run();
+                try
+                {
+                    job.Run();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(_app.Translate("run_succeed"));
+                    Console.ResetColor();
+                    Console.WriteLine($" {job.Id}:{job.Name}.");
+                }
+                catch
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write(_app.Translate("execution_error"));
+                    Console.ResetColor();
+                    Console.WriteLine($" {job.Id}:{job.Name}.");
+                }
             }
-
-            return "Successfully run BackUp"; // Message de succès
+            return _app.Translate("log_repo") + LogPath;
         }
     }
 }

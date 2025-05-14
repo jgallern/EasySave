@@ -33,7 +33,7 @@ public class MenuView : IView
         {
             Console.Clear();
             Console.WriteLine($"=== EasySave v1.0.0 | Language: {_appController.GetCurrentLanguage()} ===\n");
-
+            Console.WriteLine($"        {_appController.Translate("select_language")}\n\n");
             for (int i = 0; i < _items.Count; i++)
             {
                 if (i == selected)

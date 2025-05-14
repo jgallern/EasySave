@@ -12,9 +12,11 @@ namespace BackUp.Model
         private const int MaxJobs = 5;
         private readonly string filePath;
 
-        private ConfigManager(string filePath)
+        private ConfigManager()
         {
-            this.filePath = filePath;
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "env\\jobconfig.json");
+            //Console.WriteLine(filePath);
+            //Console.ReadKey();
             if (!File.Exists(filePath))
                 SaveJobs(new List<BackUpJob>());
         }
@@ -34,7 +36,7 @@ namespace BackUp.Model
             lock (_lock)
             {
                 if (_instance == null)
-                    _instance = new ConfigManager(filePath);
+                    _instance = new ConfigManager();
             }
         }
 
@@ -43,7 +45,6 @@ namespace BackUp.Model
             try
             {
                 string json = File.ReadAllText(filePath);
-                Console.WriteLine(json);
                 if (string.IsNullOrWhiteSpace(json)) return new List<BackUpJob>();
                 List<BackUpJob> jobs = JsonConvert.DeserializeObject<List<BackUpJob>>(json) ?? new List<BackUpJob>();
                 return jobs;

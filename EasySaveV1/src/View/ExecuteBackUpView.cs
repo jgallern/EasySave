@@ -26,8 +26,8 @@ namespace BackUp.View
             do
             {
                 Console.Clear();
-                Console.WriteLine("=== Exécution des jobs ===");
-                Console.Write("Entrez les jobs à exécuter (ou Échap pour revenir au menu) > ");
+                Console.WriteLine(_app.Translate("job_exec_title"));
+                Console.Write(_app.Translate("enter_jobs"));
 
                 string input = "";
                 ConsoleKeyInfo key;
@@ -64,11 +64,21 @@ namespace BackUp.View
                 if (_vm.ExecuteBackUpCommand.CanExecute(input))
                     _vm.ExecuteBackUpCommand.Execute(input);
                 else
-                    _vm.ResultMessage = "❌ Entrée invalide !";
+                    _vm.ResultMessage = _app.Translate("invalid_input");
 
-                Console.WriteLine(_vm.ResultMessage);
-                Console.WriteLine($"You can find the Log files into:");
-                Console.WriteLine(_vm.LogPath);
+                if (!string.IsNullOrWhiteSpace(_vm.ResultMessage))
+                {
+                    if (_vm.ResultMessage.Contains(_app.Translate("log_repo")))
+                    {
+                        Console.WriteLine(_vm.ResultMessage);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(_vm.ResultMessage);
+                        Console.ResetColor();
+                    }
+                }
                 Console.ReadKey();
 
             } while (true);
