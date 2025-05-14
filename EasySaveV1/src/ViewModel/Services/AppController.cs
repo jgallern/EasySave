@@ -24,12 +24,25 @@ namespace BackUp.ViewModel
             ExitCommand = new RelayCommand(_ => Exit());
         }
 
-        // Actions ciblées
-        public void RedirectMenu() { new MenuView(this).Run(); }
-        public void RedirectSettings() { ISettingsViewModel vm = new SettingsViewModel(_localizer); new SettingsView(this, vm).Run(); }
-        public void RedirectExecuteBackup() { var vm = new ExecuteBackUpServices(); new ExecuteBackUpView(this, vm).Run(); }
-        public void RedirectManageBackups() { /*var vm = new ManageBackUpServices(); new SettingsView(this, vm).Run();*/ }
-        public void Exit() => Environment.Exit(0);
+        private void RedirectMenu()
+        {
+            new MenuView(this).Run(); 
+        }
+
+        private void RedirectSettings()
+        {
+            ISettingsViewModel vm = new SettingsViewModel(_localizer); 
+            new SettingsView(this, vm).Run(); 
+        }
+
+        private void RedirectExecuteBackup()
+        {
+            var vm = new ExecuteBackUpServices();
+            new ExecuteBackUpView(this, vm).Run();
+        }
+
+        private void RedirectManageBackups() { /*var vm = new ManageBackUpServices(); new SettingsView(this, vm).Run();*/ }
+        private void Exit() => Environment.Exit(0);
 
         public string GetCurrentLanguage() => _localizer.GetCurrentLanguage();
         public List<string> GetAvailableLanguages() => _localizer.GetAvailableLanguages();
