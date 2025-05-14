@@ -2,11 +2,20 @@ namespace BackUp.ViewModel
 {
     public interface IAppController
     {
-        void RunApp();
-        void RunManageJobs();
-        void RunExecuteBackup();
-        void RunSettings();
+        ICommand RedirectMenuCommand { get; }
+        ICommand RedirectSettingsCommand { get; }
+        ICommand RedirectExecuteBackupCommand { get; }
+        ICommand RedirectManageBackupsCommand { get; }
+        ICommand ExitCommand { get; }
+
+        void RedirectMenu();
+        void RedirectManageBackups();
+        void RedirectExecuteBackup();
+        void RedirectSettings();
         void Exit();
+        string GetCurrentLanguage();
+        List<string> GetAvailableLanguages();
+        string Translate(string key);
     }
 
 }
