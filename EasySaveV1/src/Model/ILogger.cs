@@ -4,8 +4,6 @@ namespace BackUp.Model{
 
     public interface ILogger
     {
-        public string GetLogDirectory();
-
         public string GetDailyLogDirectory();
 
         public string GetDailyLogPath();

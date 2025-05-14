@@ -34,6 +34,6 @@ public class TestLogger
             { "Timestamp", "17 / 12 / 2020 17:06:50" }
         };
         log.AddLogInfo(LogType.Status, json_content1);
-        Console.WriteLine($"You can find your status log in {log.GetLogDirectory()}");
+        Console.WriteLine($"You can find your status log in {Logger.GetLogDirectory()}");
     }
 }

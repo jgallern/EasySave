@@ -11,7 +11,7 @@ namespace BackUp.Model{
     {
         private static Logger _instance;
         private static readonly object _lock = new object();
-        private readonly string _logpath;
+        public readonly string _logpath;
 
         private Logger()
         {
@@ -19,15 +19,13 @@ namespace BackUp.Model{
         }
         public static Logger Instance { get { lock (_lock) { return _instance ??= new Logger(); } } }
 
-        public string GetLogDirectory()
+        public static string GetLogDirectory()
         {
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "EasySave", "Logs");
             if (!Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);
             }
-            Console.WriteLine(folder);
-            Console.ReadKey();
             return folder;
         }
 

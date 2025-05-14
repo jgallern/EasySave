@@ -63,7 +63,6 @@ namespace BackUp.Model
                     if (shouldCopy)
                     {
                         Stopwatch watch = Stopwatch.StartNew();
-                        Console.WriteLine("ajout");
                         File.Copy(sourceFile, targetFile, true);
                         watch.Stop();
                         WriteDailyLog(sourceFile, targetFile, watch.ElapsedMilliseconds.ToString());

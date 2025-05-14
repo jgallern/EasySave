@@ -28,7 +28,6 @@ namespace BackUp.Model
 				}
 				foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
 				{
-					Console.WriteLine($"creation de la dir : {dirPath}");
 					Directory.CreateDirectory(dirPath.Replace(dirSource, dirTarget));
 				}
 
