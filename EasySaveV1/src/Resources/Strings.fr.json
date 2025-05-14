@@ -8,5 +8,10 @@
     "language_menu": "Sélectioner une langue",
     // Run Job View
     "run_jobs_menu": "Exécuter des BackUp",
-    "continue": "Continuer"
+    "continue": "Continuer",
+    // Manage job
+    "manage_job_menu": "Page de gestion des jobs",
+    "add_job"   : "Ajouter un nouveau job",
+    "arrow_instruction": "Utilisez les flèches pour naviguer, Entrée pour valider, Échap pour quitter.",
+    "confirm_update":  "Job mis à jour !\nAppuyez sur une touche pour revenir..."
 }

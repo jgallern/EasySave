@@ -10,4 +10,10 @@
     // Run Job View
     "run_jobs_menu": "Run BackUp Jobs",
     "continue": "Continue"
+    // Manage job
+    "manage_job_menu": "Jobs management page",
+    "add_job"   : "Add a new job",
+    "arrow_instruction": "Use arrows to navigate, Enter to validate, Escape to exit."
+    "confirm_update":  "Job updated! Press any key to return..."
+
 }
