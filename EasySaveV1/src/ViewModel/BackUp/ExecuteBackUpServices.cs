@@ -30,6 +30,8 @@ namespace BackUp.ViewModel
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public string LogPath => Logger.GetLogDirectory();
+
         // Constructeur pour initialiser les dépendances
         public ExecuteBackUpServices(AppController app)
         {
