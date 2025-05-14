@@ -1,51 +1,59 @@
 using BackUp.ViewModel;
 using System;
+using BackUp.View;
 
-namespace BackUp.View
+public class MenuView : IView
 {
-    public class MenuView : IView
+    private readonly AppController _appController;
+    private readonly List<MenuItem> _items;
+
+    public MenuView(AppController controller)
     {
-        private readonly MenuViewModel _menuVm;
+        _appController = controller;
+        _items = BuildMenu();
+    }
 
-        public MenuView(MenuViewModel menuVm)
+    private List<MenuItem> BuildMenu()
+    {
+        return new List<MenuItem>
         {
-            _menuVm = menuVm;
-        }
+            new MenuItem(_appController.Translate("manage_jobs"),     () => _appController.RedirectManageBackupsCommand.Execute(null)),
+            new MenuItem(_appController.Translate("execute_backup"),  () => _appController.RedirectExecuteBackupCommand.Execute(null)),
+            new MenuItem(_appController.Translate("settings"),        () => _appController.RedirectSettingsCommand.Execute(null)),
+            new MenuItem(_appController.Translate("exit"),            () => _appController.ExitCommand.Execute(null))
+        };
+    }
 
-        public void Run()
+    public void Run()
+    {
+        int selected = 0;
+        ConsoleKey key;
+
+        do
         {
-            int selected = 0;
-            ConsoleKey key;
+            Console.Clear();
+            Console.WriteLine($"=== EasySave v1.0.0 | Language: {_appController.GetCurrentLanguage()} ===\n");
 
-            do
+            for (int i = 0; i < _items.Count; i++)
             {
-                Console.Clear();
+                if (i == selected)
+                    Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(_items[i].Label);
+                Console.ResetColor();
+            }
 
-                // --- Header avec la langue actuelle ---
-                Console.WriteLine($"=== EasySave v1.0.0 | Language: {_menuVm.CurrentLanguage} ===\n");
-                Console.WriteLine($"     {_menuVm.SelectLabel("select_language")}\n");
-                // --- Menu principal ---
-                for (int i = 0; i < _menuVm.Items.Count; i++)
-                {
-                    var item = _menuVm.Items[i];
-                    if (i == selected) Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(item.Label);
-                    Console.ResetColor();
-                }
+            key = Console.ReadKey(true).Key;
 
-                key = Console.ReadKey(true).Key;
-                if (key == ConsoleKey.UpArrow && selected > 0)
-                    selected--;
-                else if (key == ConsoleKey.DownArrow && selected < _menuVm.Items.Count - 1)
-                    selected++;
+            if (key == ConsoleKey.UpArrow && selected > 0) selected--;
+            else if (key == ConsoleKey.DownArrow && selected < _items.Count - 1) selected++;
+            else if (key == ConsoleKey.Enter) _items[selected].Action();
+            else if (key == ConsoleKey.Tab)
+            {
+                _appController.RedirectSettingsCommand.Execute(null);
+                _items.Clear();
+                _items.AddRange(BuildMenu());
+            }
 
-                else if (key == ConsoleKey.Enter)
-                    _menuVm.Items[selected].Action();
-                else if (key == ConsoleKey.Tab)
-                    _menuVm.NavigateToSettings();
-                    _menuVm.RefreshMenu();
-
-            } while (true);
-        }
+        } while (true);
     }
 }

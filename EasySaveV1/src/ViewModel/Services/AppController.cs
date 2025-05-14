@@ -1,28 +1,39 @@
 using BackUp.ViewModel;
 using BackUp.View;
+using BackUp.Model;
 
 namespace BackUp.ViewModel
 {
     public class AppController : IAppController
     {
+        public ICommand RedirectMenuCommand { get; }
+        public ICommand RedirectSettingsCommand { get; }
+        public ICommand RedirectExecuteBackupCommand { get; }
+        public ICommand RedirectManageBackupsCommand { get; }
+        public ICommand ExitCommand { get; }
+
         private readonly ILocalizer _localizer;
 
         public AppController(ILocalizer localizer)
         {
             _localizer = localizer;
+
+            RedirectMenuCommand = new RelayCommand(_ => RedirectMenu());
+            RedirectSettingsCommand = new RelayCommand(_ => RedirectSettings());
+            RedirectExecuteBackupCommand = new RelayCommand(_ => RedirectExecuteBackup());
+            RedirectManageBackupsCommand = new RelayCommand(_ => RedirectManageBackups());
+            ExitCommand = new RelayCommand(_ => Exit());
         }
 
-        public void RunApp()
+        private void RedirectMenu()
         {
-            var vm = new MenuViewModel(this, _localizer);
-            new MenuView(vm).Run();
+            new MenuView(this).Run(); 
         }
-        public void RunExecuteBackup()
+
+        private void RedirectSettings()
         {
-            /*
-            var vm = new ExecuteBackup(new BackupService(), _localizer);
-            new ExecuteBackUpView(vm).Run();
-            */
+            ISettingsViewModel vm = new SettingsViewModel(_localizer);
+            new SettingsView(this, vm).Run();
         }
         public void RunSettings()
         {
@@ -32,13 +43,21 @@ namespace BackUp.ViewModel
         public void RunManageJobs()
         {
             var vm = new ManageBackUp();
-            new ManageBackUpView(vm).Run();
+            new ManageBackUpView(vm).Run(); 
         }
-        public void Exit()
-        {
-            Environment.Exit(0);
-        }
-        // ajouter BackUp managment et potentiel autre
-    }
 
+        private void RedirectExecuteBackup()
+        {
+            var vm = new ExecuteBackUpServices(this);
+            new ExecuteBackUpView(this, vm).Run();
+        }
+
+        private void RedirectManageBackups() { /*var vm = new ManageBackUpServices(); new SettingsView(this, vm).Run();*/ }
+        private void Exit() => Environment.Exit(0);
+
+        public string GetCurrentLanguage() => _localizer.GetCurrentLanguage();
+        public List<string> GetAvailableLanguages() => _localizer.GetAvailableLanguages();
+        public string Translate(string key) => _localizer[key];
+
+    }
 }

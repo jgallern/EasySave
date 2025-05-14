@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace BackUp.Model
@@ -7,15 +8,15 @@ namespace BackUp.Model
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string FileSource { get; set; }
-		public string FileTarget { get; set; }
+		public string dirSource { get; set; }
+		public string dirTarget { get; set; }
 		public bool Differential{ get; set; }
 
-		public BackUpJob(string Name, string SourceDir, string TargetDir, bool Differential)
+		public BackUpJob(string Name, string FileSource, string FileTarget, bool Differential)
 		{
-			this.Name = Name;
-			this.FileSource = SourceDir;
-			this.FileTarget= TargetDir;
+            this.Name = Name;
+			this.dirSource = FileSource;
+			this.dirTarget= FileTarget;
             this.Differential= Differential;
         }
 
@@ -30,8 +31,8 @@ namespace BackUp.Model
         public void Run()
         {
             IBackUpType backupType = Differential ?
-				new BackUpDifferential(Name, FileSource, FileTarget) :
-				new BackUpFull(Name, FileSource, FileTarget);
+				new BackUpDifferential(Name, dirSource, dirTarget) :
+				new BackUpFull(Name, dirSource, dirTarget);
 
             backupType.Execute();
         }

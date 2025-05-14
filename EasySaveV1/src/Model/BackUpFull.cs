@@ -8,12 +8,12 @@ namespace BackUp.Model
 		public string dirSource { get; }
 		public string dirTarget {  get; }
 		private ILogger _log;
-		public BackUpFull(string Name, string dirSource, string dirTarget)
+		public BackUpFull(string Name, string FileSource, string FileTarget)
 		{
 			this._log = Logger.Instance;
 			this.Name = Name;
-			this.dirSource = dirSource;
-			this.dirTarget = dirTarget;
+			this.dirSource = FileSource;
+			this.dirTarget = FileTarget;
 		}
 		
 		public void Execute()
@@ -28,7 +28,6 @@ namespace BackUp.Model
 				}
 				foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
 				{
-					Console.WriteLine($"creation de la dir : {dirPath}");
 					Directory.CreateDirectory(dirPath.Replace(dirSource, dirTarget));
 				}
 
@@ -66,13 +65,6 @@ namespace BackUp.Model
 			    { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") }
 			};
 			_log.AddLogInfo(LogType.Daily, logEntry);
-		}
-
-
-		public string GetFileName(string filePath) 
-		{
-			string fileName = filePath;
-			return fileName; 
 		}
 
         public void WriteStatusLog(double jobTimer, string message)

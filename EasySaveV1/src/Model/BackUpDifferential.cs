@@ -63,7 +63,6 @@ namespace BackUp.Model
                     if (shouldCopy)
                     {
                         Stopwatch watch = Stopwatch.StartNew();
-                        Console.WriteLine("ajout");
                         File.Copy(sourceFile, targetFile, true);
                         watch.Stop();
                         WriteDailyLog(sourceFile, targetFile, watch.ElapsedMilliseconds.ToString());
@@ -81,7 +80,7 @@ namespace BackUp.Model
             WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
         }
 
-        public void WriteDailyLog(string sourceFile, string targetFile, string transfertTime)
+        private void WriteDailyLog(string sourceFile, string targetFile, string transfertTime)
         {
             FileInfo fileInfo = new FileInfo(sourceFile);
             Dictionary<string, object> logEntry = new Dictionary<string, object>
@@ -96,7 +95,7 @@ namespace BackUp.Model
             _log.AddLogInfo(LogType.Daily, logEntry);
         }
 
-        public void WriteStatusLog(double jobTimer, string message)
+        private void WriteStatusLog(double jobTimer, string message)
         {
             Dictionary<string, object> logJob = new Dictionary<string, object>
                 {

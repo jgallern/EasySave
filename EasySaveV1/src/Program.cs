@@ -10,18 +10,18 @@ using BackUp.Model;
 public class Program
 {
     public static void Main()
-    {
-        ConfigManager.Initialize(@"c:\users\jg\test.json");
+    {        
         Console.Write("Loading AppConfig language...\n");
+
+        ConfigManager.Initialize(@"c:\users\Florian\test.json");
 
         ILocalizer localizer = Localizer.Instance;
         CultureInfo.CurrentUICulture = new CultureInfo(localizer.GetCurrentLanguage());
 
         // Création du contrôleur principal
         IAppController appController = new AppController(localizer);
-
         // Lancement de l'application
-        appController.RunApp();
+        appController.RedirectMenuCommand.Execute(null);
     }
 
 
@@ -33,5 +33,10 @@ public class Program
     Console.Write("================== TESTS ===================");
         TestLogger.Run();
     */
+    /* //---------------------- TESTS -------------------------
+    Console.Write("================== TESTS ===================");
+        TestBackUpFull.Run();
+    */
+
 }
 

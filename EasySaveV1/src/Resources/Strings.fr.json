@@ -7,5 +7,6 @@
     // Select Language View
     "language_menu": "Sélectioner une langue",
     // Run Job View
-    "run_jobs_menu": "Exécuter des BackUp"
+    "run_jobs_menu": "Exécuter des BackUp",
+    "continue": "Continuer"
 }
