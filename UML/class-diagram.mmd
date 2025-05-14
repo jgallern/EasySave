@@ -2,38 +2,43 @@ classDiagram
 direction LR
 
 namespace View{
-
-    class SettingsView{
-        - vm : ISettingsViewModel
-        - loc : ILocalizer
-        - languageChanged : bool
-        + SettingsView(ISettingsViewModel)
-        + Run() void
-
-    }
-
-    class MenuView{
-        - menuVm : MenuViewModel
-        + MenuView(MenuViewModel)
-        + Run() void
-    }
-
-    class ManageBackUpView{
-        + Run() void
-    }
-
-    class ExecuteBackUpView{
-        + Run() void
-    }
-
-    class DetailsBackUpView{
-        + Run() void
-    }
-
     class IView{
         + Run() void
     }
 
+    class SettingsView{
+        - acs : IAppControllerServices
+        - languageChanged : bool
+        + SettingsView(IAppControllerServices)
+        + Run() void
+    }
+
+    class MenuView{
+        - acs : IAppControllerServices
+        + MenuView(IAppControllerServices)
+        + Run() void
+    }
+
+    class ManageBackUpView{
+        - acs : IAppControllerServices
+        - mbuvm : IManageBackUpServices
+        + ManageBackUpView(IAppControllerServices, IManageBackUpServices)
+        + Run() void
+    }
+
+    class ExecuteBackUpView{
+        - acs : IAppControllerServices
+        - ebuvm : IExecuteBackUpServices
+        + RunBackUpView(IAppControllerServices, IExecuteBackUpServices)
+        + Run() void
+    }
+
+    class DetailsBackUpView{
+        - acs : IAppControllerServices
+        - mbuvm : IManageBackUpServices
+        + ManageBackUpView(IAppControllerServices, IManageBackUpServices)
+        + Run() void
+    }
 }
 
 <<Interface>> IView
@@ -41,56 +46,94 @@ namespace View{
 
 namespace ViewModel{
 
-    class IBackUpService{
-
-    }
-
-    class ExecuteBackUp{
-
-    }
-
-    class ManageBackUp{
-
-    }
-
     class ICommand{
-
-
+        + CanExecute(object) : bool
+        + Execute(object) : void
+        + CanExecuteChanged : event EventHandler
     }
-
     class RelayCommand{
-
+        - execute : Action<object?>
+        - canExecute : Func<object?, bool>?
+        + canExecuteChanged : event EventHandler?
+        + RelayCommand(Action<object?>, Func<object?, bool>?)
+        + CanExecute(object?) bool
+        + Execute(object?) void
+        + RaiseCanExecuteChanged() void
     }
 
-    class IMenuViewModel
-    class MenuItem
-    class MenuViewModel
-    class AppController
-    class IAppController
-    class ILocalizer
-    class Localizer
-    class ISettingsViewModel
-    class SettingsViewModel
-
-
-
-    class ManageJob{
-        + CreateJobCommand() void
-        + ViewJobsCommand() void
-        + ModifyJobCommand() void
-        + DeleteJobCommand() void
+    class IAppControllerServices{
+        + RunAppMenu : ICommand
+        + RunManageJobs : ICommand
+        + RunExecuteBackup : ICommand
+        + RunSettings : ICommand
+        + Exit : ICommand
+    }
+    class AppControllerServices{
+        - localizer : ILocalizer
+        + AppControllerServices(ILocalizer)
+        + RunAppMenu : ICommand
+        + RunManageJobs : ICommand
+        + RunExecuteBackup : ICommand
+        + RunSettings : ICommand
+        + Exit : ICommand
     }
 
-    class ICommand{
-        + execute() void
+    class IExecuteBackUpServices{
+        + ExecuteBackUpCommand : ICommand
+        + IsValidInput(string) bool
+        + DetectJobs(string) string
+    }
+    class ExecuteBackUpServices{
+        + ExecuteBackUpCommand : ICommand
+        + IsValidInput(string) bool
+        + DetectJobs(string) string
     }
 
-    class RunJob{
-        + RunJobCommand(JobList) void
+    class IManageBackUpServices{
+        + CreateBackUpCommand : ICommand
+        + AlterBackUpCommand : ICommand
+        + DeleteBackUpCommand : ICommand
+        + SelectBackUpCommand : ICommand
+    }
+    class ManageBackUpServices{
+        - jobs : IJobs
+        + CreateBackUpCommand : ICommand
+        + AlterBackUpCommand : ICommand
+        + DeleteBackUpCommand : ICommand
+        + SelectBackUpCommand : ICommand
+        + BackUpsOverviewCommand : ICommand
+        + CreateBackUp(string, string, string, bool) void
+        + AlterBackUp (string, string, string, bool) void
+        + DeleteBackUp (int) void
+        + SelectBackUp (int) void
+        + SelectAllBackUp() string
+    }
+
+    class ILocalizer{
+        this[string key] : string
+        + ChangeLanguage(string ) void 
+        + GetCurrentLanguage() string
+        + GetAvailableLanguages() List<string>
+    }
+    class Localizer{
+        - instance : Localizer
+        - lock : object
+        - translationManager : TranslationManager
+        + Localizer()
+        + Instance : static Localizer
+        + this[string key] : string
+        + ChangeLanguage(string) void
+        + GetCurrentLanguage() string
+        + GetAvailableLanguage() List<string>
     }
 }
 
 <<Interface>> ICommand
+<<Interface>> ILocalizer
+<<Singleton>> Localizer
+<<Interface>> IManageBackUpServices
+<<Interface>> IExecuteBackUpServices
+<<Interface>> IAppControllerServices
 
 
 SettingsView ..|> IView
@@ -98,10 +141,26 @@ MenuView ..|> IView
 DetailsBackUpView ..|> IView
 ExecuteBackUpView ..|> IView
 ManageBackUpView ..|> IView
-IView --> ICommand
 
-ManageJob --|> ICommand
-RunJob --|> ICommand
+IAppControllerServices --> ILocalizer
+ExecuteBackUpView --> IAppControllerServices
+ExecuteBackUpView --> IExecuteBackUpServices
+ManageBackUpView --> IAppControllerServices
+ManageBackUpView --> IManageBackUpServices
+DetailsBackUpView --> IAppControllerServices
+DetailsBackUpView --> IManageBackUpServices
+
+ManageBackUpServices --|> IManageBackUpServices : implements
+ExecuteBackUpServices --|> IExecuteBackUpServices : implements
+AppControllerServices --|> IAppControllerServices : implements
+Localizer --|> ILocalizer : implements
+
+ManageBackUpServices --> ICommand
+ExecuteBackUpServices --> ICommand
+AppControllerServices --> ICommand
+
+
+RelayCommand --|> ICommand : implements
 
 namespace Model{
     class IJobs{
@@ -134,16 +193,15 @@ namespace Model{
         + GetDailyLogDirectory() string
         + GetDailyLogPath() string 
         + GetStatusLogPath() string
-        + AddLogInfo(LogType logType, Dictionary<string, object> logEntry) void
+        + AddLogInfo(LogType, Dictionary<string, object>) void
     }
-    
 
     class Logger{
-        + jobname : string
-        + logpath : string
-        + setLog() void
-        + getLog() StatusLog
-        + getDailyLog() void
+        + GetLogDirectory() string
+        + GetDailyLogDirectory() string
+        + GetDailyLogPath() string 
+        + GetStatusLogPath() string
+        + AddLogInfo(LogType, Dictionary<string, object>) void
     }
 
     class ConfigManager {
@@ -166,21 +224,32 @@ namespace Model{
     }
     
     class IBackUpType{
-        + execute() bool
+        + Name : string
+        + dirSource : string
+        + dirTarget : string
+        + Execute() void
     }
 
-    class DifferentialType{
-        + name : string
-        + FileSource : string
-        + FileTarget : string
-        + execute() bool
+    class BackUpDifferential{
+        - log : ILogger
+        + Name : string
+        + dirSource : string
+        + dirTarget : string
+        + BackUpDifferential(string, string, string)
+        + Execute() void
+        - WriteDailyLog(string, string, string) void
+        - WriteStatusLog(double, string) void
     }
 
-    class FullType{
-        + name : string
-        + FileSource : string
-        + FileTarget : string
-        + execute() bool
+    class BackUpFull{
+        - log : ILogger
+        + Name : string
+        + dirSource : string
+        + dirTarget : string
+        + BackUpFull(string, string, string)
+        + Execute() void
+        - WriteDailyLog(string, string, string) void
+        - WriteStatusLog(double, string) void
     }
 
     class ITranslationManager{
@@ -212,16 +281,20 @@ namespace Model{
 <<Interface>> ILogger
 <<Singleton>> Logger
 <<Interface>> IBackUpType
-RunJob --> IJobs
 
 ConfigManager <-- BackUpJob : uses
 BackUpJob ..|> IJobs : implements
 
 BackUpJob --> IBackUpType : uses at runtime
-IBackUpType <|.. FullType : implements
-IBackUpType <|.. DifferentialType : implements
+IBackUpType <|.. BackUpFull : implements
+IBackUpType <|.. BackUpDifferential : implements
 
 Logger ..|> ILogger : implements 
-BackUpJob --> ILogger : uses
+BackUpDifferential --> ILogger : uses
+BackUpFull --> ILogger : uses
 
 TranslationManager ..|> ITranslationManager : implements
+
+Localizer --> ITranslationManager
+ManageBackUpServices --> IJobs
+ExecuteBackUpServices --> IJobs
