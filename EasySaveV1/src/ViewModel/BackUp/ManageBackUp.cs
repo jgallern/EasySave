@@ -48,5 +48,10 @@ namespace BackUp.ViewModel
             updatedjob.Id = Id;
             updatedjob.AlterJob();
         }
+        public void DeleteJob(int Id)
+        {
+            BackUpJob JobToDelete = BackUpJob.GetJobByID(Id);
+            JobToDelete.DeleteJob();
+        }
     }
 }

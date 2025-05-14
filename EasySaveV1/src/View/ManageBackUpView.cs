@@ -25,7 +25,7 @@ namespace BackUp.View
 
                 List<KeyValuePair<int, string>> jobs = _vm.GetAllJobs();
 
-                for (int i = 0; i < jobs.Count+1; i++)
+                for (int i = 0; i < jobs.Count+2; i++)
                 {
                     if (i == selectedIndex)
                     {
@@ -34,7 +34,11 @@ namespace BackUp.View
                     }
                     if (i == jobs.Count)
                     {
-                        Console.WriteLine("➕ Ajouter un nouveau job");
+                        Console.WriteLine("\n+ Ajouter un nouveau job");
+                    }
+                    else if (i == jobs.Count + 1)
+                    {
+                        Console.WriteLine("- Supprimer un job");
                     }
                     else
                     {
@@ -43,7 +47,7 @@ namespace BackUp.View
                     Console.ResetColor();
                 }
 
-                Console.WriteLine("\nUtilisez ↑ ↓ pour naviguer, Entrée pour modifier, Échap pour quitter.");
+                Console.WriteLine("\nUtilisez les flèches pour naviguer, Entrée pour modifier, Échap pour quitter.");
 
                 key = Console.ReadKey(true).Key;
 
@@ -54,7 +58,7 @@ namespace BackUp.View
                         break;
 
                     case ConsoleKey.DownArrow:
-                        selectedIndex = (selectedIndex == jobs.Count) ? 0 : selectedIndex + 1;
+                        selectedIndex = (selectedIndex == jobs.Count +1) ? 0 : selectedIndex + 1;
                         break;
 
                     case ConsoleKey.Enter:
@@ -100,7 +104,7 @@ namespace BackUp.View
                             Console.ReadKey(true);
                             break;
                         }
-                        else
+                        else if (selectedIndex == jobs.Count)
                         {
                             if (jobs.Count == 5)
                             {
@@ -153,20 +157,67 @@ namespace BackUp.View
                             Console.ReadKey(true);
                             break;
                         }
-                       
-                }
-            } while (key != ConsoleKey.Escape);
+                        else if (selectedIndex == jobs.Count + 1)
+                        {
+                            if (jobs.Count == 0)
+                            {
+                                Console.WriteLine("\n!! Aucun Job à supprimer");
+                                Console.ReadKey(true);
+                                break;
+                            }
+
+                            selectedIndex = 0;
+                            do
+                            {
+                                Console.Clear();
+                                Console.WriteLine("==== Veuillez selectionner le Job à Supprimer ====\n");
+                                for (int i = 0; i < jobs.Count; i++)
+                                {
+                                    if (i == selectedIndex)
+                                    {
+                                        Console.BackgroundColor = ConsoleColor.Gray;
+                                        Console.ForegroundColor = ConsoleColor.Black;
+                                    }
+                                    Console.WriteLine($"{jobs[i].Key}. {jobs[i].Value}");
+                                    Console.ResetColor();
+                                }
+
+                                key = Console.ReadKey(true).Key;
+                                switch (key)
+                                {
+                                    case ConsoleKey.UpArrow:
+                                        selectedIndex = (selectedIndex == 0) ? jobs.Count : selectedIndex - 1;
+                                        break;
+
+                                    case ConsoleKey.DownArrow:
+                                        selectedIndex = (selectedIndex == jobs.Count + 1) ? 0 : selectedIndex + 1;
+                                        break;
+                                    case ConsoleKey.Enter:
+                                        Console.WriteLine(jobs[selectedIndex].Key);
+                                        _vm.DeleteJob(jobs[selectedIndex].Key);
+                                        key = ConsoleKey.Escape;
+                                        break;
+                                }
+                            }while (key != ConsoleKey.Escape);
+                        }
+                        else
+                        {
+                            break;
+                        }
+
+                        }
+                } while (key != ConsoleKey.Escape) ;
 
 
-            // Print all jobs name:
-            //      Create a job
-            //      Modify a job
-            //      Delete a job
-            //      View details job
-            //          Modify job
-            //          Delete job
-            //          exit
-            //      exit
-        }
+                // Print all jobs name:
+                //      Create a job
+                //      Modify a job
+                //      Delete a job
+                //      View details job
+                //          Modify job
+                //          Delete job
+                //          exit
+                //      exit
+            }
     }
 }
