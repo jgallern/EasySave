@@ -6,9 +6,10 @@ namespace BackUp.View
 {
     public class ExecuteBackUpView : IView
     {
-        private readonly ExecuteBackUpViewModel _vm;
+        private readonly IExecuteBackUpServices _vm;
+        private readonly IAppController _app;
 
-        public ExecuteBackUpView(ExecuteBackUpViewModel vm) 
+        public ExecuteBackUpView(IAppController _app, IExecuteBackUpServices vm) 
         {
             _vm = vm;
         }
@@ -21,7 +22,7 @@ namespace BackUp.View
                 Console.Clear();
                 Console.Write("Entrez les jobs à exécuter > ");
                 string input = Console.ReadLine() ?? "";
-
+                /*
                 if (_vm.RunJobsCommand.CanExecute(input))
                 {
                     _vm.RunJobsCommand.Execute(input);
@@ -36,7 +37,7 @@ namespace BackUp.View
                     Console.ResetColor();
                     Console.ReadKey();
                 }
-
+                */
             } while (true);
         }
     }

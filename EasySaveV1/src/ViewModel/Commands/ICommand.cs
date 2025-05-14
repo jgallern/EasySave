@@ -1,6 +1,6 @@
 namespace BackUp.ViewModel
 {
-	public interface ICommand
+	public interface ICommand // Possible de directement utiliser l'interface ICommand de Windows.Input
 	{
         
         bool CanExecute(object parameter);

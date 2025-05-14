@@ -1,6 +1,6 @@
 ﻿namespace BackUp.ViewModel
 {
-    public class ExecuteBackUpServices : IExecuteBackUpServices
+    public interface IExecuteBackUpServices 
     {
         /*
         private readonly IBackupService _backupService;

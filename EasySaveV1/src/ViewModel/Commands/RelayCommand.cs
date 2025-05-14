@@ -22,7 +22,7 @@ namespace BackUp.ViewModel
         public void RaiseCanExecuteChanged()
             => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
-
+}
     /*
     public class RelayCommand<T> : ICommand
     {
@@ -44,4 +44,3 @@ namespace BackUp.ViewModel
         }
     }
     */
-}

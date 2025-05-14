@@ -16,10 +16,10 @@ public class Program
         CultureInfo.CurrentUICulture = new CultureInfo(localizer.GetCurrentLanguage());
 
         // Création du contrôleur principal
-        IAppController appController = new AppController();
+        IAppController appController = new AppController(localizer);
 
         // Lancement de l'application
-        appController.RunApp();
+        appController.RedirectMenuCommand.Execute(null);
     }
 
 
