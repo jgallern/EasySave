@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 
 namespace BackUp.Model
 {
@@ -132,7 +133,10 @@ namespace BackUp.Model
                 throw new ArgumentException($"Aucun job avec L'ID '{Id}'.");
             SaveJobs(jobs);
         }
-
-        
+        public BackUpJob GetJobById (int Id)
+        {
+            List<BackUpJob> jobs = LoadJobs();
+            return jobs.FirstOrDefault(job => job.Id == Id);
+        }
     }
 }

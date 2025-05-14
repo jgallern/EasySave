@@ -50,13 +50,16 @@ namespace BackUp.Model
 
 		public void AlterJob()
 		{
-			Id = ConfigManager.Instance.FindJobId(this);
 			ConfigManager.Instance.UpdateJob(Id,this);	
 		}
 
 		public static List<BackUpJob> GetAllJobsFromConfig()
 		{
 			return ConfigManager.Instance.GetAllJobs();
+		}
+		public static BackUpJob GetJobByID(int Id)
+		{
+			return ConfigManager.Instance.GetJobById(Id);
 		}
 	}
 }

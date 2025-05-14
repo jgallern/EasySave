@@ -5,14 +5,13 @@ using System.Globalization;
 using BackUp;
 using BackUp.ViewModel;
 using BackUp.View;
+using BackUp.Model;
 
 public class Program
 {
     public static void Main()
     {
-        Console.Write("================== TESTS ===================");
-        TestBackUpFull.Run();
-        /*
+        ConfigManager.Initialize(@"c:\users\jg\test.json");
         Console.Write("Loading AppConfig language...\n");
 
         ILocalizer localizer = Localizer.Instance;
@@ -22,7 +21,7 @@ public class Program
         IAppController appController = new AppController(localizer);
 
         // Lancement de l'application
-        appController.RunApp();*/
+        appController.RunApp();
     }
 
 

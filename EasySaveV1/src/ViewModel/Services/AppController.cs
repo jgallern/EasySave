@@ -31,6 +31,8 @@ namespace BackUp.ViewModel
         }
         public void RunManageJobs()
         {
+            var vm = new ManageBackUp();
+            new ManageBackUpView(vm).Run();
         }
         public void Exit()
         {
