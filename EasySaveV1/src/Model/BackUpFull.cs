@@ -68,13 +68,6 @@ namespace BackUp.Model
 			_log.AddLogInfo(LogType.Daily, logEntry);
 		}
 
-
-		public string GetFileName(string filePath) 
-		{
-			string fileName = filePath;
-			return fileName; 
-		}
-
         public void WriteStatusLog(double jobTimer, string message)
         {
             Dictionary<string, object> logJob = new Dictionary<string, object>
