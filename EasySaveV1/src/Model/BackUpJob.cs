@@ -19,6 +19,14 @@ namespace BackUp.Model
             this.Differential= Differential;
         }
 
+		public BackUpJob()
+		{
+			this.Name = "";
+			this.FileSource = "";
+			this.FileTarget= "";
+            this.Differential= false;
+		}
+
         public void Run()
         {
             IBackUpType backupType = Differential ?
@@ -44,6 +52,11 @@ namespace BackUp.Model
 		{
 			Id = ConfigManager.Instance.FindJobId(this);
 			ConfigManager.Instance.UpdateJob(Id,this);	
+		}
+
+		public static List<BackUpJob> GetAllJobsFromConfig()
+		{
+			return ConfigManager.Instance.GetAllJobs();
 		}
 	}
 }
