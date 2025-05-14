@@ -24,6 +24,11 @@
     "start_supp_end": "❌ Invalid range: start > end.",
     "invalid_input_list": "❌ Invalid input in list:",
     "invalid_num_list": "❌ Invalid job number in list:",
-    "no_job_config": "No jobs to execute."
+    "no_job_config": "No jobs to execute.",
+    // Manage job
+    "manage_job_menu": "Jobs management page",
+    "add_job": "Add a new job",
+    "arrow_instruction": "Use arrows to navigate, Enter to validate, Escape to exit.",
+    "confirm_update": "Job updated! Press any key to return..."
 
 }

@@ -6,13 +6,21 @@ namespace BackUp.View
 
     public class ManageBackUpView : IView
     {
+<<<<<<< HEAD
+        private readonly ManageBackUp _vm;
+        private readonly IAppController _app;
+
+        public ManageBackUpView(ManageBackUp vm, IAppController app)
+=======
         private readonly IAppController _app;
         private readonly IManageBackUpServices _vm;
 
         public ManageBackUpView(IAppController app, IManageBackUpServices vm)
+>>>>>>> bd8348a963d694121cc02e8234319314216cd894
         {
             _app = app;
             _vm = vm;
+            _app = app;
         }
 
         public void Run()
@@ -23,7 +31,7 @@ namespace BackUp.View
             do
             {
                 Console.Clear();
-                Console.WriteLine("=== Page de gestion des jobs ===\n");
+                Console.WriteLine("=== "+_app.Translate("manage_job_menu")+"===\n");
 
                 List<KeyValuePair<int, string>> jobs = _vm.GetAllJobs();
 
@@ -36,7 +44,7 @@ namespace BackUp.View
                     }
                     if (i == jobs.Count)
                     {
-                        Console.WriteLine("\n+ Ajouter un nouveau job");
+                        Console.WriteLine("\n"+ _app.Translate("add_job"));
                     }
                     else if (i == jobs.Count + 1)
                     {
@@ -49,7 +57,7 @@ namespace BackUp.View
                     Console.ResetColor();
                 }
 
-                Console.WriteLine("\nUtilisez les flèches pour naviguer, Entrée pour modifier, Échap pour quitter.");
+                Console.WriteLine("\n"+ _app.Translate("arrow_instruction"));
 
                 key = Console.ReadKey(true).Key;
 
@@ -70,7 +78,7 @@ namespace BackUp.View
                             Dictionary<string, object> jobData = _vm.GetJobById(selectedJobId);
 
                             Console.Clear();
-                            Console.WriteLine($"=== Modification du job ID {selectedJobId} ===\n");
+                            Console.WriteLine($"=== Modif job, ID : {selectedJobId} ===\n");
 
                             // Nom
                             Console.Write($"Nom du job [{jobData["Name"]}] : ");
@@ -101,8 +109,7 @@ namespace BackUp.View
                             // Appeler la méthode pour mettre à jour le job dans la configuration
                             _vm.UpdateJob(selectedJobId, jobData);
 
-                            Console.WriteLine("\n✅ Job mis à jour !");
-                            Console.WriteLine("Appuyez sur une touche pour revenir...");
+                            Console.WriteLine("\n"+_app.Translate("confirm_update"));
                             Console.ReadKey(true);
                             break;
                         }

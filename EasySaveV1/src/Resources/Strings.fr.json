@@ -23,5 +23,10 @@
     "start_supp_end": "❌ Range invalide: début > fin.",
     "invalid_input_list": "❌ Entrée invalide dans la liste:",
     "invalid_num_list": "❌ Numéro de job invalide dans la liste:",
-    "no_job_config": "Aucun job correspondant"
+    "no_job_config": "Aucun job correspondant",
+    // Manage job
+    "manage_job_menu": "Page de gestion des jobs",
+    "add_job": "Ajouter un nouveau job",
+    "arrow_instruction": "Utilisez les flèches pour naviguer, Entrée pour valider, Échap pour quitter.",
+    "confirm_update": "Job mis à jour !\nAppuyez sur une touche pour revenir..."
 }
