@@ -10,17 +10,18 @@ namespace BackUp.ViewModel
     {
         private readonly ILocalizer _localizer;
         public event PropertyChangedEventHandler PropertyChanged;
-        public event Action LanguageChanged;
 
         public SettingsViewModel(ILocalizer localizer)
         {
             _localizer = localizer;
             //For WPF
-            ChangeLanguageCommand = new RelayCommand<string>(lang =>
+            ChangeLanguageCommand = new RelayCommand(obj =>
             {
-                _localizer.ChangeLanguage(lang);
-                OnPropertyChanged(nameof(CurrentLanguage));
-                LanguageChanged?.Invoke();
+                if (obj is string lang)
+                {
+                    _localizer.ChangeLanguage(lang);
+                    OnPropertyChanged(nameof(CurrentLanguage));
+                }
             });
         }
 

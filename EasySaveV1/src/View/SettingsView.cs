@@ -7,25 +7,26 @@ namespace BackUp.View
     public class SettingsView : IView
     {
         private readonly ISettingsViewModel _vm;
-        private readonly ILocalizer _loc;
+        private readonly IAppController _app;
         private bool _languageChanged;
 
-        public SettingsView(ISettingsViewModel vm)
+        public SettingsView(IAppController app, ISettingsViewModel vm)
         {
             _vm = vm;
+            _app = app;
         }
 
         public void Run()
         {
             _languageChanged = false;
-            var langs = _vm.AvailableLanguages;
+            var langs = _app.GetAvailableLanguages();
             int idx = 0;
             ConsoleKey key;
 
             do
             {
                 Console.Clear();
-                Console.WriteLine($"=== {_vm["language_menu"]} ===\n");
+                Console.WriteLine($"=== {_app.Translate("language_menu")} ===\n");
                 for (int i = 0; i < langs.Count; i++)
                 {
                     if (i == idx) Console.ForegroundColor = ConsoleColor.Green;

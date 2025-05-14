@@ -5,11 +5,9 @@ namespace BackUp.Model
     {
 		int Id { get; }
 		string Name { get; set; }
-		string FileSource { get; set; }
-		string FileTarget { get; set; }
+		string dirSource { get; set; }
+		string dirTarget { get; set; }
 		bool Differential { get; set; }
-
-
 
         void Run();
         void CreateJob();

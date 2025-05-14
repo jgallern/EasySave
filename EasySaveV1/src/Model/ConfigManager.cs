@@ -63,6 +63,12 @@ namespace BackUp.Model
 
         public List<BackUpJob> GetAllJobs() => LoadJobs();
 
+        public BackUpJob GetJobById(int Id)
+        {
+            List<BackUpJob> jobs = LoadJobs();
+            return jobs.FirstOrDefault(job => job.Id == Id);
+        }
+
         public void AddJob(BackUpJob job)
         {
             List<BackUpJob> jobs = LoadJobs();
@@ -70,7 +76,7 @@ namespace BackUp.Model
                 throw new InvalidOperationException("Le nombre maximum de jobs (5) a été atteint.");
             foreach (IJobs savedjob in jobs)
             {
-                if (savedjob.Name  == job.Name | (savedjob.FileSource == job.FileSource && savedjob.FileTarget == job.FileTarget && savedjob.Differential == job.Differential))
+                if (savedjob.Name  == job.Name | (savedjob.dirSource == job.dirSource && savedjob.dirTarget == job.dirTarget && savedjob.Differential == job.Differential))
                 {
                     throw new Exception("Ce job est déja enregistré dans la config");
                 }
