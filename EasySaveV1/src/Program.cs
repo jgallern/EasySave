@@ -5,12 +5,15 @@ using System.Globalization;
 using BackUp;
 using BackUp.ViewModel;
 using BackUp.View;
+using BackUp.Model;
 
 public class Program
 {
     public static void Main()
     {
         Console.Write("Loading AppConfig language...\n");
+
+        ConfigManager.Initialize(@"c:\users\Florian\test.json");
 
         ILocalizer localizer = Localizer.Instance;
         CultureInfo.CurrentUICulture = new CultureInfo(localizer.GetCurrentLanguage());

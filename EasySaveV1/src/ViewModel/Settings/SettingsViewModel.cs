@@ -10,7 +10,6 @@ namespace BackUp.ViewModel
     {
         private readonly ILocalizer _localizer;
         public event PropertyChangedEventHandler PropertyChanged;
-        public event Action LanguageChanged;
 
         public SettingsViewModel(ILocalizer localizer)
         {
@@ -22,7 +21,6 @@ namespace BackUp.ViewModel
                 {
                     _localizer.ChangeLanguage(lang);
                     OnPropertyChanged(nameof(CurrentLanguage));
-                    LanguageChanged?.Invoke();
                 }
             });
         }
