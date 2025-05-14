@@ -6,10 +6,12 @@ namespace BackUp.View
 
     public class ManageBackUpView : IView
     {
-        private readonly ManageBackUp _vm;
+        private readonly IAppController _app;
+        private readonly IManageBackUpServices _vm;
 
-        public ManageBackUpView(ManageBackUp vm)
+        public ManageBackUpView(IAppController app, IManageBackUpServices vm)
         {
+            _app = app;
             _vm = vm;
         }
 
@@ -199,6 +201,7 @@ namespace BackUp.View
                                         break;
                                 }
                             }while (key != ConsoleKey.Escape);
+                            break;
                         }
                         else
                         {

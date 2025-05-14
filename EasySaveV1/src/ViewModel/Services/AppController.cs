@@ -35,15 +35,10 @@ namespace BackUp.ViewModel
             ISettingsViewModel vm = new SettingsViewModel(_localizer);
             new SettingsView(this, vm).Run();
         }
-        public void RunSettings()
+        public void RedirectManageBackups()
         {
-            var vm = new SettingsViewModel(_localizer);
-            new SettingsView(vm).Run();
-        }
-        public void RunManageJobs()
-        {
-            var vm = new ManageBackUp();
-            new ManageBackUpView(vm).Run(); 
+            IManageBackUpServices vm = new ManageBackUpServices(this);
+            new ManageBackUpView(this, vm).Run(); 
         }
 
         private void RedirectExecuteBackup()
@@ -52,7 +47,6 @@ namespace BackUp.ViewModel
             new ExecuteBackUpView(this, vm).Run();
         }
 
-        private void RedirectManageBackups() { /*var vm = new ManageBackUpServices(); new SettingsView(this, vm).Run();*/ }
         private void Exit() => Environment.Exit(0);
 
         public string GetCurrentLanguage() => _localizer.GetCurrentLanguage();

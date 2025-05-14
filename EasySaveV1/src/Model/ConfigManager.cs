@@ -43,6 +43,7 @@ namespace BackUp.Model
             try
             {
                 string json = File.ReadAllText(filePath);
+                Console.WriteLine(json);
                 if (string.IsNullOrWhiteSpace(json)) return new List<BackUpJob>();
                 List<BackUpJob> jobs = JsonConvert.DeserializeObject<List<BackUpJob>>(json) ?? new List<BackUpJob>();
                 return jobs;
@@ -138,11 +139,6 @@ namespace BackUp.Model
             if (removed == 0)
                 throw new ArgumentException($"Aucun job avec L'ID '{Id}'.");
             SaveJobs(jobs);
-        }
-        public BackUpJob GetJobById (int Id)
-        {
-            List<BackUpJob> jobs = LoadJobs();
-            return jobs.FirstOrDefault(job => job.Id == Id);
         }
     }
 }

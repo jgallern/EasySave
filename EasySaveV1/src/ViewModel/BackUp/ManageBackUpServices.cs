@@ -1,113 +1,64 @@
 using BackUp.Model;
-using System.ComponentModel;
 
 namespace BackUp.ViewModel
 {
-    public class ManageBackUpServices
+    public class ManageBackUpServices : IManageBackUpServices
     {
-        public ManageBackUpServices()
-        {
+        private AppController _app;
 
+        public ICommand ExecuteBackUpCommand { get; }
+
+        public ManageBackUpServices(AppController app)
+        {
+            _app = app;
         }
-    }
-    /*
-    
-    public class ManageBackUpServicesViewModel : IManageBackUpServices, INotifyPropertyChanged
-    {
-        // 1) Propriétés exposées (contrat de l’interface)
-        public ICommand CreateBackUpCommand { get; }
-        public ICommand AlterBackUpCommand { get; }
-        public ICommand DeleteBackUpCommand { get; }
-        public ICommand SelectBackUpCommand { get; }
-        public ICommand SelectAllJobsCommand { get; }
-
-        // 2) Champs privés pour stocker les RelayCommand (optionnel mais pratique pour RaiseCanExecuteChanged)
-        private readonly RelayCommand _createCmd;
-        private readonly RelayCommand _alterCmd;
-        private readonly RelayCommand _deleteCmd;
-        private readonly RelayCommand _selectCmd;
-        private readonly RelayCommand _selectAllCmd;
-
-        // Un service métier injecté pour réellement réaliser les backups
-        private readonly IJobs _jobsModel;
-
-        // Une propriété pour la sauvegarde sélectionnée
-        private BackUpJob _selectedBackUp;
-        public BackUpJob SelectedBackUp
+        public List<KeyValuePair<int, string>> GetAllJobs()
         {
-            get => _selectedBackUp;
-            set
+            List<BackUpJob> jobs = BackUpJob.GetAllJobsFromConfig();
+            List<KeyValuePair<int, string>> jobList = new List<KeyValuePair<int, string>>();
+
+            foreach (BackUpJob job in jobs)
             {
-                if (_selectedBackUp != value)
-                {
-                    _selectedBackUp = value;
-                    OnPropertyChanged(nameof(SelectedBackUp));
-                    // chaque fois qu’on change de sélection, on réévalue CanExecute
-                    _alterCmd.RaiseCanExecuteChanged();
-                    _deleteCmd.RaiseCanExecuteChanged();
-                }
+                jobList.Add(new KeyValuePair<int, string>(job.Id, job.Name));
+            }
+            return jobList;
+        }
+        public void CreateJob(string name, string sourcePath, string destintionPath, bool isDifferential)
+        {
+            BackUpJob job = new BackUpJob(name, sourcePath, destintionPath, isDifferential);
+            try
+            {
+                job.CreateJob();
+            }
+            catch (Exception ex)
+            {
+                new Exception("Erreur lors de la creation du Job");
             }
         }
 
-        public ManageBackUpServices(IJobs service)
+        public Dictionary<string, object> GetJobById(int id)
         {
-            _jobsModel = service;
-
-            // 3) Création des RelayCommand en pointant sur les méthodes
-            _createCmd = new RelayCommand(
-                _ => CreateBackUp(),
-                _ => CanCreateBackUp()
-            );
-            _alterCmd = new RelayCommand(
-                _ => AlterBackUp(),
-                _ => CanAlterBackUp()
-            );
-            _deleteCmd = new RelayCommand(
-                _ => DeleteBackUp(),
-                _ => CanDeleteBackUp()
-            );
-            _selectCmd = new RelayCommand(
-                param => SelectBackUp((BackUpJob)param),
-                param => param is BackUpJob
-            );
-
-            // 1) On affecte nos champs RelayCommand aux propriétés ICommand
-            CreateBackUpCommand = _createCmd;
-            AlterBackUpCommand = _alterCmd;
-            DeleteBackUpCommand = _deleteCmd;
-            SelectBackUpCommand = _selectCmd;
+            BackUpJob job = BackUpJob.GetJobByID(id);
+            return new Dictionary<string, object>
+            {
+                {"Id", job.Id},
+                { "Name", job.Name  },
+                { "SourcePath", job.dirSource},
+                { "DestinationPath", job.dirTarget},
+                { "IsDifferential", job.Differential}
+            };
         }
 
-        // 4) Méthodes appelées par Execute
-        private void CreateBackUp()
+        public void UpdateJob(int Id, Dictionary<string, object> jobdata)
         {
-            var newBackup = _jobsModel.Create();
-            // par ex. Actualiser une liste, etc.
+            BackUpJob updatedjob = new BackUpJob((string)jobdata["Name"], (string)jobdata["SourcePath"], (string)jobdata["DestinationPath"], (bool)jobdata["IsDifferential"]);
+            updatedjob.Id = Id;
+            updatedjob.AlterJob();
         }
-        private bool CanCreateBackUp() => true;  // toujours possible ici
-
-        private void AlterBackUp()
+        public void DeleteJob(int Id)
         {
-            if (SelectedBackUp != null)
-                _jobsModel.Alter(SelectedBackUp);
+            BackUpJob JobToDelete = BackUpJob.GetJobByID(Id);
+            JobToDelete.DeleteJob();
         }
-        private bool CanAlterBackUp() => SelectedBackUp != null;
-
-        private void DeleteBackUp()
-        {
-            if (SelectedBackUp != null)
-                _jobsModel.Delete(SelectedBackUp.Id);
-        }
-        private bool CanDeleteBackUp() => SelectedBackUp != null;
-
-        private void SelectBackUp(BackUpJob backup)
-        {
-            SelectedBackUp = backup;
-        }
-
-        // INotifyPropertyChanged pour les bindings
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged(string name)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    }*/
+    }
 }
