@@ -1,5 +1,6 @@
 using BackUp.ViewModel;
 using BackUp.View;
+using BackUp.Model;
 
 namespace BackUp.ViewModel
 {
@@ -37,7 +38,7 @@ namespace BackUp.ViewModel
 
         private void RedirectExecuteBackup()
         {
-            var vm = new ExecuteBackUpServices();
+            var vm = new ExecuteBackUpServices(this);
             new ExecuteBackUpView(this, vm).Run();
         }
 

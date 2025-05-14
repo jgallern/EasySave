@@ -11,11 +11,11 @@ namespace BackUp.Model
 		public string dirTarget { get; set; }
 		public bool Differential{ get; set; }
 
-		public BackUpJob(string Name, string SourceDir, string TargetDir, bool Differential)
+		public BackUpJob(string Name, string FileSource, string FileTarget, bool Differential)
 		{
-			this.Name = Name;
-			this.dirSource = SourceDir;
-			this.dirTarget= TargetDir;
+            this.Name = Name;
+			this.dirSource = FileSource;
+			this.dirTarget= FileTarget;
             this.Differential= Differential;
         }
 
@@ -46,10 +46,14 @@ namespace BackUp.Model
 			ConfigManager.Instance.UpdateJob(Id,this);	
 		}
 
-        public static List<BackUpJob> GetAllJobs()
+        public static BackUpJob GetJobByID(int Id)
         {
-            List<BackUpJob> listJobs = ConfigManager.Instance.GetAllJobs();
-			return listJobs;
+            return ConfigManager.Instance.GetJobById(Id);
+        }
+
+        public static List<BackUpJob> GetAllJobsFromConfig()
+        {
+			return ConfigManager.Instance.GetAllJobs();
         }
     }
 }
