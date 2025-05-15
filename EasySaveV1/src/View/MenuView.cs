@@ -19,7 +19,6 @@ public class MenuView : IView
         {
             new MenuItem(_appController.Translate("manage_jobs"),     () => _appController.RedirectManageBackupsCommand.Execute(null)),
             new MenuItem(_appController.Translate("execute_backup"),  () => _appController.RedirectExecuteBackupCommand.Execute(null)),
-            new MenuItem(_appController.Translate("settings"),        () => _appController.RedirectSettingsCommand.Execute(null)),
             new MenuItem(_appController.Translate("exit"),            () => _appController.ExitCommand.Execute(null))
         };
     }

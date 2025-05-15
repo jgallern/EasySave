@@ -49,6 +49,7 @@ namespace BackUp.View
                     break;
                 }
                 if (key == ConsoleKey.Tab) break;
+                if (key == ConsoleKey.Escape) break;
 
             } while (true);
         }
