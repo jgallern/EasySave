@@ -31,7 +31,7 @@ namespace BackUp.Model
             }
         }
 
-        public static void Initialize(string filePath)
+        public static void Initialize()
         {
             lock (_lock)
             {

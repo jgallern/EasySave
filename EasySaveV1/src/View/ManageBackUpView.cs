@@ -41,7 +41,7 @@ namespace BackUp.View
                     }
                     else if (i == jobs.Count + 1)
                     {
-                        Console.WriteLine("- Supprimer un job");
+                        Console.WriteLine(_app.Translate("delete_job"));
                     }
                     else
                     {

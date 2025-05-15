@@ -11,7 +11,7 @@
     "run_jobs_menu": "Run BackUp Jobs",
     "continue": "Continue",
     //_________________________
-    "job_exec_title": "=== BackUp Execution ===",
+    "job_exec_title": "==== BackUp Execution ====\n\n",
     "enter_jobs": "Enter the jobs you want to execute (ou Escape to go back to the menu)\ne.g:\n     '1-4': execute all jobs from 1 to 4\n      '1,2,5': execute the jobs in this list\n      '2': execute the job '2'\n      '*': execute all jobs\n  >",
     "run_succeed": "Successfully run BackUp",
     "execution_error": "An error occured during the execution of the backup",
@@ -27,7 +27,8 @@
     "no_job_config": "No jobs to execute.",
     // Manage job
     "manage_job_menu": "Jobs management page",
-    "add_job": "Add a new job",
+    "delete_job": "- Delete a job",
+    "add_job": "+ Add a new job",
     "arrow_instruction": "Use arrows to navigate, Enter to validate, Escape to exit.",
     "confirm_update": "Job updated! Press any key to return..."
 

@@ -13,7 +13,7 @@ public class Program
     {        
         Console.Write("Loading AppConfig language...\n");
 
-        ConfigManager.Initialize(@"c:\users\Florian\test.json");
+        ConfigManager.Initialize();
 
         ILocalizer localizer = Localizer.Instance;
         CultureInfo.CurrentUICulture = new CultureInfo(localizer.GetCurrentLanguage());

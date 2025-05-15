@@ -10,8 +10,8 @@
     "run_jobs_menu": "Exécuter des BackUp",
     "continue": "Continuer",
     //_________________________
-    "job_exec_title": "=== Lancement des sauvegardes ===",
-    "enter_jobs": "Entrez les jobs à exécuter (ou Échap pour revenir au menu)\ne.g:\n     '1-4': executer les jobs de 1 à 4\n      '1,2,5': exécuter une liste de job\n      '2': exécuter un job '2'\n      '*': eécuter tous les jobs\n  >",
+    "job_exec_title": "==== Lancement des sauvegardes ====\n\n",
+    "enter_jobs": "Entrez les jobs à exécuter (ou Échap pour revenir au menu)\ne.g:\n     '1-4': executer les jobs de 1 à 4\n      '1,2,5': exécuter une liste de job\n      '2': exécuter un job '2'\n      '*': exécuter tous les jobs\n  >",
     "run_succeed": "BackUp réalisé avec succès",
     "execution_error": "Un problème à été rencontré durant l'exécution du backup",
     "log_repo": "Vous pouvez retrouvez les fichiers de log dans le dossier suivant: ",
@@ -26,7 +26,8 @@
     "no_job_config": "Aucun job correspondant",
     // Manage job
     "manage_job_menu": "Page de gestion des jobs",
-    "add_job": "Ajouter un nouveau job",
+    "delete_job": "- Supprimer un job",
+    "add_job": "+ Ajouter un nouveau job",
     "arrow_instruction": "Utilisez les flèches pour naviguer, Entrée pour valider, Échap pour quitter.",
     "confirm_update": "Job mis à jour !\nAppuyez sur une touche pour revenir..."
 }
