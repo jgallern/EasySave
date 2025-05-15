@@ -42,14 +42,15 @@ namespace BackUp.Model
 				}
                 jobTimer.Stop();
                 message = "Job Succeed!";
+                WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
             }
 			catch (Exception ex)
             {
                 jobTimer.Stop();
-                Console.WriteLine("Erreur pendant le backup complet : " + ex.Message);
                 message = "Erreur pendant le backup complet : " + ex.Message.ToString();
+                WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
+                throw new Exception(message, ex);
             }
-            WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
         }
 
         public void WriteDailyLog(string fileSource, string fileTarget, double transfertTime)

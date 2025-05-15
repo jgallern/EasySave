@@ -70,14 +70,16 @@ namespace BackUp.Model
                 }
                 jobTimer.Stop();
                 message = "Job Succeed!";
+                WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
             }
             catch (Exception ex)
             {
                 jobTimer.Stop();
-                Console.WriteLine("Erreur pendant le backup différentiel : " + ex.Message);
                 message = "Erreur pendant le backup différentiel : " + ex.Message.ToString();
+                WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
+                throw new Exception(message, ex);
             }
-            WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
+            
         }
 
         private void WriteDailyLog(string sourceFile, string targetFile, string transfertTime)

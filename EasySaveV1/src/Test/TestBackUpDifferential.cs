@@ -9,7 +9,7 @@ public class TestBackUpDifferential
     {
         string folder = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         
-        ConfigManager.Initialize(@"c:\users\Florian\test.json");
+        ConfigManager.Initialize();
         BackUpJob bcktest = new BackUpJob("test", @"C:\Users\Florian\test", @"C:\Users\Florian\test1", true);
 
         bcktest.Run();

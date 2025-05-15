@@ -12,7 +12,10 @@ namespace BackUp.Model
 		public string dirTarget { get; set; }
 		public bool Differential{ get; set; }
 
-		public BackUpJob(string Name, string dirSource, string dirTarget, bool Differential)
+        public string? LastError { get; private set; }
+
+
+        public BackUpJob(string Name, string dirSource, string dirTarget, bool Differential)
 		{
             this.Name = Name;
 			this.dirSource = dirSource;
@@ -30,11 +33,18 @@ namespace BackUp.Model
 
         public void Run()
         {
-            IBackUpType backupType = Differential ?
+			try
+			{
+				IBackUpType backupType = Differential ?
 				new BackUpDifferential(Name, dirSource, dirTarget) :
 				new BackUpFull(Name, dirSource, dirTarget);
 
-            backupType.Execute();
+				backupType.Execute();
+			}
+			catch (Exception ex)
+			{
+                throw new Exception(ex.Message, ex);
+            }
         }
 
         public void CreateJob()

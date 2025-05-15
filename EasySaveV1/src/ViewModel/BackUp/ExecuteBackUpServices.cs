@@ -201,7 +201,7 @@ namespace BackUp.ViewModel
                     Console.ResetColor();
                     Console.WriteLine($" {job.Id}:{job.Name}.");
                 }
-                catch
+                catch (Exception ex)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write(_app.Translate("execution_error"));
