@@ -9,11 +9,19 @@ namespace BackUp.ViewModel
     {
         private const int MaxJobId = 5;
         private AppController _app;
-        private List<int> _availableJobs = GetConfigJobsID();
+        private List<int> _availableJobsId;
+        private List<string> _availableJobsName;
         private List<int> _result;
         private string _resultMessage = string.Empty;
 
         public ICommand ExecuteBackUpCommand { get; }
+
+        public string JobList { get
+            {
+                var lines = _availableJobsId.Zip(_availableJobsName, (id, name) => $"{id}: {name}");
+                return string.Join("\n\t", lines);
+            }
+        }
 
         public string ResultMessage
         {
@@ -36,7 +44,7 @@ namespace BackUp.ViewModel
         public ExecuteBackUpServices(AppController app)
         {
             _app = app;
-            _availableJobs = GetConfigJobsID(); // Obtenir les jobs disponibles
+            (_availableJobsId, _availableJobsName) = GetConfigJobsID(); // Obtenir les jobs disponibles
 
             // Initialisation de la commande
             ExecuteBackUpCommand = new RelayCommand(
@@ -89,7 +97,7 @@ namespace BackUp.ViewModel
             // Si l'entrée est '*', on exécute tous les jobs
             if (input == "*")
             {
-                _result = new List<int>(_availableJobs);
+                _result = new List<int>(_availableJobsId);
                 return;
             }
 
@@ -110,7 +118,7 @@ namespace BackUp.ViewModel
             // Si l'entrée est un seul nombre
             if (int.TryParse(input.Trim(), out int single))
             {
-                if (_availableJobs.Contains(single))
+                if (_availableJobsId.Contains(single))
                 {
                     _result = new List<int> { single };
                     return;
@@ -151,7 +159,7 @@ namespace BackUp.ViewModel
             }
 
             for (int i = start; i <= end; i++)
-                if (_availableJobs.Contains(i))
+                if (_availableJobsId.Contains(i))
                     _result.Add(i);
         }
 
@@ -166,7 +174,7 @@ namespace BackUp.ViewModel
                     continue;
                 }
 
-                if (!_availableJobs.Contains(jobId))
+                if (!_availableJobsId.Contains(jobId))
                 {
                     _resultMessage += _app.Translate("invalid_num_list") + $" {jobId}. "; // Concaténer les erreurs
                     continue;
@@ -176,10 +184,12 @@ namespace BackUp.ViewModel
             }
         }
 
-        private static List<int> GetConfigJobsID()
+        private static (List<int>, List<string>) GetConfigJobsID()
         {
-            var allJobs = BackUpJob.GetAllJobsFromConfig(); // Appel de la méthode qui récupère les jobs
-            return allJobs.Select(job => job.Id).ToList();
+            List<BackUpJob> allJobs = BackUpJob.GetAllJobsFromConfig(); // Appel de la méthode qui récupère les jobs
+            List<int> ids = allJobs.Select(job => job.Id).ToList();
+            List<string> names = allJobs.Select(job => job.Name).ToList();
+            return (ids, names);
         }
 
         private string ExecuteJobs()

@@ -27,6 +27,7 @@ namespace BackUp.View
             {
                 Console.Clear();
                 Console.WriteLine(_app.Translate("job_exec_title"));
+                Console.WriteLine($"{_app.Translate("job_available")}\n\t{_vm.JobList}\n\n");
                 Console.Write(_app.Translate("enter_jobs"));
 
                 string input = "";

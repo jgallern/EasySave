@@ -11,6 +11,7 @@
     "continue": "Continuer",
     //_________________________
     "job_exec_title": "==== Lancement des sauvegardes ====\n\n",
+    "job_available": "Jobs disponibles:",
     "enter_jobs": "Entrez les jobs à exécuter (ou Échap pour revenir au menu)\ne.g:\n     '1-4': executer les jobs de 1 à 4\n      '1,2,5': exécuter une liste de job\n      '2': exécuter un job '2'\n      '*': exécuter tous les jobs\n  >",
     "run_succeed": "BackUp réalisé avec succès",
     "execution_error": "Un problème à été rencontré durant l'exécution du backup",
