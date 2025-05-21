@@ -1,0 +1,34 @@
+{
+    "select_language": "Langue: (Utilisez Tab pour changer la langue)",
+    "welcome_message": "Bienvenue! Vous avez le choix entre ces fonctionnalités: ",
+    "manage_jobs": "Gérer les jobs",
+    "execute_backup": "Exécuter la sauvegarde",
+    "exit": "Quitter",
+    // Select Language View
+    "language_menu": "Sélectioner une langue",
+    // Run Job View
+    "run_jobs_menu": "Exécuter des BackUp",
+    "continue": "Continuer",
+    //_________________________
+    "job_exec_title": "==== Lancement des sauvegardes ====\n\n",
+    "job_available": "Jobs disponibles:",
+    "enter_jobs": "Entrez les jobs à exécuter (ou Échap pour revenir au menu)\ne.g:\n     '1-4': executer les jobs de 1 à 4\n      '1,2,5': exécuter une liste de job\n      '2': exécuter un job '2'\n      '*': exécuter tous les jobs\n  >",
+    "run_succeed": "BackUp réalisé avec succès",
+    "execution_error": "Un problème à été rencontré durant l'exécution du backup",
+    "log_repo": "Vous pouvez retrouvez les fichiers de log dans le dossier suivant: ",
+    "no_input": "❌ Veuillez entrez quelque chose.",
+    "invalid_run_input": "❌ Entrée invalide. Sont seulements authorisés: les nombres entiers, ',', '-', et '*'.",
+    "invalid_job_num": "❌ Numéro de job invalid:",
+    "invalid_input": "❌ Entrée invalide:",
+    "invalid_range": "❌ Format de range invalid.",
+    "start_supp_end": "❌ Range invalide: début > fin.",
+    "invalid_input_list": "❌ Entrée invalide dans la liste:",
+    "invalid_num_list": "❌ Numéro de job invalide dans la liste:",
+    "no_job_config": "Aucun job correspondant",
+    // Manage job
+    "manage_job_menu": "Page de gestion des jobs",
+    "delete_job": "- Supprimer un job",
+    "add_job": "+ Ajouter un nouveau job",
+    "arrow_instruction": "Utilisez les flèches pour naviguer, Entrée pour valider, Échap pour quitter.",
+    "confirm_update": "Job mis à jour !\nAppuyez sur une touche pour revenir..."
+}
