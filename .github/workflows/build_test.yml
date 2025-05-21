@@ -16,6 +16,6 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - run: dotnet restore MySolution.sln
-      - run: dotnet build MySolution.sln --configuration Release
+      - run: dotnet restore EasySave.sln
+      - run: dotnet build EasySave.sln --configuration Release
       - run: dotnet test ./Tests/Unit-Tests/Unit-Tests.csproj --no-build --configuration Release
