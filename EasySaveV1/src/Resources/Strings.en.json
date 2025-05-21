@@ -1,4 +1,7 @@
 {
+    //Unit tests
+    "hello": "Hello",
+    "bye": "Goodbye",
     //Main App View 
     "select_language": "Language: (Use Tab to change language)",
     "welcome_message": "Welcome! You can execute these diferent functionalities: ",

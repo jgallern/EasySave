@@ -1,4 +1,8 @@
 {
+    //Unit tests
+    "hello": "Bonjour",
+    "bye": "Au revoir",
+    //Main
     "select_language": "Langue: (Utilisez Tab pour changer la langue)",
     "welcome_message": "Bienvenue! Vous avez le choix entre ces fonctionnalités: ",
     "manage_jobs": "Gérer les jobs",

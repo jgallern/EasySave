@@ -1,4 +1,8 @@
 {
+    //Unit tests
+    "hello": "Hello",
+    "bye": "Goodbye",
+    //Main
     "select_language": "Language: (Use Tab to change language)",
     "welcome_message": "Welcome! You can execute these diferent functionalities: ",
     "manage_jobs": "Manage Jobs",

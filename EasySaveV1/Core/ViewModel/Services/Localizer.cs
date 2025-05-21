@@ -6,11 +6,12 @@ namespace Core.ViewModel
     {
         private static Localizer _instance;
         private static readonly object _lock = new object();
-        private readonly TranslationManager _translationManager;
+        private readonly ITranslationManager _translationManager;
 
-        public Localizer()
+        public Localizer() : this(TranslationManager.Instance) { }
+        public Localizer(ITranslationManager translationManager)
         {
-            _translationManager = TranslationManager.Instance;
+            _translationManager = translationManager;
         }
 
         public static Localizer Instance
