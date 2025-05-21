@@ -8,7 +8,7 @@ on:
     branches: ['*']
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,6 +16,26 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - run: dotnet restore EasySave/EasySave.sln
-      - run: dotnet build EasySave/EasySave.sln --configuration Release
-      - run: dotnet test ./tests/Unit-Tests/Unit-Tests.csproj --no-build --configuration Release
+      - name: Restore Core project
+        run: dotnet restore EasySave/src/Core/Core.csproj
+
+      - name: Restore Unit Tests project
+        run: dotnet restore EasySave/tests/Unit-Tests/Unit-Tests.csproj
+
+      - name: Build Core project
+        run: dotnet build EasySave/src/Core/Core.csproj --configuration Release
+
+      - name: Build Unit Tests project
+        run: dotnet build EasySave/tests/Unit-Tests/Unit-Tests.csproj --configuration Release
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Run Unit Tests
+        run: dotnet test EasySave/tests/Unit-Tests/Unit-Tests.csproj --no-build --configuration Release
