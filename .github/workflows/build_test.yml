@@ -47,4 +47,5 @@ jobs:
             name: unit-test-build
 
       - name: Run Unit Tests
-        run: dotnet test EasySave/tests/Unit-Tests/Unit-Tests.csproj --no-build --configuration Release
+        run: dotnet test EasySave/tests/Unit-Tests/bin/Release/net8.0/Unit-Tests.dll --no-build
+
