@@ -33,5 +33,11 @@ jobs:
         with:
             name: unit-test-build
             path: EasySave/tests/Unit-Tests/bin/Release/net*
+
+      - name: Copy config file for unit tests
+        run: |
+            mkdir -p EasySave/tests/Unit-Tests/bin/Release/net8.0/env
+            cp EasySave/src/Core/env/appconfig.json EasySave/tests/Unit-Tests/bin/Release/net8.0/env/
+
       - name: Run tests using vstest
         run: dotnet vstest EasySave/tests/Unit-Tests/bin/Release/net8.0/Unit-Tests.dll
