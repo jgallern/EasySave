@@ -33,18 +33,5 @@ jobs:
         with:
             name: unit-test-build
             path: EasySave/tests/Unit-Tests/bin/Release/net*
-
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-  
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-            name: unit-test-build
-
-      - name: Run Unit Tests
-        run: dotnet test EasySave/tests/Unit-Tests/bin/Release/net8.0/Unit-Tests.dll --no-build
+      - name: Run tests using vstest
+        run: dotnet vstest EasySave/tests/Unit-Tests/bin/Release/net8.0/Unit-Tests.dll
