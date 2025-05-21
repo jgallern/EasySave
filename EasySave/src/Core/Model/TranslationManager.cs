@@ -19,7 +19,7 @@ namespace Core.Model
 
         private TranslationManager()
         {
-            _appConfigPath = Path.Join(Directory.GetCurrentDirectory(), "env\\appconfig.json");
+            _appConfigPath = Path.Join(Directory.GetCurrentDirectory(), Path.Join("env","appconfig.json"));
             //Console.WriteLine(_appConfigPath);
             //Console.ReadKey();
             _resourcesPath = Path.Join(Directory.GetCurrentDirectory(), "Resources");
