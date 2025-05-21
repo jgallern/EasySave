@@ -19,10 +19,10 @@ namespace Core.Model
 
         private TranslationManager()
         {
-            _appConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "env\\appconfig.json");
+            _appConfigPath = Path.Join(Directory.GetCurrentDirectory(), "env\\appconfig.json");
             //Console.WriteLine(_appConfigPath);
             //Console.ReadKey();
-            _resourcesPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+            _resourcesPath = Path.Join(Directory.GetCurrentDirectory(), "Resources");
 
             LoadAppConfigLanguage();
             LoadTranslations(GetCurrentLanguage());
@@ -66,7 +66,7 @@ namespace Core.Model
 
         public void LoadTranslations(string language)
         {
-            string filePath = Path.Combine(_resourcesPath, $"Strings.{language}.json");
+            string filePath = Path.Join(_resourcesPath, $"Strings.{language}.json");
 
             if (File.Exists(filePath))
             {
@@ -75,7 +75,7 @@ namespace Core.Model
             }
             else
             {
-                filePath = Path.Combine(_resourcesPath, $"Strings.json");
+                filePath = Path.Join(_resourcesPath, $"Strings.json");
                 if (File.Exists(filePath))
                 {
                     string json = File.ReadAllText(filePath);
@@ -115,7 +115,7 @@ namespace Core.Model
 
         public string GetDefaultTranslation(string key)
         {
-            string filePath = Path.Combine(_resourcesPath, $"Strings.json");
+            string filePath = Path.Join(_resourcesPath, $"Strings.json");
 
             if (File.Exists(filePath))
             {
