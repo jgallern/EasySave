@@ -1,4 +1,4 @@
-name: Build WPF App
+name: Publish & Deploy
 
 on:
   push:
