@@ -48,4 +48,3 @@ jobs:
 
       - name: Run Unit Tests
         run: dotnet test EasySave/tests/Unit-Tests/bin/Release/net8.0/Unit-Tests.dll --no-build
-
