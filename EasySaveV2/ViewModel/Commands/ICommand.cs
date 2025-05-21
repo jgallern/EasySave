@@ -1,10 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace BackUp.ViewModel
 {
-	public interface ICommand // Possible de directement utiliser l'interface ICommand de Windows.Input
-	{
-        
+    public interface ICommand
+    {
+        event EventHandler CanExecuteChanged;
         bool CanExecute(object parameter);
         void Execute(object parameter);
-        event EventHandler CanExecuteChanged;
     }
 }
