@@ -10,7 +10,6 @@ namespace Core.Model
         private static ConfigManager? _instance;
         private static readonly object _lock = new object();
 
-        private const int MaxJobs = 5;
         private readonly string filePath;
 
         private ConfigManager()
@@ -75,8 +74,6 @@ namespace Core.Model
         public void AddJob(BackUpJob job)
         {
             List<BackUpJob> jobs = LoadJobs();
-            if (jobs.Count >= MaxJobs)
-                throw new InvalidOperationException("Le nombre maximum de jobs (5) a été atteint.");
             foreach (IJobs savedjob in jobs)
             {
                 if (savedjob.Name  == job.Name | (savedjob.dirSource == job.dirSource && savedjob.dirTarget == job.dirTarget && savedjob.Differential == job.Differential))
@@ -115,10 +112,26 @@ namespace Core.Model
             }
             return id;
         }
-        
+
         public void ReorganiseIndex()
         {
             List<BackUpJob> jobs = LoadJobs();
+            int AvailableID = GetAvailableID();
+            if (jobs.Count() >= AvailableID)
+            {
+                for (int i = 0; i < jobs.Count(); i++)
+                {
+                    foreach (BackUpJob job in jobs)
+                    {
+                        job.Id = i + 1;
+                    }
+                }
+                SaveJobs(jobs);
+            }
+            else
+            {
+                return;
+            }
         }
 
         public int FindJobId(BackUpJob jobtofind)
