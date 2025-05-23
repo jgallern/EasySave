@@ -25,7 +25,7 @@
           SelectedItem="{Binding CurrentLanguage, Mode=TwoWay}" Height="19"
           />
         <Label Content="{Binding [welcome_message]}" HorizontalAlignment="Left" Margin="38,97,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="30" Width="362"/>
-        <Button Grid.Column="1" Content="{Binding [execute_backup]}" HorizontalAlignment="Left" Margin="391,86,0,0" VerticalAlignment="Top" Height="17" Width="44"/>
+        <Button Grid.Column="1" Content="{Binding [execute_backup]}" HorizontalAlignment="Left" Margin="391,86,0,0" VerticalAlignment="Top"/>
 
 
     </Grid>

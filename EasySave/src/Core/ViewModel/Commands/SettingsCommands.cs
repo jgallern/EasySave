@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Core.ViewModel
 {
@@ -22,6 +23,7 @@ namespace Core.ViewModel
             {
                 if (_currentLanguage != value && AvailableLanguages.Contains(value))
                 {
+                    Debug.WriteLine("language Changed ({_currentLanguage}) -> ({value})");
                     _currentLanguage = value;
                     _localizer.ChangeLanguage(value);
                     OnPropertyChanged("Item[]");
@@ -29,11 +31,11 @@ namespace Core.ViewModel
             }
         }
 
-        public ICommand ChangeLanguageCommand { get; }
         public string this[string key] => _localizer[key];
 
         public SettingsCommands(ILocalizer localizer)
         {
+            Debug.WriteLine("Started");
             _localizer = localizer;
             _currentLanguage = _localizer.GetCurrentLanguage();
         }
