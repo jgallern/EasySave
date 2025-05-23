@@ -6,27 +6,175 @@
         xmlns:local="clr-namespace:EasySaveV2"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-
-
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="19*"/>
-            <ColumnDefinition Width="181*"/>
-        </Grid.ColumnDefinitions>
-        <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,141,10,85" Grid.ColumnSpan="2"/>
-        <Label Content="EasySave V2" HorizontalAlignment="Left" Margin="46,35,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="24" Grid.ColumnSpan="2"/>
-        <DatePicker Grid.Column="1" HorizontalAlignment="Left" Margin="564,399,0,0" VerticalAlignment="Top" Height="25" Width="150" FontSize="10"/>
-        <ComboBox Grid.Column="1"
-          HorizontalAlignment="Left"
-          Margin="639,50,0,0"
-          VerticalAlignment="Top"
-          Width="67"
-          ItemsSource="{Binding AvailableLanguages}"
-          SelectedItem="{Binding CurrentLanguage, Mode=TwoWay}" Height="19"
-          />
-        <Label Content="{Binding [welcome_message]}" HorizontalAlignment="Left" Margin="38,97,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="30" Width="362"/>
-        <Button Grid.Column="1" Content="{Binding [execute_backup]}" HorizontalAlignment="Left" Margin="391,86,0,0" VerticalAlignment="Top"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
 
+        </Grid.RowDefinitions>
+
+
+        <!-- Partie HEAD avec les boutons, le changement de langue, etc -->
+        <Grid Grid.Row="0" x:Name="HeaderGrid">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+
+            <TextBlock Text="Welcome to EasySave!" FontSize="24" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1"  Margin="10"/>
+
+            <Button Name="select_all_button"
+                    Content="Select all" 
+                    Width="70" 
+                    Height="20" 
+                    Grid.Row="1" 
+                    Grid.Column="0" 
+                    Margin="15,0,0,5"
+                    HorizontalAlignment="Left"
+            />
+            <Button Name="deselect_all_button"
+                    Content="Reinit." 
+                    Width="70" 
+                    Height="20" 
+                    Grid.Row="1" 
+                    Grid.Column="0" 
+                    Margin="0,0,10,5" 
+            />
+
+
+
+
+            <Button Name="settings_button"
+                    Content="Settings" 
+                    Width="100" 
+                    Height="30" 
+                    Grid.Row="0" 
+                    Grid.Column="4" 
+                    Margin="10"
+            />
+            <Button Name="log_button"
+                    Content="Show logs" 
+                    Width="100" 
+                    Height="30" 
+                    Grid.Row="0" 
+                    Grid.Column="3" 
+                    Margin="10"
+            />
+            <ComboBox Name="language_selector"
+                      Grid.Row="1" 
+                      Grid.Column="3"
+                      Grid.ColumnSpan="2"
+                      Margin="10,0,10,10">
+
+                <ComboBoxItem Content="English"/>
+                <ComboBoxItem Content="French"/>
+            </ComboBox>
+
+        </Grid>
+
+
+        <!-- Partie MAIN - scrollviewer -->
+        <ScrollViewer Grid.Row="1" Margin="10,0,10,0" BorderThickness="2" BorderBrush="Black">
+            <StackPanel>
+
+                <CheckBox Margin="10" HorizontalContentAlignment="Stretch">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Example job 1 |" 
+                                   FontSize="14" 
+                                   Grid.Row="0" 
+                                   Grid.Column="0" 
+                                   Margin="10,0,10,5"
+                        />
+                        <TextBlock Text="source/path/as/example" 
+                                   FontSize="10" 
+                                   Grid.Row="1" 
+                                   Grid.Column="0" 
+                                   Margin="10,0"
+                        />
+                        <TextBlock Text="➥ target/path/as/example" 
+                                   FontSize="10" 
+                                   Grid.Row="2" 
+                                   Grid.Column="0" 
+                                   Margin="10,0"
+                        />
+
+                        <TextBlock Text="Last execution : 03/05/2025, 15h48" 
+                                   FontSize="10"
+                                   FontStyle="Italic"
+                                   Grid.Row="0" 
+                                   Grid.Column="2" 
+                                   Margin="10,5"
+                        />
+
+                        <Button Name="edit_button"
+                                Content="🖋"
+                                Width="30"
+                                Height="40"
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                Grid.RowSpan="3"
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Left"
+                        />
+                        <Button Name="delete_button"
+                                Content="🗑"
+                                Width="30"
+                                Height="40"
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                Grid.RowSpan="3"
+                                Margin="45,0,10,0"
+                                HorizontalAlignment="Right"
+                        />
+
+
+                    </Grid>
+                </CheckBox>
+
+            </StackPanel>
+        </ScrollViewer>
+
+
+        <!-- Partie FOOT -->
+        <Grid Grid.Row="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Name="start_button"
+                    Content="START" 
+                    Width="100" 
+                    Height="30" 
+                    Grid.Row="0" 
+                    Grid.Column="1" 
+                    Margin="10"
+            />
+
+        </Grid>
 
     </Grid>
 </Window>
