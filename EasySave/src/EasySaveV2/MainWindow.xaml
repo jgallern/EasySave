@@ -3,9 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:EasySaveV2"
+        xmlns:vm="clr-namespace:Core.ViewModel;assembly=Core"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -83,7 +85,52 @@
         </Grid>
 
 
-        <!-- Partie MAIN - scrollviewer -->
+        <!-- Partie MAIN - Datagrid -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding JobsList}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="True"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  Margin="10,0">
+
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Select"
+                                        Binding="{Binding isSelected}"
+                                        Width="30"
+                />
+                <DataGridTextColumn Header="Name"
+                                    Binding="{Binding Name}"
+                                    Width="*"
+                />
+                <DataGridTextColumn Header="Type"
+                                    Binding="{Binding Type}"
+                                    Width="*"
+                />
+                <DataGridTextColumn Header="Source"
+                                    Binding="{Binding Source}"
+                                    Width="*"
+                />
+                <DataGridTextColumn Header="Target"
+                                    Binding="{Binding Target}"
+                                    Width="*"
+                />
+                <DataGridTextColumn Header="Last execution"
+                                    Binding="{Binding LastExecution, StringFormat='{}{0:dd/MM/yyyy, HH\\hmm}'}"
+                                    Width="*"
+                />
+                
+            </DataGrid.Columns>
+
+        </DataGrid>
+            
+            
+    
+        
+        
+        
+        <!--
         <ScrollViewer Grid.Row="1" Margin="10,0,10,0" BorderThickness="2" BorderBrush="Black">
             <StackPanel>
 
@@ -155,6 +202,7 @@
 
             </StackPanel>
         </ScrollViewer>
+        -->
 
 
         <!-- Partie FOOT -->
