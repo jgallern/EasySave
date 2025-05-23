@@ -7,16 +7,26 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="19*"/>
             <ColumnDefinition Width="181*"/>
         </Grid.ColumnDefinitions>
-        <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,141,10,40" Grid.ColumnSpan="2"/>
+        <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,141,10,85" Grid.ColumnSpan="2"/>
         <Label Content="EasySave V2" HorizontalAlignment="Left" Margin="46,35,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="24" Grid.ColumnSpan="2"/>
         <DatePicker Grid.Column="1" HorizontalAlignment="Left" Margin="564,399,0,0" VerticalAlignment="Top" Height="25" Width="150" FontSize="10"/>
-        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="586,50,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox Grid.Column="1"
+          HorizontalAlignment="Left"
+          Margin="639,50,0,0"
+          VerticalAlignment="Top"
+          Width="67"
+          ItemsSource="{Binding AvailableLanguages}"
+          SelectedItem="{Binding CurrentLanguage, Mode=TwoWay}" Height="19"
+          />
+        <Label Content="{Binding [welcome_message]}" HorizontalAlignment="Left" Margin="38,97,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="30" Width="362"/>
+        <Button Grid.Column="1" Content="{Binding [execute_backup]}" HorizontalAlignment="Left" Margin="391,86,0,0" VerticalAlignment="Top"/>
+
 
     </Grid>
 </Window>

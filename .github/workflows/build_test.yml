@@ -8,7 +8,7 @@ on:
     branches: ['*']
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,6 +16,28 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - run: dotnet restore MySolution.sln
-      - run: dotnet build MySolution.sln --configuration Release
-      - run: dotnet test ./Tests/Unit-Tests/Unit-Tests.csproj --no-build --configuration Release
+      - name: Restore Core project
+        run: dotnet restore EasySave/src/Core/Core.csproj
+
+      - name: Restore Unit Tests project
+        run: dotnet restore EasySave/tests/Unit-Tests/Unit-Tests.csproj
+
+      - name: Build Core project
+        run: dotnet build EasySave/src/Core/Core.csproj --configuration Release
+
+      - name: Build Unit Tests project
+        run: dotnet build EasySave/tests/Unit-Tests/Unit-Tests.csproj --configuration Release
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+            name: unit-test-build
+            path: EasySave/tests/Unit-Tests/bin/Release/net*
+
+      - name: Copy config file for unit tests
+        run: |
+            mkdir -p EasySave/tests/Unit-Tests/bin/Release/net8.0/env
+            cp EasySave/src/Core/env/appconfig.json EasySave/tests/Unit-Tests/bin/Release/net8.0/env/
+
+      - name: Run tests using vstest
+        run: dotnet vstest EasySave/tests/Unit-Tests/bin/Release/net8.0/Unit-Tests.dll

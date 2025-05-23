@@ -13,11 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="View\" />
+    <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\EasySaveV1\Core\Core.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Core.ViewModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +20,10 @@ namespace EasySaveV2
         public MainWindow()
         {
             InitializeComponent();
+            ILocalizer localizer = new Localizer(); // instancie ton implémentation
+            ISettingsCommands SettingsVM = new SettingsCommands(localizer);
+
+            DataContext = SettingsVM;
         }
     }
 }

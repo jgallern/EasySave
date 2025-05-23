@@ -30,7 +30,7 @@ namespace Core.ViewModel
 
         private void RedirectSettings()
         {
-            ISettingsViewModel vm = new SettingsViewModel(_localizer);
+            ISettingsCommands vm = new SettingsCommands(_localizer);
             //new SettingsView(this, vm).Run();
         }
         public void RedirectManageBackups()
