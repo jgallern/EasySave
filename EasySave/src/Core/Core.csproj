@@ -19,5 +19,17 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
+    <ItemGroup>
+		<None Update="env\*.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\*.json">
+		    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    </None>
+    </ItemGroup>
+
+	<ItemGroup>
+    <Folder Include="ViewModel\Settings\" />
+  </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@ using System.Windows.Input;
 
 namespace Core.ViewModel
 {
-    public interface ISettingsViewModel
+    public interface ISettingsCommands
     {
         IReadOnlyList<string> AvailableLanguages { get; }
         string CurrentLanguage { get; }

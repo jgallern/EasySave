@@ -23,7 +23,6 @@ namespace Core.Model
             //Console.WriteLine(_appConfigPath);
             //Console.ReadKey();
             _resourcesPath = Path.Join(Directory.GetCurrentDirectory(), "Resources");
-
             LoadAppConfigLanguage();
             LoadTranslations(GetCurrentLanguage());
         }
