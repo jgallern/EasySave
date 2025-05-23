@@ -154,6 +154,7 @@ namespace Core.Model
             if (removed == 0)
                 throw new ArgumentException($"Aucun job avec L'ID '{Id}'.");
             SaveJobs(jobs);
+            ReorganiseIndex(); 
         }
     }
 }

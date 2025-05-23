@@ -19,8 +19,6 @@ namespace Unit_Tests
             BackUpJob bcktest1 = new BackUpJob("test1", "c:/users/jg/test1", "c:/users/jg/test1", false);    
             bcktest1.CreateJob();    
             bcktest.DeleteJob();
-            ConfigManager.Instance.ReorganiseIndex();
-
         }
     }
 }
