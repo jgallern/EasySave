@@ -1,18 +1,14 @@
 using System.Windows.Input;
 
-namespace Core.ViewModel
+namespace Core.ViewModel.Commands
 {
-    public interface IAppController
+    public interface IAppRedirectionCommands
     {
         ICommand RedirectMenuCommand { get; }
         ICommand RedirectSettingsCommand { get; }
         ICommand RedirectExecuteBackupCommand { get; }
         ICommand RedirectManageBackupsCommand { get; }
         ICommand ExitCommand { get; }
-
-        string GetCurrentLanguage();
-        List<string> GetAvailableLanguages();
-        string Translate(string key);
     }
 
 }

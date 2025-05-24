@@ -1,14 +1,16 @@
 ﻿using Core.Model;
+using Core.ViewModel.Commands;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Core.Model.Services;
 
 namespace Core.ViewModel
 {
     public class ExecuteBackUpServices : IExecuteBackUpServices, INotifyPropertyChanged
     {
         private const int MaxJobId = 5;
-        private AppController _app;
+        private ILocalizer _app;
         private List<int> _availableJobsId;
         private List<string> _availableJobsName;
         private List<int> _result;
@@ -41,7 +43,7 @@ namespace Core.ViewModel
         public string LogPath => Logger.GetLogDirectory();
 
         // Constructeur pour initialiser les dépendances
-        public ExecuteBackUpServices(AppController app)
+        public ExecuteBackUpServices(ILocalizer app)
         {
             _app = app;
             (_availableJobsId, _availableJobsName) = GetConfigJobsID(); // Obtenir les jobs disponibles
@@ -81,7 +83,7 @@ namespace Core.ViewModel
 
             if (string.IsNullOrWhiteSpace(input))
             {
-                _resultMessage = _app.Translate("no_input");
+                _resultMessage = _app["no_input"];
                 return;
             }
 
@@ -89,7 +91,7 @@ namespace Core.ViewModel
             {
                 if (!char.IsDigit(c) && c != ',' && c != '-' && c != '*')
                 {
-                    _resultMessage = _app.Translate("invalid_run_input");
+                    _resultMessage = _app["invalid_run_input"];
                     return;
                 }
             }
@@ -125,12 +127,12 @@ namespace Core.ViewModel
                 }
                 else
                 {
-                    _resultMessage = _app.Translate("invalid_job_num") + $" {single}.";
+                    _resultMessage = _app["invalid_job_num"] + $" {single}.";
                     return;
                 }
             }
 
-            _resultMessage = _app.Translate("invalid_input") + $" {input.Trim()}."; // Erreur générique si aucune condition n'est remplie
+            _resultMessage = _app["invalid_input"] + $" {input.Trim()}."; // Erreur générique si aucune condition n'est remplie
         }
 
         private void ParseRange(string input)
@@ -139,7 +141,7 @@ namespace Core.ViewModel
 
             if (parts.Length != 2)
             {
-                _resultMessage = _app.Translate("invalid_range");
+                _resultMessage = _app["invalid_range"];
                 return;
             }
 
@@ -154,7 +156,7 @@ namespace Core.ViewModel
 
             if (start > end)
             {
-                _resultMessage = _app.Translate("start_supp_end");
+                _resultMessage = _app["start_supp_end"];
                 return;
             }
 
@@ -170,13 +172,13 @@ namespace Core.ViewModel
             {
                 if (!int.TryParse(job.Trim(), out int jobId))
                 {
-                    _resultMessage += _app.Translate("invalid_input_list") + $" {job}. ";  // Concaténer les erreurs
+                    _resultMessage += _app["invalid_input_list"] + $" {job}. ";  // Concaténer les erreurs
                     continue;
                 }
 
                 if (!_availableJobsId.Contains(jobId))
                 {
-                    _resultMessage += _app.Translate("invalid_num_list") + $" {jobId}. "; // Concaténer les erreurs
+                    _resultMessage += _app["invalid_num_list"] + $" {jobId}. "; // Concaténer les erreurs
                     continue;
                 }
 
@@ -196,7 +198,7 @@ namespace Core.ViewModel
         {
             if (!string.IsNullOrEmpty(_resultMessage) || _result == null)
             {
-                return _resultMessage ?? _app.Translate("no_job_config"); // Retourner le message d'erreur si les jobs sont vides
+                return _resultMessage ?? _app["no_job_config"]; // Retourner le message d'erreur si les jobs sont vides
             }
 
             // Exécuter réellement les jobs
@@ -207,19 +209,19 @@ namespace Core.ViewModel
                 {
                     job.Run();
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write(_app.Translate("run_succeed"));
+                    Console.Write(_app["run_succeed"]);
                     Console.ResetColor();
                     Console.WriteLine($" {job.Id}:{job.Name}.");
                 }
                 catch (Exception ex)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write(_app.Translate("execution_error"));
+                    Console.Write(_app["execution_error"]);
                     Console.ResetColor();
                     Console.WriteLine($" {job.Id}:{job.Name}.");
                 }
             }
-            return _app.Translate("log_repo") + LogPath;
+            return _app["log_repo"] + LogPath;
         }
     }
 }

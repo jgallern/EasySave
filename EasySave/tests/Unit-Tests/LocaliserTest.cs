@@ -1,19 +1,19 @@
-using Core.Model;
-using Core.ViewModel;
 using Moq;
 using Xunit;
 using System.Collections.Generic;
+using Core.Model.Managers;
+using Core.Model.Services;
 
 namespace Unit_Tests
 {
     public class LocalizerTests
     {
-        private readonly Mock<ITranslationManager> _mockTranslationManager;
+        private readonly Mock<IAppConfigManager> _mockTranslationManager;
         private readonly Localizer _localizer;
 
         public LocalizerTests()
         {
-            _mockTranslationManager = new Mock<ITranslationManager>();
+            _mockTranslationManager = new Mock<IAppConfigManager>();
             _localizer = new Localizer(_mockTranslationManager.Object);
         }
 

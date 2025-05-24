@@ -1,5 +1,5 @@
-﻿using Core.ViewModel;
-using Core.Model.Services;
+﻿using Core.Model.Services;
+using Core.ViewModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,17 +14,15 @@ using System.Windows.Shapes;
 namespace EasySaveV2
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class SettingsWindow : Window
     {
-        public MainWindow()
+        public SettingsWindow()
         {
             InitializeComponent();
             ILocalizer localizer = new Localizer(); // instancie ton implémentation
             SettingsViewModel SettingsVM = new SettingsViewModel(localizer);
-
-            DataContext = SettingsVM;
         }
     }
 }

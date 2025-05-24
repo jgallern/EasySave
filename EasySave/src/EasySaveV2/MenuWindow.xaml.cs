@@ -1,5 +1,4 @@
 ﻿using Core.ViewModel;
-using Core.Model.Services;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,17 +13,17 @@ using System.Windows.Shapes;
 namespace EasySaveV2
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MenuWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MenuWindow : Window
     {
-        public MainWindow()
+        public MenuWindow()
         {
             InitializeComponent();
-            ILocalizer localizer = new Localizer(); // instancie ton implémentation
-            SettingsViewModel SettingsVM = new SettingsViewModel(localizer);
+            //ILocalizer localizer = new Localizer(); // instancie ton implémentation
+            //IAppSettingsCommands SettingsVM = new AppSettingsCommands(localizer);
 
-            DataContext = SettingsVM;
+            //DataContext = SettingsVM;
         }
     }
 }

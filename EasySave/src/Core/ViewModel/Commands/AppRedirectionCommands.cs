@@ -1,8 +1,11 @@
+using Core.Model.Services;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
-namespace Core.ViewModel
+namespace Core.ViewModel.Commands
 {
-    public class AppController : IAppController
+    public class AppRedirectionCommands : IAppRedirectionCommands
     {
         public ICommand RedirectMenuCommand { get; }
         public ICommand RedirectSettingsCommand { get; }
@@ -12,7 +15,7 @@ namespace Core.ViewModel
 
         private readonly ILocalizer _localizer;
 
-        public AppController(ILocalizer localizer)
+        public AppRedirectionCommands(ILocalizer localizer)
         {
             _localizer = localizer;
 
@@ -30,26 +33,22 @@ namespace Core.ViewModel
 
         private void RedirectSettings()
         {
-            ISettingsCommands vm = new SettingsCommands(_localizer);
+            IAppRedirectionCommands vm = new AppRedirectionCommands(_localizer);
             //new SettingsView(this, vm).Run();
         }
         public void RedirectManageBackups()
         {
-            IManageBackUpServices vm = new ManageBackUpServices(this);
+            //IManageBackUpServices vm = new ManageBackUpServices(this);
             //new ManageBackUpView(this, vm).Run(); 
         }
 
         private void RedirectExecuteBackup()
         {
-            var vm = new ExecuteBackUpServices(this);
+            //var vm = new ExecuteBackUpServices(this);
             //new ExecuteBackUpView(this, vm).Run();
         }
 
         private void Exit() => Environment.Exit(0);
-
-        public string GetCurrentLanguage() => _localizer.GetCurrentLanguage();
-        public List<string> GetAvailableLanguages() => _localizer.GetAvailableLanguages();
-        public string Translate(string key) => _localizer[key];
 
     }
 }

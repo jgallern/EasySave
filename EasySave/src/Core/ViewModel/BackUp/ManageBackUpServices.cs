@@ -1,15 +1,16 @@
 using Core.Model;
+using Core.ViewModel.Commands;
 using System.Windows.Input;
 
 namespace Core.ViewModel
 {
     public class ManageBackUpServices : IManageBackUpServices
     {
-        private AppController _app;
+        private AppRedirectionCommands _app;
 
         public ICommand ExecuteBackUpCommand { get; }
 
-        public ManageBackUpServices(AppController app)
+        public ManageBackUpServices(AppRedirectionCommands app)
         {
             _app = app;
         }
