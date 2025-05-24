@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.ViewModel
+namespace Core.ViewModel.Commands
 {
     public interface ICommand
     {

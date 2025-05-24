@@ -49,28 +49,28 @@ namespace Core.Model
 
         public void CreateJob()
 		{
-			Id = ConfigManager.Instance.GetAvailableID();
-	        ConfigManager.Instance.AddJob(this);
+			Id = JobConfigManager.Instance.GetAvailableID();
+            JobConfigManager.Instance.AddJob(this);
 		}
 
 		public void DeleteJob()
 		{
-			Id = ConfigManager.Instance.FindJobId(this);
-			ConfigManager.Instance.DeleteJob(Id);
+			Id = JobConfigManager.Instance.FindJobId(this);
+            JobConfigManager.Instance.DeleteJob(Id);
 		}
 
 		public void AlterJob()
 		{
-			ConfigManager.Instance.UpdateJob(Id,this);	
+            JobConfigManager.Instance.UpdateJob(Id,this);	
 		}
 
 		public static List<BackUpJob> GetAllJobsFromConfig()
 		{
-			return ConfigManager.Instance.GetAllJobs();
+			return JobConfigManager.Instance.GetAllJobs();
 		}
 		public static BackUpJob GetJobByID(int Id)
 		{
-			return ConfigManager.Instance.GetJobById(Id);
+			return JobConfigManager.Instance.GetJobById(Id);
 		}
 	}
 }

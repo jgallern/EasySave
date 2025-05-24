@@ -5,14 +5,14 @@ using System.IO;
 
 namespace Core.Model
 {
-    public class ConfigManager
+    public class JobConfigManager
     {
-        private static ConfigManager? _instance;
+        private static JobConfigManager? _instance;
         private static readonly object _lock = new object();
 
         private readonly string filePath;
 
-        private ConfigManager()
+        private JobConfigManager()
         {
             filePath = Path.Combine(Directory.GetCurrentDirectory(), "env\\jobconfig.json");
             //Console.WriteLine(filePath);
@@ -21,12 +21,12 @@ namespace Core.Model
                 SaveJobs(new List<BackUpJob>());
         }
 
-        public static ConfigManager Instance
+        public static JobConfigManager Instance
         {
             get
             {
                 if (_instance == null)
-                    throw new InvalidOperationException("ConfigManager n'a pas encore été initialisé.");
+                    throw new InvalidOperationException("JobConfigManager n'a pas encore été initialisé.");
                 return _instance;
             }
         }
@@ -36,7 +36,7 @@ namespace Core.Model
             lock (_lock)
             {
                 if (_instance == null)
-                    _instance = new ConfigManager();
+                    _instance = new JobConfigManager();
             }
         }
 

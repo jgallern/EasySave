@@ -3,7 +3,15 @@
     "welcome_message": "Welcome! You can execute these diferent functionalities: ",
     "manage_jobs": "Manage Jobs",
     "execute_backup": "Run Backup",
+    "encryption_extensions": "Encryption Extensions",
+    "encryption_extensions_detail": "There are the files extensions that use CryptoSoft to be encrypted in the destination of the backup, these extensions are encrypted in all the backups in which you have the encryption activated",
+    "software_packages": "Software Packages",
+    "software_packages_detail": "There are the packages that bloc the backup execution, if you have once open, please close it during the backup",
+    "encryption_key": "Encryption Key",
     "exit": "Exit",
+    "modify":  "Modify",
+    "cancel": "Cancel",
+    "validate":  "Validate",
     // Select Language View
     "language_menu": "Select a Language",
     // Run Job View

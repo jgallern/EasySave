@@ -1,3 +1,6 @@
 {
-    "Language": "fr"
+    "Language": "en",
+    "EncryptionExtensions": ".docx, .pdf",
+    "SoftwarePackages": "notepad.exe",
+    "CryptoSoftKey": ""
 }   

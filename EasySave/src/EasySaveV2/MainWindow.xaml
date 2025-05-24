@@ -1,4 +1,4 @@
-﻿<Window x:Class="EasySaveV2.MainWindow"
+﻿ <Window x:Class="EasySaveV2.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -123,13 +123,129 @@
                 
             </DataGrid.Columns>
 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+
+        </Grid.RowDefinitions>
+
+
+        <!-- Partie HEAD avec les boutons, le changement de langue, etc -->
+        <Grid Grid.Row="0" x:Name="HeaderGrid">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+
+            <TextBlock Text="Welcome to EasySave!" FontSize="24" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1"  Margin="10"/>
+
+            <Button Name="select_all_button"
+                    Content="Select all" 
+                    Width="70" 
+                    Height="20" 
+                    Grid.Row="1" 
+                    Grid.Column="0" 
+                    Margin="15,0,0,5"
+                    HorizontalAlignment="Left"
+            />
+            <Button Name="deselect_all_button"
+                    Content="Reinit." 
+                    Width="70" 
+                    Height="20" 
+                    Grid.Row="1" 
+                    Grid.Column="0" 
+                    Margin="0,0,10,5" 
+            />
+
+
+
+
+            <Button Name="settings_button"
+                    Content="Settings" 
+                    Command="{Binding SettingsCommand}"
+                    Width="100" 
+                    Height="30" 
+                    Grid.Row="0" 
+                    Grid.Column="4" 
+                    Margin="10"
+            />
+            <Button Name="log_button"
+                    Content="Show logs" 
+                    Width="100" 
+                    Height="30" 
+                    Grid.Row="0" 
+                    Grid.Column="3" 
+                    Margin="10"
+            />
+            <ComboBox Name="language_selector"
+                      Grid.Row="1" 
+                      Grid.Column="3"
+                      Grid.ColumnSpan="2"
+                      Margin="10,0,10,10">
+
+                <ComboBoxItem Content="English"/>
+                <ComboBoxItem Content="French"/>
+            </ComboBox>
+
+        </Grid>
+
+
+        <!-- Partie MAIN - Datagrid -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding JobsList}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="True"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  Margin="10,0">
+
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Select"
+                                        Binding="{Binding isSelected}"
+                                        Width="30"
+                />
+                <DataGridTextColumn Header="Name"
+                                    Binding="{Binding Name}"
+                                    Width="*"
+                />
+                <DataGridTextColumn Header="Type"
+                                    Binding="{Binding Type}"
+                                    Width="*"
+                />
+                <DataGridTextColumn Header="Source"
+                                    Binding="{Binding Source}"
+                                    Width="*"
+                />
+                <DataGridTextColumn Header="Target"
+                                    Binding="{Binding Target}"
+                                    Width="*"
+                />
+                <DataGridTextColumn Header="Last execution"
+                                    Binding="{Binding LastExecution, StringFormat='{}{0:dd/MM/yyyy, HH\\hmm}'}"
+                                    Width="*"
+                />
+
+            </DataGrid.Columns>
+
         </DataGrid>
-            
-            
-    
-        
-        
-        
+
+
+
+
+
+
         <!--
         <ScrollViewer Grid.Row="1" Margin="10,0,10,0" BorderThickness="2" BorderBrush="Black">
             <StackPanel>

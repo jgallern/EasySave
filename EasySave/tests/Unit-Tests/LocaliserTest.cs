@@ -1,87 +1,145 @@
-using Core.Model;
-using Core.ViewModel;
-using Moq;
-using Xunit;
+using Core.Model.Managers;
+using Core.Model.Services;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using Xunit;
 
 namespace Unit_Tests
 {
-    public class LocalizerTests
+    public class LocalizerIntegrationTests : IDisposable
     {
-        private readonly Mock<ITranslationManager> _mockTranslationManager;
-        private readonly Localizer _localizer;
+        private readonly string _tempEnvPath;
+        private readonly string _tempResourcesPath;
+        private readonly string _appConfigPath;
 
-        public LocalizerTests()
+        public LocalizerIntegrationTests()
         {
-            _mockTranslationManager = new Mock<ITranslationManager>();
-            _localizer = new Localizer(_mockTranslationManager.Object);
+            // Create a tomporary repository
+            var basePath = Directory.GetCurrentDirectory();
+            _tempEnvPath = Path.Combine(basePath, "env");
+            _tempResourcesPath = Path.Combine(basePath, "Resources");
+
+            Directory.CreateDirectory(_tempEnvPath);
+            Directory.CreateDirectory(_tempResourcesPath);
+
+            // Crée un appconfig.json de test
+            _appConfigPath = Path.Combine(_tempEnvPath, "appconfig.json");
+            var config = new Dictionary<string, string>
+            {
+                { "Language", "en" },
+                { "EncryptionExtensions", ".txt, .docx" },
+                { "SoftwarePackages", "Notepad++, Visual Studio" },
+                { "CryptoSoftKey", "abc123" }
+            };
+            File.WriteAllText(_appConfigPath, JsonConvert.SerializeObject(config, Formatting.Indented));
+
+            // Crée un fichier de ressources Strings.en.json
+            var translationsEn = new Dictionary<string, string>
+            {
+                { "exit", "Exit" },
+                { "save", "Save" }
+            };
+            File.WriteAllText(Path.Combine(_tempResourcesPath, "Strings.en.json"), JsonConvert.SerializeObject(translationsEn, Formatting.Indented));
+
+            // Crée un fichier de ressources Strings.en.json
+            var translationsFr = new Dictionary<string, string>
+            {
+                { "exit", "Quitter" },
+                { "save", "Sauvegarder" }
+            };
+            File.WriteAllText(Path.Combine(_tempResourcesPath, "Strings.fr.json"), JsonConvert.SerializeObject(translationsFr, Formatting.Indented));
+
+            // Crée un fichier de ressources Strings.json
+            var translations = new Dictionary<string, string>
+            {
+                { "exit", "Exit" },
+                { "save", "Save" }
+            };
+            File.WriteAllText(Path.Combine(_tempResourcesPath, "Strings.json"), JsonConvert.SerializeObject(translations, Formatting.Indented));
+        }
+
+        public void Dispose()
+        {
+            // Nettoyage après les tests
+            if (Directory.Exists(_tempEnvPath)) Directory.Delete(_tempEnvPath, true);
+            if (Directory.Exists(_tempResourcesPath)) Directory.Delete(_tempResourcesPath, true);
         }
 
         [Fact]
-        public void Indexer_Returns_Translation_From_TranslationManager()
+        public void Indexer_Should_Return_Translation()
         {
             // Arrange
-            string key = "exit";
-            string expected = "Quitter";
-            _mockTranslationManager.Setup(tm => tm.GetTranslation(key)).Returns(expected);
+            var localizer = new Localizer();
+            localizer.ChangeLanguage("fr");
 
             // Act
-            var result = _localizer[key];
+            var translation = localizer["exit"];
 
             // Assert
-            Assert.Equal(expected, result);
+            Assert.Equal("Quitter", translation);
         }
 
         [Fact]
-        public void ChangeLanguage_Calls_TranslationManager()
+        public void ChangeAndRetrieveEncryptionExtensions_Should_Work()
         {
             // Arrange
-            string language = "fr";
+            var localizer = new Localizer();
+
+            string newExtensions = ".zip, .pdf";
+            localizer.ChangeEncryptionExtensions(newExtensions);
 
             // Act
-            _localizer.ChangeLanguage(language);
+            var result = localizer.GetEncryptionExtensions();
 
             // Assert
-            _mockTranslationManager.Verify(tm => tm.ChangeLanguage(language), Times.Once);
+            Assert.Equal(".zip, .pdf", result);
         }
 
         [Fact]
-        public void GetCurrentLanguage_Returns_Value_From_TranslationManager()
+        public void ChangeAndRetrieveSoftwarePackages_Should_Work()
         {
             // Arrange
-            string expected = "en";
-            _mockTranslationManager.Setup(tm => tm.GetCurrentLanguage()).Returns(expected);
+            var localizer = new Localizer();
+
+            string newSoftware = "Word.exe, Excel.exe";
+            localizer.ChangeSoftwarePackages(newSoftware);
 
             // Act
-            var result = _localizer.GetCurrentLanguage();
+            var result = localizer.GetSoftwarePackages();
 
             // Assert
-            Assert.Equal(expected, result);
+            Assert.Equal("Word.exe, Excel.exe", result);
         }
 
         [Fact]
-        public void GetAvailableLanguages_Returns_List_From_TranslationManager()
+        public void ChangeAndRetrieveEncryptionKey_Should_Work()
         {
             // Arrange
-            var expected = new List<string> { "en", "fr" };
-            _mockTranslationManager.Setup(tm => tm.GetAvailableLanguages()).Returns(expected);
+            var localizer = new Localizer();
+
+            string newKey = "newKey456";
+            localizer.ChangeEncryptionKey(newKey);
 
             // Act
-            var result = _localizer.GetAvailableLanguages();
+            var result = localizer.GetEncryptionKey();
 
             // Assert
-            Assert.Equal(expected, result);
+            Assert.Equal("newKey456", result);
         }
 
         [Fact]
-        public void Instance_Returns_Singleton_Instance()
+        public void GetAvailableLanguages_Should_Detect_LanguageFiles()
         {
+            // Arrange
+            var localizer = new Localizer();
+
             // Act
-            var instance1 = Localizer.Instance;
-            var instance2 = Localizer.Instance;
+            List<string> languages = localizer.GetAvailableLanguages();
 
             // Assert
-            Assert.Same(instance1, instance2);
+            Assert.Equal(["fr", "en"], languages);
         }
     }
 }
