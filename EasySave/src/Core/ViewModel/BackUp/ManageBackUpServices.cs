@@ -1,18 +1,15 @@
 using Core.Model;
-using Core.ViewModel.Commands;
+using Core.ViewModel.Services;
 using System.Windows.Input;
 
 namespace Core.ViewModel
 {
     public class ManageBackUpServices : IManageBackUpServices
     {
-        private AppRedirectionCommands _app;
-
         public ICommand ExecuteBackUpCommand { get; }
 
-        public ManageBackUpServices(AppRedirectionCommands app)
+        public ManageBackUpServices()
         {
-            _app = app;
         }
         public List<KeyValuePair<int, string>> GetAllJobs()
         {

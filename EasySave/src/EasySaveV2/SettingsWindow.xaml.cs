@@ -1,4 +1,5 @@
 ﻿using Core.Model.Services;
+using Core.ViewModel.Services;
 using Core.ViewModel;
 using System.Text;
 using System.Windows;
@@ -8,7 +9,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace EasySaveV2
@@ -21,8 +21,10 @@ namespace EasySaveV2
         public SettingsWindow()
         {
             InitializeComponent();
-            ILocalizer localizer = new Localizer(); // instancie ton implémentation
-            SettingsViewModel SettingsVM = new SettingsViewModel(localizer);
+            ILocalizer localizer = new Localizer();
+            INavigationService _navigation = new NavigationService();
+            SettingsViewModel SettingsVM = new SettingsViewModel(localizer, _navigation);
+            DataContext = SettingsVM;
         }
     }
 }

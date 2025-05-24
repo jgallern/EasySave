@@ -34,7 +34,7 @@ namespace Core.ViewModel
         {
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
 
-            RedirectSettingsCommand = new RelayCommand(_ => CurrentViewModel = new SettingsViewModel(_localizer));
+            //RedirectSettingsCommand = new RelayCommand(_ => CurrentViewModel = new SettingsViewModel(_localizer));
             //ExitCommand = new RelayCommand(_ => Application.Current.Shutdown());
 
             // Vue initiale

@@ -1,20 +1,26 @@
-﻿using System;
+﻿using Core.Model.Services;
+using Core.ViewModel.Services;
+using Core.ViewModel.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Core.Model.Services;
 
 namespace Core.ViewModel
 {
     public class SettingsViewModel : ViewModelBase
     {
         private readonly ILocalizer _localizer;
+        private readonly INavigationService _navigationService;
 
         private readonly RelayCommand _changeSettingsCommand;
         public ICommand ChangeSettingsCommand => _changeSettingsCommand;
 
-        public SettingsViewModel(ILocalizer localizer)
+        public ICommand ExitCommand { get; }
+
+        public SettingsViewModel(ILocalizer localizer, INavigationService navigationService)
         {
+            _navigationService = navigationService;
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
 
             // Initialisation des valeurs
@@ -37,11 +43,18 @@ namespace Core.ViewModel
             });
 
             _changeSettingsCommand = new RelayCommand(_ => SaveAll(),
-                                         _ => IsEditing);
+                                            _ => IsEditing);
 
+            ExitCommand = new RelayCommand(_ => Exit());
 
-            CloseCommand = new RelayCommand(_ => RequestClose?.Invoke());
         }
+
+        private void Exit()
+        {
+            _navigationService.NavigateToMenu();
+            _navigationService.CloseSettings();
+        }
+
 
         private void SaveAll()
         {

@@ -1,18 +1,20 @@
-﻿using System;
+﻿using Core.Model.Services;
+using Core.ViewModel.Commands;
+using Core.ViewModel;
+using Core.ViewModel.Services;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using Core.ViewModel;
-using Core.Model.Services;
 
 namespace Core.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
         private ViewModelBase _currentViewModel;
-        private ViewModelBase _lastViewModel;
         private readonly ILocalizer _localizer;
+        private readonly INavigationService _navigationService;
 
         public ViewModelBase CurrentViewModel
         {
@@ -26,35 +28,19 @@ namespace Core.ViewModel
                 }
             }
         }
+        public ICommand SettingsCommand { get; }
 
-        public ViewModelBase LastViewModel
-        {
-            get => _lastViewModel;
-            set
-            {
-                if (_lastViewModel != value)
-                {
-                    _lastViewModel = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public ICommand RedirectMenuCommand { get; }
-        public ICommand RedirectSettingsCommand { get; }
-        public ICommand ExitCommand { get; }
-
-        public MainViewModel(ILocalizer localizer)
+        public MainViewModel(ILocalizer localizer, INavigationService navigation)
         {
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+            _navigationService = navigation;
+            SettingsCommand = new RelayCommand(_ => Settings());
+        }
 
-            // Initialisation des commandes
-           // RedirectMenuCommand = new RelayCommand(_ => CurrentViewModel = new MenuViewModel(_localizer));
-            RedirectSettingsCommand = new RelayCommand(_ => CurrentViewModel = new SettingsViewModel(_localizer));
-           // ExitCommand = new RelayCommand(_ => Application.Current.Shutdown());
-
-            // Vue initiale
-           // CurrentViewModel = new MenuViewModel(_localizer);
+        private void Settings()
+        {
+            _navigationService.NavigateToSettings();
+            _navigationService.CloseMenu();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -63,6 +49,7 @@ namespace Core.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /* //Si on met la combobox de selection de language dans le menu principal
         private string _currentLanguage;
         public string CurrentLanguage
         {
@@ -76,6 +63,7 @@ namespace Core.ViewModel
                 OnPropertyChanged("Item[]"); // Pour rafraîchir les bindings indexeurs
             }
         }
+        */
         public string this[string key] => _localizer[key];
 
     }
