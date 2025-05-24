@@ -9,6 +9,9 @@
     "software_packages_detail": "Il y a les paquets qui bloquent l’exécution de la sauvegarde, si vous avez un ouvert, s’il vous plaît fermez-le pour le lancement des sauvegardes",
     "encryption_key": "Clé d'encryptage",
     "exit": "Quitter",
+    "modify":  "Modifier",
+    "cancel": "Annuler",
+    "validate":  "Valider",
     // Select Language View
     "language_menu": "Sélectioner une langue",
     // Run Job View

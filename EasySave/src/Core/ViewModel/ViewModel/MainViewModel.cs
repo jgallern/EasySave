@@ -11,6 +11,7 @@ namespace Core.ViewModel
     public class MainViewModel : INotifyPropertyChanged
     {
         private ViewModelBase _currentViewModel;
+        private ViewModelBase _lastViewModel;
         private readonly ILocalizer _localizer;
 
         public ViewModelBase CurrentViewModel
@@ -21,6 +22,19 @@ namespace Core.ViewModel
                 if (_currentViewModel != value)
                 {
                     _currentViewModel = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ViewModelBase LastViewModel
+        {
+            get => _lastViewModel;
+            set
+            {
+                if (_lastViewModel != value)
+                {
+                    _lastViewModel = value;
                     OnPropertyChanged();
                 }
             }
