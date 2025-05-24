@@ -1,22 +1,28 @@
 {
-    "select_language": "Langue: (Utilisez Tab pour changer la langue)",
-    "welcome_message": "Bienvenue! Vous avez le choix entre ces fonctionnalités: ",
-    "manage_jobs": "Gérer les jobs",
-    "execute_backup": "Exécuter la sauvegarde",
+    //Main View
+    "easysave": "Bienvenue sur EasySave!",
+    "settings": "Réglages",
+    "select_all": "Tout sélectioner",
+    "reset": "Réinitialiser",
+
+    //Settings View
     "encryption_extensions": "Extensions à Encrypter",
     "encryption_extensions_detail": "Il y a les extensions de fichiers qui utilisent CryptoSoft pour être chiffrées dans la destination de la sauvegarde, ces extensions sont chiffrées dans toutes les sauvegardes dans lesquelles vous avez le chiffrement activé",
     "software_packages": "Logiciels bloquants",
     "software_packages_detail": "Il y a les paquets qui bloquent l’exécution de la sauvegarde, si vous avez un ouvert, s’il vous plaît fermez-le pour le lancement des sauvegardes",
     "encryption_key": "Clé d'encryptage",
     "exit": "Quitter",
-    "modify":  "Modifier",
+    "modify": "Modifier",
     "cancel": "Annuler",
-    "validate":  "Valider",
-    // Select Language View
-    "language_menu": "Sélectioner une langue",
+    "validate": "Valider",
+
     // Run Job View
     "run_jobs_menu": "Exécuter des BackUp",
     "continue": "Continuer",
+    "select_language": "Langue: (Utilisez Tab pour changer la langue)",
+    "welcome_message": "Bienvenue! Vous avez le choix entre ces fonctionnalités: ",
+    "manage_jobs": "Gérer les jobs",
+    "execute_backup": "Exécuter la sauvegarde",
     //_________________________
     "job_exec_title": "==== Lancement des sauvegardes ====\n\n",
     "job_available": "Jobs disponibles:",

@@ -34,6 +34,8 @@ namespace Core.ViewModel
         {
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             _navigationService = navigation;
+            CurrentLanguage = _localizer.GetCurrentLanguage();
+            AvailableLanguages = _localizer.GetAvailableLanguages();
             SettingsCommand = new RelayCommand(_ => Settings());
         }
 
@@ -49,7 +51,9 @@ namespace Core.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        /* //Si on met la combobox de selection de language dans le menu principal
+        //Si on met la combobox de selection de language dans le menu principal
+        public IReadOnlyList<string> AvailableLanguages { get; }
+
         private string _currentLanguage;
         public string CurrentLanguage
         {
@@ -63,7 +67,6 @@ namespace Core.ViewModel
                 OnPropertyChanged("Item[]"); // Pour rafraîchir les bindings indexeurs
             }
         }
-        */
         public string this[string key] => _localizer[key];
 
     }
