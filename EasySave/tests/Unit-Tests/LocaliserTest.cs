@@ -136,10 +136,10 @@ namespace Unit_Tests
             var localizer = new Localizer();
 
             // Act
-            var languages = localizer.GetAvailableLanguages();
+            List<string> languages = localizer.GetAvailableLanguages();
 
             // Assert
-            Assert.Contains("en, fr", languages);
+            Assert.Equal(["fr", "en"], languages);
         }
     }
 }
