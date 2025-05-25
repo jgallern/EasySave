@@ -87,7 +87,7 @@
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding JobsList}"
                   AutoGenerateColumns="False"
-                  CanUserAddRows="True"
+                  CanUserAddRows="False"
                   CanUserDeleteRows="True"
                   SelectionMode="Single"
                   Margin="10,0">

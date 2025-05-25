@@ -31,22 +31,6 @@ namespace Core.ViewModel
             }
         }
 
-        private bool _areAllSelected;
-        public bool AreAllSelected
-        {
-            get => _areAllSelected;
-            set
-            {
-                if (_areAllSelected != value)
-                {
-                    _areAllSelected = value;
-                    foreach (var job in JobsList)
-                        job.isSelected = value;
-                    OnPropertyChanged(nameof(AreAllSelected));
-                }
-            }
-        }
-
         public ObservableCollection<BackUpJob> JobsList { get; }
 
         private IManageBackUpServices _backUpServices;
@@ -76,6 +60,8 @@ namespace Core.ViewModel
                 // Call the execution with threading
             }
         }
+
+   
 
 
         public IEnumerable<BackUpJob> GetSelectedJobs()

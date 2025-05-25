@@ -14,12 +14,12 @@ namespace Core.Model
 
         private JobConfigManager()
         {
-            filePath = Path.Join(Directory.GetCurrentDirectory(), Path.Join("env", "jobconfig.json"));
-            //Console.WriteLine(filePath);
-            //Console.ReadKey();
-            //if (!File.Exists(filePath))
-
-                //SaveJobs(new List<BackUpJob>());
+            filePath = Path.Join(AppContext.BaseDirectory, Path.Join("env", "jobconfig.json"));
+            string? dir = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
         }
 
         public static JobConfigManager Instance
