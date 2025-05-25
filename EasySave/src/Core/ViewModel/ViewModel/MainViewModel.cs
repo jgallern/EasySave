@@ -113,9 +113,19 @@ namespace Core.ViewModel
 
         private void DeleteJob(BackUpJob selectedJob)
         {
-            selectedJob.DeleteJob();//Faut refresh la grid
+            selectedJob.DeleteJob();
+            JobsList.Remove(selectedJob);
+            //RefreshJobs();
         }
 
+        private void RefreshJobs()
+        {
+            JobsList.Clear();
+            foreach (var job in BackUpJob.GetAllJobsFromConfig())
+            {
+                JobsList.Add(job);
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
