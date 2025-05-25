@@ -22,9 +22,9 @@ namespace Core.ViewModel
             }
             return jobList;
         }
-        public void CreateJob(string name, string sourcePath, string destintionPath, bool isDifferential)
+        public void CreateJob(string name, string sourcePath, string destintionPath, bool isDifferential, bool useEncryption)
         {
-            BackUpJob job = new BackUpJob(name, sourcePath, destintionPath, isDifferential);
+            BackUpJob job = new BackUpJob(name, sourcePath, destintionPath, isDifferential, useEncryption);
             try
             {
                 job.CreateJob();
@@ -44,13 +44,17 @@ namespace Core.ViewModel
                 { "Name", job.Name  },
                 { "SourcePath", job.dirSource},
                 { "DestinationPath", job.dirTarget},
-                { "IsDifferential", job.Differential}
+                { "IsDifferential", job.Differential},
+                { "Encryption", job.Encryption},
+                { "CreationDate", job.CreationDate},
+                { "ModificationDate", job.ModificationDate},
+                { "Statement", job.Statement}
             };
         }
 
         public void UpdateJob(int Id, Dictionary<string, object> jobdata)
         {
-            BackUpJob updatedjob = new BackUpJob((string)jobdata["Name"], (string)jobdata["SourcePath"], (string)jobdata["DestinationPath"], (bool)jobdata["IsDifferential"]);
+            BackUpJob updatedjob = new BackUpJob((string)jobdata["Name"], (string)jobdata["SourcePath"], (string)jobdata["DestinationPath"], (bool)jobdata["IsDifferential"], (bool)jobdata["Encryption"]);
             updatedjob.Id = Id;
             updatedjob.AlterJob();
         }

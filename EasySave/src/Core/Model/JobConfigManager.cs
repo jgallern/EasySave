@@ -76,7 +76,7 @@ namespace Core.Model
             List<BackUpJob> jobs = LoadJobs();
             foreach (IJobs savedjob in jobs)
             {
-                if (savedjob.Name  == job.Name | (savedjob.dirSource == job.dirSource && savedjob.dirTarget == job.dirTarget && savedjob.Differential == job.Differential))
+                if (savedjob.Name  == job.Name | (savedjob.dirSource == job.dirSource && savedjob.dirTarget == job.dirTarget && savedjob.Differential == job.Differential && savedjob.Encryption == job.Encryption))
                 {
                     throw new Exception("Ce job est déja enregistré dans la config");
                 }
