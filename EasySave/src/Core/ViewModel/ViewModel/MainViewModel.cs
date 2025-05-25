@@ -38,6 +38,7 @@ namespace Core.ViewModel
         public ICommand SettingsCommand { get; }
         public ICommand CreateJobCommand { get; }
         public ICommand ModifyJobCommand { get; }
+        public ICommand DeleteJobCommand { get; }
         public ICommand ExecuteJobsCommand { get; }
 
         public MainViewModel(ILocalizer localizer, INavigationService navigation)
@@ -56,6 +57,12 @@ namespace Core.ViewModel
                 if (job is BackUpJob backupJob)
                     AlterJob(backupJob);
             });
+            DeleteJobCommand = new RelayCommand(job =>
+            {
+                if (job is BackUpJob backupJob)
+                    DeleteJob(backupJob);
+            });
+
             ExecuteJobsCommand = new RelayCommand(_ => ExecuteSelectedJobs());
         }
 
@@ -106,8 +113,7 @@ namespace Core.ViewModel
 
         private void DeleteJob(BackUpJob selectedJob)
         {
-            //_navigationService.NavigateToBackUp("delete",);
-            _navigationService.CloseMenu();
+            selectedJob.DeleteJob();//Faut refresh la grid
         }
 
 

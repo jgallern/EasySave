@@ -18,6 +18,8 @@ namespace Core.ViewModel
 
         private readonly INavigationService _navigation;
 
+        private IFileDialogService _fileDialogService;
+
         private ViewModelBase _currentViewModel;
         public ViewModelBase CurrentViewModel
         {
@@ -32,16 +34,40 @@ namespace Core.ViewModel
             }
         }
 
+
         public ICommand ModifyCommand { get; }
         public ICommand DeleteCommand { get;} 
         public ICommand ValidateCommand { get; }
         public ICommand CancelCommand { get; }
-
-        private IFileDialogService _fileDialogService;
-
-        private IJobs _job;
         public ICommand BrowseSourceCommand { get; }
         public ICommand BrowseTargetCommand { get; }
+
+
+
+        private bool _isNameInvalid;
+        public bool IsNameInvalid
+        {
+            get => _isNameInvalid;
+            set => SetProperty(ref _isNameInvalid, value);
+        }
+
+        private bool _isDirSourceInvalid;
+        public bool IsDirSourceInvalid
+        {
+            get => _isDirSourceInvalid;
+            set => SetProperty(ref _isDirSourceInvalid, value);
+        }
+
+        private bool _isDirTargetInvalid;
+        public bool IsDirTargetInvalid
+        {
+            get => _isDirTargetInvalid;
+            set => SetProperty(ref _isDirTargetInvalid, value);
+        }
+
+
+
+        private IJobs _job;
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -136,8 +162,13 @@ namespace Core.ViewModel
 
         private bool IsValid()
         {
-            return !string.IsNullOrEmpty(Name)  && !string.IsNullOrEmpty(dirSource) && !string.IsNullOrEmpty(dirTarget);
+            IsNameInvalid = string.IsNullOrEmpty(Name);
+            IsDirSourceInvalid = string.IsNullOrEmpty(dirSource);
+            IsDirTargetInvalid = string.IsNullOrEmpty(dirTarget);
+
+            return !IsNameInvalid && !IsDirSourceInvalid && !IsDirTargetInvalid;
         }
+
 
         private void Validate()
         {
