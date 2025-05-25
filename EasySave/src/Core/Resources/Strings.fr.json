@@ -16,6 +16,12 @@
     "cancel": "Annuler",
     "validate": "Valider",
 
+    //BackUp Management View
+    "create": "Créer",
+
+
+
+    //--------------------- V1 ------------------------
     // Run Job View
     "run_jobs_menu": "Exécuter des BackUp",
     "continue": "Continuer",

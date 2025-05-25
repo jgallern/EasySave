@@ -7,6 +7,34 @@
         mc:Ignorable="d"
         Title="BackUpWindow" Height="450" Width="800">
 
+    <Window.Resources>
+        <Style x:Key="ValidationTextBoxStyle" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsNameInvalid}" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SourceTextBoxStyle" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDirSourceInvalid}" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TargetTextBoxStyle" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDirTargetInvalid}" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
     <Grid>
 
@@ -23,20 +51,20 @@
         </Grid.ColumnDefinitions>
         
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="30,30,0,0" Grid.Row="0" Grid.Column="0">
-            <TextBlock Text="{Binding jobIdName}" FontSize="18"/>
+            <TextBlock Text="{Binding JobIdName}" FontSize="18"/>
         </StackPanel>
         
         <StackPanel Orientation="Vertical" HorizontalAlignment="center" Margin="0,10,0,0" Grid.Row="1" Grid.Column="0">
             <Label Content="Name" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" TextWrapping="Wrap" Text="{Binding EditedKey}" VerticalAlignment="Top" Width="120"/>
+            <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top" Width="120" Style="{StaticResource ValidationTextBoxStyle}"/>
             <Label Content="Source path" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,15,0,0" Grid.Row="1" VerticalAlignment="Top"/>
             <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding SourcePath}" Width="200" Margin="0,0,5,0"/>
+                <TextBox Text="{Binding dirSource}" Width="200" Margin="0,0,5,0" Style="{StaticResource SourceTextBoxStyle}"/>
                 <Button Content="..." Command="{Binding BrowseSourceCommand}" Width="30"/>
             </StackPanel>
             <Label Content="Target path" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,15,0,0" Grid.Row="1" VerticalAlignment="Top"/>
             <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding TargetPath}" Width="200" Margin="0,0,5,0"/>
+                <TextBox Text="{Binding dirTarget}" Width="200" Margin="0,0,5,0" Style="{StaticResource TargetTextBoxStyle}"/>
                 <Button Content="..." Command="{Binding BrowseTargetCommand}" Width="30"/>
             </StackPanel>
         </StackPanel>
@@ -44,17 +72,17 @@
         <StackPanel Orientation="Vertical" HorizontalAlignment="center" Margin="0,10,0,0" Grid.Row="1" Grid.Column="1">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Encryption" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-                <CheckBox HorizontalAlignment="Left" Margin="10,7,0,0" IsChecked="{Binding IsEncryption}" VerticalAlignment="Top" Width="120"/>
+                <CheckBox HorizontalAlignment="Left" Margin="10,7,0,0" IsChecked="{Binding Encryption}" VerticalAlignment="Top" Width="120"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
                 <Label Content="Diferencial" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-                <CheckBox HorizontalAlignment="Left" Margin="10,7,0,0" IsChecked="{Binding IsEncryption}" VerticalAlignment="Top" Width="120"/>
+                <CheckBox HorizontalAlignment="Left" Margin="10,7,0,0" IsChecked="{Binding Differential}" VerticalAlignment="Top" Width="120"/>
             </StackPanel>
         </StackPanel>
         
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="center" Margin="0,10,0,40" Grid.Row="2" Grid.ColumnSpan="2">
-            <Button Content="{Binding [cancel]}" Command="{Binding CancelCommand}" />
-            <Button Content="{Binding [validate]}" Command="{Binding validateCommand}" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="center" Margin="0,40,0,40" Grid.Row="2" Grid.ColumnSpan="2">
+            <Button Content="{Binding [cancel]}" Command="{Binding CancelCommand}" Margin="0,0,10,0" />
+            <Button Content="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Margin="10,0,0,0" />
         </StackPanel>
 
     </Grid>

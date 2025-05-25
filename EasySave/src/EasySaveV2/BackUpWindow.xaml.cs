@@ -18,15 +18,13 @@ namespace EasySaveV2
     /// </summary>
     public partial class BackUpWindow : Window
     {
-        public BackUpWindow()
+        public BackUpWindow(BackUpViewModel vm)
         {
             InitializeComponent();
-            ILocalizer localizer = new Localizer();
-            INavigationService navigation = new NavigationService();
             IFileDialogService dialog = new FileDialogService();
-            BackUpViewModel SettingsVM = new BackUpViewModel(localizer, navigation, dialog);
+            vm.InitializeDialogService(dialog);
 
-            DataContext = SettingsVM;
+            DataContext = vm;
         }
 
         private readonly IFileDialogService _fileDialogService = new FileDialogService();
@@ -38,7 +36,7 @@ namespace EasySaveV2
             {
                 if (DataContext is BackUpViewModel vm)
                 {
-                    vm.SourcePath = folderPath;
+                    vm.dirSource = folderPath;
                 }
             }
         }
@@ -50,7 +48,7 @@ namespace EasySaveV2
             {
                 if (DataContext is BackUpViewModel vm)
                 {
-                    vm.SourcePath = folderPath;
+                    vm.dirTarget = folderPath;
                 }
             }
         }

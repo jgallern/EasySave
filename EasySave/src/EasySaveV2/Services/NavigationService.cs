@@ -20,9 +20,9 @@ namespace Core.ViewModel.Services
             settingsWindow.Show();
         }
 
-        public void NavigateToBackUp()
+        public void NavigateToBackUp(BackUpViewModel vm)
         {
-            Window backupWindow = new BackUpWindow();
+            Window backupWindow = new BackUpWindow(vm);
             backupWindow.Show();
         }
 
@@ -54,7 +54,7 @@ namespace Core.ViewModel.Services
         {
             foreach (Window window in System.Windows.Application.Current.Windows)
             {
-                if (window is MainWindow)
+                if (window is BackUpWindow)
                 {
                     window.Close();
                     break;
