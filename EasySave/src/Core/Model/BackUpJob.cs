@@ -1,5 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Xml.Linq;
+
 
 namespace Core.Model
 {
@@ -7,19 +11,53 @@ namespace Core.Model
     {
         Running,
         Paused,
-		Stoped,
+		Canceled,
+		Error,
+        Done,
+        NoStatement,
     }
-    public class BackUpJob : IJobs
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
+    public class BackUpJob : IJobs, INotifyPropertyChanged
+    {
+
+        private bool _isSelected;
+
+        public bool isSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged(nameof(isSelected));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+
 		public string dirSource { get; set; }
-		public string dirTarget { get; set; }
+
+        public string dirTarget { get; set; }
+
 		public bool Differential{ get; set; }
+
         public bool Encryption { get; set; }
-        public DateTime CreationDate { get; private set; }
-        public DateTime ModificationDate { get; private set; }
+
+        public DateTime CreationDate { get; set; }
+
+        public DateTime ModificationDate { get; set; }
+
         public Statement Statement { get; set; }
+
         public string LastFileBackUp { get; set; }
 
         public string? LastError { get; private set; }
@@ -62,7 +100,7 @@ namespace Core.Model
 		{
             this.CreationDate = DateTime.Now;
             this.ModificationDate = DateTime.Now;
-            this.Statement = Statement.Stoped;
+            this.Statement = Statement.NoStatement;
             Id = JobConfigManager.Instance.GetAvailableID();
             JobConfigManager.Instance.AddJob(this);
 		}
@@ -76,6 +114,7 @@ namespace Core.Model
 		public void AlterJob()
 		{
 			this.ModificationDate = DateTime.Now;
+            this.Statement = Statement.NoStatement;
             JobConfigManager.Instance.UpdateJob(Id,this);	
 		}
 

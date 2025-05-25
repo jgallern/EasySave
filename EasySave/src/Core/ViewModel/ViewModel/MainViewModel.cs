@@ -1,12 +1,14 @@
 ﻿using Core.Model.Services;
-using Core.ViewModel.Commands;
 using Core.ViewModel;
+using Core.ViewModel.Commands;
 using Core.ViewModel.Services;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using Core.Model;
 
 namespace Core.ViewModel
 {
@@ -28,7 +30,28 @@ namespace Core.ViewModel
                 }
             }
         }
+
+        private bool _areAllSelected;
+        public bool AreAllSelected
+        {
+            get => _areAllSelected;
+            set
+            {
+                if (_areAllSelected != value)
+                {
+                    _areAllSelected = value;
+                    foreach (var job in JobsList)
+                        job.isSelected = value;
+                    OnPropertyChanged(nameof(AreAllSelected));
+                }
+            }
+        }
+
+        public ObservableCollection<BackUpJob> JobsList { get; }
+
+        private IManageBackUpServices _backUpServices;
         public ICommand SettingsCommand { get; }
+        public ICommand CreateJobCommand { get; }
 
         public MainViewModel(ILocalizer localizer, INavigationService navigation)
         {
@@ -36,14 +59,63 @@ namespace Core.ViewModel
             _navigationService = navigation;
             CurrentLanguage = _localizer.GetCurrentLanguage();
             AvailableLanguages = _localizer.GetAvailableLanguages();
+            _backUpServices = new ManageBackUpServices();
+            JobsList = new ObservableCollection<BackUpJob>(_backUpServices.GetAllJobs());
+            
+            //ExecuteSelectedJobsCommand = new RelayCommand(_ => ExecuteSelectedJobs());
             SettingsCommand = new RelayCommand(_ => Settings());
+            CreateJobCommand = new RelayCommand(_ => CreateJob());
         }
+
+        private void ExecuteSelectedJobs()
+        {
+            var selectedJobs = GetSelectedJobs();
+
+            foreach (var job in selectedJobs)
+            {
+                // Call the execution with threading
+            }
+        }
+
+
+        public IEnumerable<BackUpJob> GetSelectedJobs()
+        {
+            return JobsList.Where(job => job.isSelected);
+        }
+
 
         private void Settings()
         {
             _navigationService.NavigateToSettings();
             _navigationService.CloseMenu();
         }
+        private void CreateJob()
+        {
+            _navigationService.NavigateToBackUp();
+            _navigationService.CloseMenu();
+        }
+        /*
+        private void AlterJob(id)
+        {
+            ViewModel viewModel = new BackUpViewModel(...);
+            viewModel.IsEditMode = true;
+
+            // Préremplir les champs :
+            viewModel.Id = selectedJob.Id;
+            viewModel.Name = selectedJob.Name;
+            viewModel.SourcePath = selectedJob.Source;
+            viewModel.TargetPath = selectedJob.Target;
+            viewModel.IsEncryption = selectedJob.Encryption;
+            viewModel.IsDifferential = selectedJob.Differential;
+            _navigationService.CloseMenu();
+        }
+        private void DeleteJob(id)
+        {
+            _navigationService.NavigateToBackUp("delete", id);
+            _navigationService.CloseMenu();
+        }
+        */
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

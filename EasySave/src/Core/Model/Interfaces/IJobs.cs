@@ -11,6 +11,8 @@ namespace Core.Model
         bool Encryption { get; set; }
         DateTime CreationDate { get; }
         DateTime ModificationDate { get; }
+        string LastFileBackUp { get; set; }
+        string? LastError { get; }
 
         void Run();
         void CreateJob();

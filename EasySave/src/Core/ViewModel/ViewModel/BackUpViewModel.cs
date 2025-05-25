@@ -12,6 +12,8 @@ namespace Core.ViewModel
 {
     public class BackUpViewModel : ViewModelBase, INotifyPropertyChanged
     {
+        private readonly ILocalizer _localizer;
+
         private ViewModelBase _currentViewModel;
         public ViewModelBase CurrentViewModel
         {
@@ -34,6 +36,7 @@ namespace Core.ViewModel
         private readonly IFileDialogService _fileDialogService;
 
         public ICommand BrowseSourceCommand { get; }
+        public ICommand BrowseTargetCommand { get; }
 
         private string _sourcePath;
         public string SourcePath
@@ -41,11 +44,22 @@ namespace Core.ViewModel
             get => _sourcePath;
             set => SetProperty(ref _sourcePath, value);
         }
-        public BackUpViewModel(INavigationService navigation, IFileDialogService fileDialogService)
+        private string _targetPath;
+        public string TargetPath
+        {
+            get => _targetPath;
+            set => SetProperty(ref _targetPath, value);
+        }
+        public bool IsEncryption { get; set; }
+        public bool IsDifferential { get; set; }
+
+        public BackUpViewModel(ILocalizer localizer, INavigationService navigation, IFileDialogService fileDialogService)
         {
             _fileDialogService = fileDialogService;
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
 
             BrowseSourceCommand = new RelayCommand(BrowseSource);
+            BrowseTargetCommand = new RelayCommand(BrowseTarget);
         }
 
 
@@ -57,6 +71,14 @@ namespace Core.ViewModel
                 SourcePath = path;
             }
         }
-
+        private void BrowseTarget(object obj)
+        {
+            var path = _fileDialogService.SelectFolder();
+            if (!string.IsNullOrEmpty(path))
+            {
+                TargetPath = path;
+            }
+        }
+        public string this[string key] => _localizer[key];
     }
 }

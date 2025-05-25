@@ -1,46 +1,27 @@
-﻿using Core.ViewModel.Services;
-using Microsoft.Win32;
+﻿//using Core.ViewModel.Services;
+using Ookii.Dialogs.Wpf;
 using System;
 using System.IO;
 using System.Windows;
 
-public class FileDialogService : IFileDialogService
+namespace Core.ViewModel.Services
 {
-    public string OpenFile(string filter = "All files (*.*)|*.*")
+    public class FileDialogService : IFileDialogService
     {
-        var dialog = new OpenFileDialog
+
+        public string SelectFolder()
         {
-            Filter = filter,
-            Multiselect = false
-        };
+            var dialog = new VistaFolderBrowserDialog
+            {
+                Description = "Sélectionnez un dossier",
+                UseDescriptionForTitle = true,
+                ShowNewFolderButton = true
+            };
 
-        return dialog.ShowDialog() == true ? dialog.FileName : null;
-    }
+            bool? result = dialog.ShowDialog();
 
-    public string SaveFile(string filter = "All files (*.*)|*.*")
-    {
-        var dialog = new SaveFileDialog
-        {
-            Filter = filter
-        };
-
-        return dialog.ShowDialog() == true ? dialog.FileName : null;
-    }
-
-    // Astuce : utiliser OpenFileDialog pour sélectionner un dossier
-    public string SelectFolder()
-    {
-        var dialog = new OpenFileDialog
-        {
-            CheckFileExists = false,
-            FileName = "Select this folder"
-        };
-
-        if (dialog.ShowDialog() == true)
-        {
-            return Path.GetDirectoryName(dialog.FileName);
+            return result == true ? dialog.SelectedPath : null;
         }
 
-        return null;
     }
 }

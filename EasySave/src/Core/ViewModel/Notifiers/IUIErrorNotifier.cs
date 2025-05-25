@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.ViewModel.Services
+namespace Core.ViewModel.Notifiers
 {
-    public interface IFileDialogService
+    public interface IUIErrorNotifier
     {
-        string SelectFolder();
+        void ShowError(string message);
     }
-
 }

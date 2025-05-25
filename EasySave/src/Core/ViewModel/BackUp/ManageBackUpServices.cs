@@ -11,17 +11,18 @@ namespace Core.ViewModel
         public ManageBackUpServices()
         {
         }
-        public List<KeyValuePair<int, string>> GetAllJobs()
+        public List<BackUpJob> GetAllJobs()
         {
             List<BackUpJob> jobs = BackUpJob.GetAllJobsFromConfig();
-            List<KeyValuePair<int, string>> jobList = new List<KeyValuePair<int, string>>();
-
-            foreach (BackUpJob job in jobs)
-            {
-                jobList.Add(new KeyValuePair<int, string>(job.Id, job.Name));
-            }
-            return jobList;
+            
+            return jobs;
         }
+
+        public void UpdateJobState(int id, string newState)
+        {
+            // Change statement
+        }
+
         public void CreateJob(string name, string sourcePath, string destintionPath, bool isDifferential, bool useEncryption)
         {
             BackUpJob job = new BackUpJob(name, sourcePath, destintionPath, isDifferential, useEncryption);
@@ -31,25 +32,32 @@ namespace Core.ViewModel
             }
             catch (Exception ex)
             {
-                new Exception("Erreur lors de la creation du Job");
+                throw new Exception("Erreur lors de la création du Job", ex);
             }
         }
 
         public Dictionary<string, object> GetJobById(int id)
         {
-            BackUpJob job = BackUpJob.GetJobByID(id);
-            return new Dictionary<string, object>
+            try
             {
-                {"Id", job.Id},
-                { "Name", job.Name  },
-                { "SourcePath", job.dirSource},
-                { "DestinationPath", job.dirTarget},
-                { "IsDifferential", job.Differential},
-                { "Encryption", job.Encryption},
-                { "CreationDate", job.CreationDate},
-                { "ModificationDate", job.ModificationDate},
-                { "Statement", job.Statement}
-            };
+                BackUpJob job = BackUpJob.GetJobByID(id);
+                return new Dictionary<string, object>
+                {
+                    {"Id", job.Id},
+                    { "Name", job.Name  },
+                    { "SourcePath", job.dirSource},
+                    { "DestinationPath", job.dirTarget},
+                    { "IsDifferential", job.Differential},
+                    { "Encryption", job.Encryption},
+                    { "CreationDate", job.CreationDate},
+                    { "ModificationDate", job.ModificationDate},
+                    { "Statement", job.Statement}
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new KeyNotFoundException($"Le job avec l'ID {id} est introuvable.");
+            }
         }
 
         public void UpdateJob(int Id, Dictionary<string, object> jobdata)

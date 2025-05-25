@@ -14,11 +14,12 @@ namespace Core.Model
 
         private JobConfigManager()
         {
-            filePath = Path.Combine(Directory.GetCurrentDirectory(), "env\\jobconfig.json");
+            filePath = Path.Join(Directory.GetCurrentDirectory(), Path.Join("env", "jobconfig.json"));
             //Console.WriteLine(filePath);
             //Console.ReadKey();
-            if (!File.Exists(filePath))
-                SaveJobs(new List<BackUpJob>());
+            //if (!File.Exists(filePath))
+
+                //SaveJobs(new List<BackUpJob>());
         }
 
         public static JobConfigManager Instance
@@ -26,17 +27,14 @@ namespace Core.Model
             get
             {
                 if (_instance == null)
-                    throw new InvalidOperationException("JobConfigManager n'a pas encore été initialisé.");
+                {
+                    lock (_lock)
+                    {
+                        if (_instance == null)
+                            _instance = new JobConfigManager();
+                    }
+                }
                 return _instance;
-            }
-        }
-
-        public static void Initialize()
-        {
-            lock (_lock)
-            {
-                if (_instance == null)
-                    _instance = new JobConfigManager();
             }
         }
 
@@ -51,8 +49,8 @@ namespace Core.Model
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors du chargement des jobs : {ex.Message}");
-                return new List<BackUpJob>();
+                throw new FileLoadException($"Erreur lors du chargement des jobs : {ex.Message}");
+                //return new List<BackUpJob>();
             }
         }
 

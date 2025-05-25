@@ -37,23 +37,24 @@
             <Label Content="Target path" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,15,0,0" Grid.Row="1" VerticalAlignment="Top"/>
             <StackPanel Orientation="Horizontal">
                 <TextBox Text="{Binding TargetPath}" Width="200" Margin="0,0,5,0"/>
-                <Button Content="..." Command="{Binding BrowseSourceCommand}" Width="30"/>
+                <Button Content="..." Command="{Binding BrowseTargetCommand}" Width="30"/>
             </StackPanel>
         </StackPanel>
 
         <StackPanel Orientation="Vertical" HorizontalAlignment="center" Margin="0,10,0,0" Grid.Row="1" Grid.Column="1">
-            <Label Content="Encryption" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <!--  voudrais une checkbox -->
-            <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" TextWrapping="Wrap" Text="{Binding EditedKey}" VerticalAlignment="Top" Width="120"/>
-            <Label Content="Diferencial" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,15,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <!--  voudrais une checkbox -->
-            <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" TextWrapping="Wrap" Text="{Binding EditedKey}" VerticalAlignment="Top" Width="120"/>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Encryption" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                <CheckBox HorizontalAlignment="Left" Margin="10,7,0,0" IsChecked="{Binding IsEncryption}" VerticalAlignment="Top" Width="120"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                <Label Content="Diferencial" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                <CheckBox HorizontalAlignment="Left" Margin="10,7,0,0" IsChecked="{Binding IsEncryption}" VerticalAlignment="Top" Width="120"/>
+            </StackPanel>
         </StackPanel>
-
+        
         <StackPanel Orientation="Horizontal" HorizontalAlignment="center" Margin="0,10,0,40" Grid.Row="2" Grid.ColumnSpan="2">
             <Button Content="{Binding [cancel]}" Command="{Binding CancelCommand}" />
             <Button Content="{Binding [validate]}" Command="{Binding validateCommand}" />
-            <Button Content="{Binding [delete]}" Command="{Binding deleteCommand}" />
         </StackPanel>
 
     </Grid>
