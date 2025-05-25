@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Core.Model.Managers
 {
@@ -17,7 +18,7 @@ namespace Core.Model.Managers
 
         public ResourceManager()
         {
-            _resourcesPath = Path.Join(Directory.GetCurrentDirectory(), "Resources");
+            _resourcesPath = Path.Join(AppContext.BaseDirectory, "Resources");
         }
 
         public static ResourceManager Instance

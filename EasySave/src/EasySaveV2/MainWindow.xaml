@@ -87,37 +87,69 @@
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding JobsList}"
                   AutoGenerateColumns="False"
-                  CanUserAddRows="True"
+                  CanUserAddRows="False"
                   CanUserDeleteRows="True"
-                  IsReadOnly="True"
                   SelectionMode="Single"
                   Margin="10,0">
 
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Header="Select"
-                                        Binding="{Binding isSelected}"
-                                        Width="30"
-                />
+                <DataGridTemplateColumn Header="Select">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Focusable="False"
+                              ClickMode="Press" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn  Header="Id"
+                        Binding="{Binding Id}"
+                        Width="30"
+                        IsReadOnly="True"
+/>
                 <DataGridTextColumn Header="Name"
                                     Binding="{Binding Name}"
                                     Width="*"
+                                    IsReadOnly="True"
                 />
-                <DataGridTextColumn Header="Type"
-                                    Binding="{Binding Type}"
+                <DataGridCheckBoxColumn Header="Differential"
+                                    Binding="{Binding Differential}"
                                     Width="*"
+                                    IsReadOnly="True"
+                />
+                <DataGridCheckBoxColumn Header="Encryption"
+                                        Binding="{Binding Encryption}"
+                                        Width="*"
+                                        IsReadOnly="True"
                 />
                 <DataGridTextColumn Header="Source"
-                                    Binding="{Binding Source}"
+                                    Binding="{Binding dirSource}"
                                     Width="*"
+                                    IsReadOnly="True"
                 />
                 <DataGridTextColumn Header="Target"
-                                    Binding="{Binding Target}"
+                                    Binding="{Binding dirTarget}"
                                     Width="*"
+                                    IsReadOnly="True"
                 />
+                <DataGridTextColumn Header="Creation date"
+                                    Binding="{Binding CreationDate, StringFormat='{}{0:dd/MM/yyyy, HH\\hmm}'}"
+                                    Width="*"
+                                    IsReadOnly="True"
+                />
+                <DataGridTextColumn Header="Modification date"
+                                    Binding="{Binding ModificationDate, StringFormat='{}{0:dd/MM/yyyy, HH\\hmm}'}"
+                                    Width="*"
+                                    IsReadOnly="True"
+                />
+                <!--
                 <DataGridTextColumn Header="Last execution"
                                     Binding="{Binding LastExecution, StringFormat='{}{0:dd/MM/yyyy, HH\\hmm}'}"
                                     Width="*"
-                />
+                />-->
 
             </DataGrid.Columns>
 
@@ -211,8 +243,21 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
+
+            <Button Name="create_button"
+                    Content="Create Job" 
+                    Command="{Binding CreateJobCommand}"
+                    Width="100" 
+                    Height="30" 
+                    Grid.Row="0" 
+                    Grid.Column="0" 
+                    Margin="10"
+            />  
+            
+
             <Button Name="start_button"
                     Content="START" 
+                    Command="{Binding ExecuteSelectedJobsCommand}"
                     Width="100" 
                     Height="30" 
                     Grid.Row="0" 

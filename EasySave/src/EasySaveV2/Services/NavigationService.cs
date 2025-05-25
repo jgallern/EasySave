@@ -12,22 +12,18 @@ namespace Core.ViewModel.Services
         {
             Window menuWindow = new MainWindow();
             menuWindow.Show();
-
-            // Fermer la fenêtre active si besoin
-            foreach (Window window in System.Windows.Application.Current.Windows)
-            {
-                if (window is SettingsWindow)
-                {
-                    window.Close();
-                    break;
-                }
-            }
         }
 
         public void NavigateToSettings()
         {
-            var settingsWindow = new SettingsWindow();
+            Window settingsWindow = new SettingsWindow();
             settingsWindow.Show();
+        }
+
+        public void NavigateToBackUp()
+        {
+            Window backupWindow = new BackUpWindow();
+            backupWindow.Show();
         }
 
         public void CloseSettings()
@@ -43,6 +39,18 @@ namespace Core.ViewModel.Services
         }
 
         public void CloseMenu()
+        {
+            foreach (Window window in System.Windows.Application.Current.Windows)
+            {
+                if (window is MainWindow)
+                {
+                    window.Close();
+                    break;
+                }
+            }
+        }
+
+        public void CloseBackUp()
         {
             foreach (Window window in System.Windows.Application.Current.Windows)
             {

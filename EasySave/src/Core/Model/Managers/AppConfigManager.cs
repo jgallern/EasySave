@@ -18,7 +18,7 @@ namespace Core.Model.Managers
 
         private AppConfigManager()
         {
-            _appConfigPath = Path.Join(Directory.GetCurrentDirectory(), Path.Join("env","appconfig.json"));
+            _appConfigPath = Path.Join(AppContext.BaseDirectory, Path.Join("env","appconfig.json"));
             LoadAppConfig();
         }
 
