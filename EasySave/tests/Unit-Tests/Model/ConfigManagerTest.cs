@@ -12,11 +12,9 @@ namespace Unit_Tests
         [Fact]
         public void Main()
         {
-
-            JobConfigManager.Initialize();
-            BackUpJob bcktest = new BackUpJob("test", "c:/users/jg/test1", "c:/users/jg/test", false);    
+            BackUpJob bcktest = new BackUpJob("test", "c:/users/jg/test1", "c:/users/jg/test", false, false);    
             bcktest.CreateJob();    
-            BackUpJob bcktest1 = new BackUpJob("test1", "c:/users/jg/test1", "c:/users/jg/test1", false);    
+            BackUpJob bcktest1 = new BackUpJob("test1", "c:/users/jg/test1", "c:/users/jg/test1", false, false);    
             bcktest1.CreateJob();    
             bcktest.DeleteJob();
         }
