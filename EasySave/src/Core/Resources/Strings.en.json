@@ -16,6 +16,12 @@
     "cancel": "Cancel",
     "validate": "Validate",
 
+    //BackUp Management View
+    "create": "Create",
+
+
+
+    //--------------------- V1 ------------------------
     // Run Job View
     "select_language": "Language: (Use Tab to change language)",
     "welcome_message": "Welcome! You can execute these diferent functionalities: ",

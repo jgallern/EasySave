@@ -7,12 +7,16 @@ using Core.ViewModel;
 using Core.Model.Services;
 using Core.ViewModel.Services;
 using Core.ViewModel.Commands;
+using Microsoft.Extensions.Options;
+using Core.Model;
 
 namespace Core.ViewModel
 {
     public class BackUpViewModel : ViewModelBase, INotifyPropertyChanged
     {
         private readonly ILocalizer _localizer;
+
+        private readonly INavigationService _navigation;
 
         private ViewModelBase _currentViewModel;
         public ViewModelBase CurrentViewModel
@@ -33,42 +37,153 @@ namespace Core.ViewModel
         public ICommand ValidateCommand { get; }
         public ICommand CancelCommand { get; }
 
-        private readonly IFileDialogService _fileDialogService;
+        private IFileDialogService _fileDialogService;
 
+        private IJobs _job;
         public ICommand BrowseSourceCommand { get; }
         public ICommand BrowseTargetCommand { get; }
 
+        private bool _isEditMode;
+        public bool IsEditMode
+        {
+            get => _isEditMode;
+            set
+            {
+                _isEditMode = value;
+                ValidateLabel = this[_isEditMode ? "modify" : "create"];
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(Validate)); // Pour rafraîchir si lié en XAML
+            }
+        }
+
+        public string ValidateLabel { get; set; }
+
+        public string JobIdName
+        { get; set; }
+
+        private int _id;
+        public int Id
+        {
+            get => _id;
+            set => SetProperty(ref _id, value);
+        }
+
+        private string _name;
+        public string Name
+        {
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
+
         private string _sourcePath;
-        public string SourcePath
+        public string dirSource
         {
             get => _sourcePath;
             set => SetProperty(ref _sourcePath, value);
         }
         private string _targetPath;
-        public string TargetPath
+        public string dirTarget
         {
             get => _targetPath;
             set => SetProperty(ref _targetPath, value);
         }
-        public bool IsEncryption { get; set; }
-        public bool IsDifferential { get; set; }
-
-        public BackUpViewModel(ILocalizer localizer, INavigationService navigation, IFileDialogService fileDialogService)
+        private bool _isEncryption;
+        public bool Encryption
         {
-            _fileDialogService = fileDialogService;
-            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
-
-            BrowseSourceCommand = new RelayCommand(BrowseSource);
-            BrowseTargetCommand = new RelayCommand(BrowseTarget);
+            get => _isEncryption;
+            set => SetProperty(ref _isEncryption, value);
         }
 
+        private bool _isDifferential;
+        public bool Differential
+        {
+            get => _isDifferential;
+            set => SetProperty(ref _isDifferential, value);
+        }
+
+        public BackUpViewModel(ILocalizer localizer, INavigationService navigation)
+        {
+            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+            _navigation = navigation ?? throw new ArgumentNullException(nameof(localizer));
+            BrowseSourceCommand = new RelayCommand(BrowseSource);
+            BrowseTargetCommand = new RelayCommand(BrowseTarget);
+            ValidateCommand = new RelayCommand(_ => Validate());
+            CancelCommand = new RelayCommand(_ => Cancel());
+        }
+        public void InitializeDialogService(IFileDialogService fileDialogService)
+        {
+            _fileDialogService = fileDialogService;
+        }
+
+        public void LoadFromExistingJob(BackUpJob job)
+        {
+            _job = job;
+            Id = job.Id;
+            Name = job.Name;
+            dirSource = job.dirSource;
+            dirTarget = job.dirTarget;
+            Encryption = job.Encryption;
+            Differential = job.Differential;
+            JobIdName = $"{job.Id}. {job.Name}";
+        }
+
+
+        private void Cancel()
+        {
+            _navigation.NavigateToMenu();
+            _navigation.CloseBackUp();
+        }
+
+        private bool IsValid()
+        {
+            return !string.IsNullOrEmpty(Name)  && !string.IsNullOrEmpty(dirSource) && !string.IsNullOrEmpty(dirTarget);
+        }
+
+        private void Validate()
+        {
+            if (IsValid())
+            {
+                if (IsEditMode)
+                    AlterJob();
+                else
+                    CreateJob();
+            }
+        }
+
+        private void AlterJob()
+        {
+            if (IsValid())
+            {
+                if (_job == null) return;
+
+                _job.Name = Name;
+                _job.dirSource = dirSource;
+                _job.dirTarget = dirTarget;
+                _job.Encryption = Encryption;
+                _job.Differential = Differential;
+
+                _job.AlterJob();
+                Cancel();
+            }
+        }
+
+
+        private void CreateJob()
+        {
+            if (IsValid())
+            {
+                _job = new BackUpJob(Name, dirSource, dirTarget, Differential, Encryption);
+                _job.CreateJob();
+                Cancel();
+            }
+        }
 
         private void BrowseSource(object obj)
         {
             var path = _fileDialogService.SelectFolder();
             if (!string.IsNullOrEmpty(path))
             {
-                SourcePath = path;
+                dirSource = path;
             }
         }
         private void BrowseTarget(object obj)
@@ -76,7 +191,7 @@ namespace Core.ViewModel
             var path = _fileDialogService.SelectFolder();
             if (!string.IsNullOrEmpty(path))
             {
-                TargetPath = path;
+                dirTarget = path;
             }
         }
         public string this[string key] => _localizer[key];

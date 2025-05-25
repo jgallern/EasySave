@@ -14,9 +14,14 @@ namespace Unit_Tests
         public void Main()
         {
 
-            string basePath = Path.Combine(Path.GetTempPath(), "easysave-test");
-            string sourcePath1 = Path.Combine(basePath, "testsource1");
-            string destPath1 = Path.Combine(basePath, "testdest1");
+            string basePath = AppContext.BaseDirectory;
+            string _tempEnvPath = Path.Combine(basePath, "env");
+            // Crée un appconfig.json de test
+            string _appConfigPath = Path.Combine(_tempEnvPath, "appconfig.json");
+
+            string basePathJob = Path.Combine(Path.GetTempPath(), "easysave-test");
+            string sourcePath1 = Path.Combine(basePathJob, "testsource1");
+            string destPath1 = Path.Combine(basePathJob, "testdest1");
 
             Directory.CreateDirectory(sourcePath1);
             Directory.CreateDirectory(destPath1);
@@ -24,8 +29,8 @@ namespace Unit_Tests
             BackUpJob bcktest = new BackUpJob("test1", sourcePath1, destPath1, false, false);    
             bcktest.CreateJob();
 
-            string sourcePath2 = Path.Combine(basePath, "testsource2");
-            string destPath2 = Path.Combine(basePath, "testdest2");
+            string sourcePath2 = Path.Combine(basePathJob, "testsource2");
+            string destPath2 = Path.Combine(basePathJob, "testdest2");
 
             Directory.CreateDirectory(sourcePath2);
             Directory.CreateDirectory(destPath2);

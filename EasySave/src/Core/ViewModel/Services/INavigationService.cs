@@ -6,7 +6,7 @@ namespace Core.ViewModel.Services
     {
         void NavigateToMenu();
         void NavigateToSettings();
-        void NavigateToBackUp();
+        void NavigateToBackUp(BackUpViewModel vm);
         void CloseMenu();
         void CloseSettings();
         void CloseBackUp();

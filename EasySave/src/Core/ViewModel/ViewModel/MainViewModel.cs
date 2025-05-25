@@ -31,11 +31,14 @@ namespace Core.ViewModel
             }
         }
 
+
         public ObservableCollection<BackUpJob> JobsList { get; }
 
         private IManageBackUpServices _backUpServices;
         public ICommand SettingsCommand { get; }
         public ICommand CreateJobCommand { get; }
+        public ICommand ModifyJobCommand { get; }
+        public ICommand ExecuteJobsCommand { get; }
 
         public MainViewModel(ILocalizer localizer, INavigationService navigation)
         {
@@ -43,12 +46,17 @@ namespace Core.ViewModel
             _navigationService = navigation;
             CurrentLanguage = _localizer.GetCurrentLanguage();
             AvailableLanguages = _localizer.GetAvailableLanguages();
-            _backUpServices = new ManageBackUpServices();
-            JobsList = new ObservableCollection<BackUpJob>(_backUpServices.GetAllJobs());
+            JobsList = new ObservableCollection<BackUpJob>(BackUpJob.GetAllJobsFromConfig());
             
             //ExecuteSelectedJobsCommand = new RelayCommand(_ => ExecuteSelectedJobs());
             SettingsCommand = new RelayCommand(_ => Settings());
             CreateJobCommand = new RelayCommand(_ => CreateJob());
+            ModifyJobCommand = new RelayCommand(job =>
+            {
+                if (job is BackUpJob backupJob)
+                    AlterJob(backupJob);
+            });
+            ExecuteJobsCommand = new RelayCommand(_ => ExecuteSelectedJobs());
         }
 
         private void ExecuteSelectedJobs()
@@ -57,11 +65,9 @@ namespace Core.ViewModel
 
             foreach (var job in selectedJobs)
             {
-                // Call the execution with threading
+                job.Run();
             }
         }
-
-   
 
 
         public IEnumerable<BackUpJob> GetSelectedJobs()
@@ -77,30 +83,32 @@ namespace Core.ViewModel
         }
         private void CreateJob()
         {
-            _navigationService.NavigateToBackUp();
-            _navigationService.CloseMenu();
-        }
-        /*
-        private void AlterJob(id)
-        {
-            ViewModel viewModel = new BackUpViewModel(...);
-            viewModel.IsEditMode = true;
+            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService)
+            {
+                IsEditMode = false,
+            };
 
-            // Préremplir les champs :
-            viewModel.Id = selectedJob.Id;
-            viewModel.Name = selectedJob.Name;
-            viewModel.SourcePath = selectedJob.Source;
-            viewModel.TargetPath = selectedJob.Target;
-            viewModel.IsEncryption = selectedJob.Encryption;
-            viewModel.IsDifferential = selectedJob.Differential;
+            _navigationService.NavigateToBackUp(viewModel);
             _navigationService.CloseMenu();
         }
-        private void DeleteJob(id)
+
+        private void AlterJob(BackUpJob selectedJob)
         {
-            _navigationService.NavigateToBackUp("delete", id);
+            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService)
+            {
+                IsEditMode = true
+            };
+            viewModel.LoadFromExistingJob(selectedJob);
+
+            _navigationService.NavigateToBackUp(viewModel);
             _navigationService.CloseMenu();
         }
-        */
+
+        private void DeleteJob(BackUpJob selectedJob)
+        {
+            //_navigationService.NavigateToBackUp("delete",);
+            _navigationService.CloseMenu();
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
