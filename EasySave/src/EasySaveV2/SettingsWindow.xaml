@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EasySaveV2"
         mc:Ignorable="d"
-        Title="Settings" Height="470" Width="470" Background="#EAEAEA">
+        Title="Settings" Height="470" Width="550" Background="#EAEAEA">
 
     
     
@@ -39,8 +39,8 @@
         
         />
 
-        <TextBlock Text="Encryption key"
-                   FontSize="16"
+        <TextBlock Text="{Binding [encryption_key]}"
+                   FontSize="18"
                    FontWeight="SemiBold"
                    Grid.Row="0"
                    Grid.Column="0"
@@ -49,7 +49,7 @@
         <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,5" Padding="0" Grid.Row="1">
             <TextBox Text="{Binding EditedKey}"
                      BorderBrush="White"
-                     FontSize="14"
+                     FontSize="16"
                      Margin="7,0,7,0"
                      Grid.Row="1"
                      Grid.Column="0"
@@ -59,16 +59,16 @@
         </Border>
 
         <!--TextBlock="{Binding [software_packages], UpdateSourceTrigger=PropertyChanged}"-->
-        <TextBlock Text="Software packages"
-                   FontSize="16"
+        <TextBlock Text="{Binding [software_packages], UpdateSourceTrigger=PropertyChanged}"
+                   FontSize="18"
                    FontWeight="SemiBold"
                    Grid.Row="2"
                    Grid.Column="0"
                    Margin="25,10,20,0"
         />
         <!-- Text="{Binding [software_packages_detail], UpdateSourceTrigger=PropertyChanged}"-->
-        <TextBlock Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                   FontSize="10"
+        <TextBlock Text="{Binding [software_packages_detail], UpdateSourceTrigger=PropertyChanged}"
+                   FontSize="14"
                    TextWrapping="Wrap"
                    Grid.Row="3"
                    Margin="20,2,20,2"
@@ -76,7 +76,7 @@
         <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,5" Padding="0" Grid.Row="4">
             <TextBox Text="{Binding EditedExtensions, UpdateSourceTrigger=PropertyChanged}"
                      BorderBrush="White"
-                     FontSize="14"
+                     FontSize="16"
                      Margin="7,0,7,0"
                      Grid.Row="4"
                      Grid.Column="0"
@@ -88,16 +88,16 @@
 
 
         <!--Text="{Binding [encryption_extensions], UpdateSourceTrigger=PropertyChanged}"-->
-        <TextBlock Text="Encryption extensions"
-                   FontSize="16"
+        <TextBlock Text="{Binding [encryption_extensions], UpdateSourceTrigger=PropertyChanged}"
+                   FontSize="18"
                    FontWeight="SemiBold"
                    Grid.Row="5"
                    Grid.Column="0"
                    Margin="25,10,20,0"
         />
         <!-- {Binding [encryption_extensions_detail], UpdateSourceTrigger=PropertyChanged}-->
-        <TextBlock Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                   FontSize="10"
+        <TextBlock Text="{Binding [encryption_extensions_detail], UpdateSourceTrigger=PropertyChanged}"
+                   FontSize="14"
                    TextWrapping="Wrap"
                    Grid.Row="6"
                    Margin="20,2,20,2"
@@ -105,7 +105,7 @@
         <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,5" Padding="0" Grid.Row="7">
             <TextBox Text="{Binding EditedSoftwarePackages, UpdateSourceTrigger=PropertyChanged}"
                      BorderBrush="White"
-                     FontSize="14"
+                     FontSize="16"
                      Margin="7,0,7,0"
                      Grid.Row="7"
                      Grid.Column="0"
@@ -114,59 +114,63 @@
 
         </Border>
 
-        <Button Content="Edit" 
+        <Button Content="{Binding [modify]}" 
                 Command="{Binding EditCommand}"
                 Foreground="#707070"
                 FontWeight="DemiBold"
-                Width="110"
-                Height="25"
+                FontSize="16"
+                Width="140"
+                Height="30"
                 Background="White"
                 BorderBrush="#707070"
                 BorderThickness="1.5"
                 Grid.Row="8"
-                Margin="0,10,130,10"
+                Margin="0,10,160,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Visibility="{Binding IsEditing, Converter={StaticResource InvBoolToVis}}"
         />
 
-        <Button Content="Discard" 
+        <Button Content="{Binding [cancel]}" 
                 Command="{Binding CancelCommand}"
                 Foreground="#E55252"
                 FontWeight="DemiBold"
-                Width="110"
-                Height="25"
+                FontSize="16"
+                Width="140"
+                Height="30"
                 Background="White"
                 BorderBrush="#E55252"
                 BorderThickness="1.5"
                 Grid.Row="8"
-                Margin="0,10,250,10"
+                Margin="0,10,310,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"        />
 
-        <Button Content="Confirm" 
+        <Button Content="{Binding [validate]}" 
                 Command="{Binding ChangeSettingsCommand}"
                 Foreground="#0D99FF"
                 FontWeight="DemiBold"
-                Width="110"
-                Height="25"
+                FontSize="16"
+                Width="140"
+                Height="30"
                 Background="White"
                 BorderBrush="#0D99FF"
                 BorderThickness="1.5"
                 Grid.Row="8"
-                Margin="0,10,130,10"
+                Margin="0,10,160,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"        
         />
 
-        <Button Content="Save &amp; Exit"
+        <Button Content="{Binding [exit]}"
                 Command="{Binding ExitCommand}"
                 Foreground="White"
                 FontWeight="DemiBold"
-                Width="110"
-                Height="25"
+                FontSize="16"
+                Width="140"
+                Height="30"
                 Background="#0D99FF"
                 BorderBrush="#64BDFF"
                 BorderThickness="1.5"

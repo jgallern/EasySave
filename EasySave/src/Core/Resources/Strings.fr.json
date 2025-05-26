@@ -1,69 +1,69 @@
 {
-    //Main View
-    "easysave": "Bienvenue sur EasySave!",
-    "settings": "Réglages",
-    "show_logs": "Afficher les Logs",
-    "select_all": "Tout sélectioner",
-    "reset": "Réinitialiser",
-    "create_job": "Créer un Job",
-    "start": "Démarrer",
+  //Main View
+  "easysave": "Bienvenue sur EasySave!",
+  "settings": "Paramètres",
+  "show_logs": "Logs",
+  "select_all": "Tout sélectioner",
+  "reset": "Réinitialiser",
+  "create_job": "Créer un Job",
+  "start": "Démarrer",
 
-    //Grid header
-    "name": "Nom",
-    "differential": "Différenciel",
-    "encryption": "encryptage",
-    "source": "Source",
-    "target": "Destination",
-    "creation_date": "Création",
-    "modification_date": "Dernière modification",
-    "statement": "Etat",
-
-
-    //Settings View
-    "encryption_extensions": "Extensions à Encrypter",
-    "encryption_extensions_detail": "Il y a les extensions de fichiers qui utilisent CryptoSoft pour être chiffrées dans la destination de la sauvegarde, ces extensions sont chiffrées dans toutes les sauvegardes dans lesquelles vous avez le chiffrement activé",
-    "software_packages": "Logiciels bloquants",
-    "software_packages_detail": "Il y a les paquets qui bloquent l’exécution de la sauvegarde, si vous avez un ouvert, s’il vous plaît fermez-le pour le lancement des sauvegardes",
-    "encryption_key": "Clé d'encryptage",
-    "exit": "Quitter",
-    "modify": "Modifier",
-    "cancel": "Annuler",
-    "validate": "Valider",
-
-    //BackUp Management View
-    "create": "Créer",
-    "successfully_created": "Job créé avec succes",
-    "successfully_modify": "Job modifié avec succes",
+  //Grid header
+  "name": "Nom",
+  "differential": "Différentiel",
+  "encryption": "Encryptage",
+  "source": "Source",
+  "target": "Destination",
+  "creation_date": "Création",
+  "modification_date": "Dernière modif.",
+  "statement": "Etat",
 
 
-    //--------------------- V1 ------------------------
-    // Run Job View
-    "run_jobs_menu": "Exécuter des BackUp",
-    "continue": "Continuer",
-    "select_language": "Langue: (Utilisez Tab pour changer la langue)",
-    "welcome_message": "Bienvenue! Vous avez le choix entre ces fonctionnalités: ",
-    "manage_jobs": "Gérer les jobs",
-    "execute_backup": "Exécuter la sauvegarde",
-    //_________________________
-    "job_exec_title": "==== Lancement des sauvegardes ====\n\n",
-    "job_available": "Jobs disponibles:",
-    "enter_jobs": "Entrez les jobs à exécuter (ou Échap pour revenir au menu)\ne.g:\n     '1-4': executer les jobs de 1 à 4\n      '1,2,5': exécuter une liste de job\n      '2': exécuter un job '2'\n      '*': exécuter tous les jobs\n  >",
-    "run_succeed": "BackUp réalisé avec succès",
-    "execution_error": "Un problème à été rencontré durant l'exécution du backup",
-    "log_repo": "Vous pouvez retrouvez les fichiers de log dans le dossier suivant: ",
-    "no_input": "❌ Veuillez entrez quelque chose.",
-    "invalid_run_input": "❌ Entrée invalide. Sont seulements authorisés: les nombres entiers, ',', '-', et '*'.",
-    "invalid_job_num": "❌ Numéro de job invalid:",
-    "invalid_input": "❌ Entrée invalide:",
-    "invalid_range": "❌ Format de range invalid.",
-    "start_supp_end": "❌ Range invalide: début > fin.",
-    "invalid_input_list": "❌ Entrée invalide dans la liste:",
-    "invalid_num_list": "❌ Numéro de job invalide dans la liste:",
-    "no_job_config": "Aucun job correspondant",
-    // Manage job
-    "manage_job_menu": "Page de gestion des jobs",
-    "delete_job": "- Supprimer un job",
-    "add_job": "+ Ajouter un nouveau job",
-    "arrow_instruction": "Utilisez les flèches pour naviguer, Entrée pour valider, Échap pour quitter.",
-    "confirm_update": "Job mis à jour !\nAppuyez sur une touche pour revenir..."
+  //Settings View
+  "encryption_extensions": "Extensions à encrypter",
+  "encryption_extensions_detail": "Les paquets avec les extensions définies ci-dessous seront encryptés à l'aide de CryptoSoft dans chaque sauvegarde dans laquelle la fonctionnalité de cryptage aura été activée.",
+  "software_packages": "Logiciels bloquants",
+  "software_packages_detail": "Les processus ou les paquets comportant les extensions définies ci-dessous empêcheront le processus de sauvegarde. Veillez à les fermer pour procéder à la sauvegarde.",
+  "encryption_key": "Clé d'encryptage",
+  "exit": "Sauver & quitter",
+  "modify": "Modifier",
+  "cancel": "Annuler",
+  "validate": "Valider",
+
+  //BackUp Management View
+  "create": "Créer",
+  "successfully_created": "Job créé avec succès",
+  "successfully_modify": "Job modifié avec succès",
+
+
+  //--------------------- V1 ------------------------
+  // Run Job View
+  "run_jobs_menu": "Exécuter des BackUp",
+  "continue": "Continuer",
+  "select_language": "Langue: (Utilisez Tab pour changer la langue)",
+  "welcome_message": "Bienvenue! Vous avez le choix entre ces fonctionnalités: ",
+  "manage_jobs": "Gérer les jobs",
+  "execute_backup": "Exécuter la sauvegarde",
+  //_________________________
+  "job_exec_title": "==== Lancement des sauvegardes ====\n\n",
+  "job_available": "Jobs disponibles:",
+  "enter_jobs": "Entrez les jobs à exécuter (ou Échap pour revenir au menu)\ne.g:\n     '1-4': executer les jobs de 1 à 4\n      '1,2,5': exécuter une liste de job\n      '2': exécuter un job '2'\n      '*': exécuter tous les jobs\n  >",
+  "run_succeed": "BackUp réalisé avec succès",
+  "execution_error": "Un problème à été rencontré durant l'exécution du backup",
+  "log_repo": "Vous pouvez retrouvez les fichiers de log dans le dossier suivant: ",
+  "no_input": "❌ Veuillez entrez quelque chose.",
+  "invalid_run_input": "❌ Entrée invalide. Sont seulements authorisés: les nombres entiers, ',', '-', et '*'.",
+  "invalid_job_num": "❌ Numéro de job invalid:",
+  "invalid_input": "❌ Entrée invalide:",
+  "invalid_range": "❌ Format de range invalid.",
+  "start_supp_end": "❌ Range invalide: début > fin.",
+  "invalid_input_list": "❌ Entrée invalide dans la liste:",
+  "invalid_num_list": "❌ Numéro de job invalide dans la liste:",
+  "no_job_config": "Aucun job correspondant",
+  // Manage job
+  "manage_job_menu": "Page de gestion des jobs",
+  "delete_job": "- Supprimer un job",
+  "add_job": "+ Ajouter un nouveau job",
+  "arrow_instruction": "Utilisez les flèches pour naviguer, Entrée pour valider, Échap pour quitter.",
+  "confirm_update": "Job mis à jour !\nAppuyez sur une touche pour revenir..."
 }
