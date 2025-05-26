@@ -5,30 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EasySaveV2"
         mc:Ignorable="d"
-        Title="BackUpWindow" Height="450" Width="800">
+        Title="Create/Edit jobs" Height="310" Width="450" Background="#EAEAEA">
 
     <Window.Resources>
-        <Style x:Key="ValidationTextBoxStyle" TargetType="TextBox">
+        <Style x:Key="ValidationTextBoxStyle" TargetType="Border">
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsNameInvalid}" Value="True">
+                <DataTrigger Binding="{Binding IsNameInvalid, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
                     <Setter Property="BorderBrush" Value="Red"/>
                     <Setter Property="BorderThickness" Value="2"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="SourceTextBoxStyle" TargetType="TextBox">
+        <Style x:Key="SourceTextBoxStyle" TargetType="Border">
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsDirSourceInvalid}" Value="True">
+                <DataTrigger Binding="{Binding IsDirSourceInvalid, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
                     <Setter Property="BorderBrush" Value="Red"/>
                     <Setter Property="BorderThickness" Value="2"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="TargetTextBoxStyle" TargetType="TextBox">
+        <Style x:Key="TargetTextBoxStyle" TargetType="Border">
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsDirTargetInvalid}" Value="True">
+                <DataTrigger Binding="{Binding IsDirTargetInvalid, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
                     <Setter Property="BorderBrush" Value="Red"/>
                     <Setter Property="BorderThickness" Value="2"/>
                 </DataTrigger>
@@ -40,50 +40,126 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Ligne pour le bouton EXIT -->
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="30,30,0,0" Grid.Row="0" Grid.Column="0">
-            <TextBlock Text="{Binding JobIdName}" FontSize="18"/>
-        </StackPanel>
-        
-        <StackPanel Orientation="Vertical" HorizontalAlignment="center" Margin="0,10,0,0" Grid.Row="1" Grid.Column="0">
-            <Label Content="Name" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <TextBox HorizontalAlignment="Left" Margin="10,5,0,0" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top" Width="120" Style="{StaticResource ValidationTextBoxStyle}"/>
-            <Label Content="Source path" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,15,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding dirSource}" Width="200" Margin="0,0,5,0" Style="{StaticResource SourceTextBoxStyle}"/>
-                <Button Content="..." Command="{Binding BrowseSourceCommand}" Width="30"/>
-            </StackPanel>
-            <Label Content="Target path" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,15,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-            <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding dirTarget}" Width="200" Margin="0,0,5,0" Style="{StaticResource TargetTextBoxStyle}"/>
-                <Button Content="..." Command="{Binding BrowseTargetCommand}" Width="30"/>
-            </StackPanel>
-        </StackPanel>
 
-        <StackPanel Orientation="Vertical" HorizontalAlignment="center" Margin="0,10,0,0" Grid.Row="1" Grid.Column="1">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Encryption" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-                <CheckBox HorizontalAlignment="Left" Margin="10,7,0,0" IsChecked="{Binding Encryption}" VerticalAlignment="Top" Width="120"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                <Label Content="Diferencial" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-                <CheckBox HorizontalAlignment="Left" Margin="10,7,0,0" IsChecked="{Binding Differential}" VerticalAlignment="Top" Width="120"/>
-            </StackPanel>
-        </StackPanel>
-        
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="center" Margin="0,40,0,40" Grid.Row="2" Grid.ColumnSpan="2">
-            <Button Content="{Binding [cancel]}" Command="{Binding CancelCommand}" Margin="0,0,10,0" />
-            <Button Content="{Binding ValidateLabel}" Command="{Binding ValidateCommand}" Margin="10,0,0,0" />
-        </StackPanel>
+        <TextBlock Text="Name"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Margin="30,20,20,0"
+        />
+        <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,0" Padding="0" Grid.Row="1" Style="{StaticResource ValidationTextBoxStyle}">
+            <TextBox Text="{Binding Name}"
+                     BorderBrush="White"
+                 FontSize="16"
+                 Margin="7,0,7,0"
+                 Grid.Row="1"
+                 Grid.Column="0"
+            />
+
+        </Border>
+
+        <TextBlock Text="Source path"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Grid.Row="2"
+                   Grid.Column="0"
+                   Margin="30,10,20,0"
+        />
+        <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,0" Padding="0" Grid.Row="3" Style="{StaticResource SourceTextBoxStyle}">
+            <TextBox Text="{Binding dirSource}"
+                     BorderBrush="White"
+                     FontSize="16"
+                     Margin="7,0,7,0"
+                     Grid.Row="3"
+                     Grid.Column="0"
+                     
+            />
+        </Border>
+        <Button Content="📂"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Height="20"
+                Width="20"
+                Command="{Binding BrowseSourceCommand}"
+                Grid.Row="3"
+                HorizontalAlignment="Right"
+                Margin="23,0"
+        />
+
+        <TextBlock Text="Target path"
+                   FontSize="16"
+                   FontWeight="DemiBold"
+                   Grid.Row="4"
+                   Grid.Column="0"
+                   Margin="30,10,20,0"
+        />
+        <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,0" Padding="0" Grid.Row="5" Style="{StaticResource TargetTextBoxStyle}">
+            <TextBox Text="{Binding dirTarget}"
+                     BorderBrush="White"
+                     FontSize="16"
+                     Margin="7,0,7,0"
+                     Grid.Row="5"
+                     Grid.Column="0"
+            />
+        </Border>
+        <Button Content="📂"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Height="20"
+                Width="20"
+                Command="{Binding BrowseTargetCommand}"
+                Grid.Row="5"
+                HorizontalAlignment="Right"
+                Margin="23,0"
+        />
+
+        <CheckBox Content="Differential"
+                  HorizontalAlignment="Left" 
+                  IsChecked="{Binding Differential}" 
+                  VerticalAlignment="Top" 
+                  Margin="30,20,10,0"
+                  Grid.Row="6"
+        />
+        <CheckBox Content="Encryption"
+                  HorizontalAlignment="Left" 
+                  IsChecked="{Binding Encryption}" 
+                  VerticalAlignment="Top" 
+                  Margin="30,10,30,10"
+                  Grid.Row="7"
+        />
+
+        <Button Content="{Binding [cancel]}" 
+                Command="{Binding CancelCommand}"
+                Width="80"
+                Height="20"
+                Grid.Row="8"
+                Margin="0,10,100,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+        />
+        <Button Content="{Binding ValidateLabel}" 
+                Command="{Binding ValidateCommand}"
+                Width="80"
+                Height="20"
+                Grid.Row="8"
+                Margin="0,10,10,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+        />
 
     </Grid>
 </Window>
