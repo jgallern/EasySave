@@ -18,7 +18,8 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.5" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.5" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.0-preview.4.25258.110" />
   </ItemGroup>
 
   <ItemGroup>

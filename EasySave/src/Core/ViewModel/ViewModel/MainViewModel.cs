@@ -99,8 +99,15 @@ namespace Core.ViewModel
             }
             foreach (var job in selectedJobs)
             {
-                job.Run();
-                job.Statement = Statement.Done;
+                try
+                {
+                    job.Run();
+                    job.Statement = Statement.Done;
+                }
+                catch (Exception ex)
+                {
+                    _notifier.ShowError(ex.ToString());
+                }
             }
         }
 
