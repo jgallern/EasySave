@@ -36,13 +36,13 @@ namespace Core.ViewModel
 
         public ObservableCollection<BackUpJob> JobsList { get; }
 
-        private IManageBackUpServices _backUpServices;
         public ICommand SettingsCommand { get; }
         public ICommand ShowLogsCommand { get; }
         public ICommand CreateJobCommand { get; }
         public ICommand ModifyJobCommand { get; }
         public ICommand DeleteJobCommand { get; }
-        public ICommand ExecuteJobsCommand { get; }
+        public ICommand ExecuteSelectedJobsCommand { get; }
+
 
         private bool _areAllSelected;
         public bool AreAllSelected
@@ -53,12 +53,15 @@ namespace Core.ViewModel
                 if (_areAllSelected != value)
                 {
                     _areAllSelected = value;
-                    OnPropertyChanged(nameof(AreAllSelected));
                     foreach (var job in JobsList)
-                        job.isSelected = value;
+                        job.IsSelected = value;
+                    OnPropertyChanged();
                 }
             }
         }
+
+
+        public List<int> SelectedJobs = new List<int>();
 
         public MainViewModel(ILocalizer localizer, INavigationService navigation, IUIErrorNotifier notifier)
         {
@@ -69,7 +72,7 @@ namespace Core.ViewModel
             AvailableLanguages = _localizer.GetAvailableLanguages();
             JobsList = new ObservableCollection<BackUpJob>(BackUpJob.GetAllJobsFromConfig());
 
-            //ExecuteSelectedJobsCommand = new RelayCommand(_ => ExecuteSelectedJobs());
+            ExecuteSelectedJobsCommand = new RelayCommand(_ => ExecuteSelectedJobs());
             ShowLogsCommand = new RelayCommand(_ => ShowLogs());
             SettingsCommand = new RelayCommand(_ => Settings());
             CreateJobCommand = new RelayCommand(_ => CreateJob());
@@ -83,24 +86,33 @@ namespace Core.ViewModel
                 if (job is BackUpJob backupJob)
                     DeleteJob(backupJob);
             });
-
-            ExecuteJobsCommand = new RelayCommand(_ => ExecuteSelectedJobs());
         }
 
         private void ExecuteSelectedJobs()
         {
             var selectedJobs = GetSelectedJobs();
-
+            
+            foreach (var job in selectedJobs)
+            {
+                _notifier.ShowSuccess($"Job {job.Id}");
+                job.Statement = Statement.Waiting;
+            }
             foreach (var job in selectedJobs)
             {
                 job.Run();
+                job.Statement = Statement.Done;
             }
         }
 
 
         public IEnumerable<BackUpJob> GetSelectedJobs()
         {
-            return JobsList.Where(job => job.isSelected);
+            List<BackUpJob> selectedJobs = JobsList.Where(job => job.IsSelected).ToList();
+            _notifier.ShowSuccess($"Jobs sélectionnés : {string.Join(", ", selectedJobs.Select(j => j.Id))}");
+
+            return selectedJobs;
+
+
         }
 
 

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Xml.Linq;
+using System.Diagnostics;
 
 
 namespace Core.Model
@@ -11,6 +12,7 @@ namespace Core.Model
     public enum Statement
     {
         Running,
+        Waiting,
         Paused,
 		Canceled,
 		Error,
@@ -19,10 +21,16 @@ namespace Core.Model
     }
     public class BackUpJob : IJobs, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
 
         private bool _isSelected;
-
-        public bool isSelected
+        public bool IsSelected
         {
             get => _isSelected;
             set
@@ -30,16 +38,11 @@ namespace Core.Model
                 if (_isSelected != value)
                 {
                     _isSelected = value;
-                    OnPropertyChanged(nameof(isSelected));
+                    OnPropertyChanged();
+
+                    // Appel direct dans MainViewModel via un callback ou événement si besoin
                 }
             }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public int Id { get; set; }
@@ -57,7 +60,20 @@ namespace Core.Model
 
         public DateTime ModificationDate { get; set; }
 
-        public Statement Statement { get; set; }
+        private Statement _statement;
+        public Statement Statement
+        {
+            get => _statement;
+            set
+            {
+                if (_statement != value)
+                {
+                    _statement = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         public string LastFileBackUp { get; set; }
 
@@ -83,16 +99,32 @@ namespace Core.Model
 
         public void Run()
         {
-			try
+            var runningProcesses = Process.GetProcesses();
+            string blockedProcesses = AppConfigManager.Instance.GetAppConfigParameter("SoftwarePackages");
+            List<string> blockedProcessesList = blockedProcesses
+                .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                .Select(p => p.Trim())
+                .ToList();
+
+            foreach (var proc in runningProcesses){
+                if (blockedProcessesList.Contains(proc.ProcessName, StringComparer.OrdinalIgnoreCase))
+                {
+                    this.Statement = Statement.Canceled;
+                    throw new Exception($"Un processus bloquant est actif : {proc.ProcessName}. Exécution du job annulée.");
+                }
+            }
+            try
 			{
-				IBackUpType backupType = Differential ?
+                this.Statement = Statement.Running;
+                IBackUpType backupType = Differential ?
 				new BackUpDifferential(Name, dirSource, dirTarget, Encryption) :
 				new BackUpFull(Name, dirSource, dirTarget, Encryption);
-
-				backupType.Execute();
-			}
+                backupType.Execute();
+                this.Statement = Statement.Done;
+            }
 			catch (Exception ex)
 			{
+                this.Statement = Statement.Error;
                 throw new Exception(ex.Message, ex);
             }
         }

@@ -92,32 +92,21 @@
                   CanUserDeleteRows="True"
                   SelectionMode="Single"
                   Margin="10,0">
-            
+
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn CanUserResize="False" Width="30">
-                    
 
-                    <DataGridTemplateColumn.Header>
-
-                        <CheckBox IsChecked="{Binding SelectAll, Mode=TwoWay}" 
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  Focusable="False"
-                                  ClickMode="Press" />
-                    </DataGridTemplateColumn.Header>
-                    
-                    
+                <DataGridTemplateColumn Header="Select" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              Focusable="False"
-                              ClickMode="Press" />
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
 
                 <DataGridTextColumn  Header="Id"
                         Binding="{Binding Id}"
@@ -243,84 +232,6 @@
 
         </DataGrid>
 
-
-
-
-
-
-        <!--
-        <ScrollViewer Grid.Row="1" Margin="10,0,10,0" BorderThickness="2" BorderBrush="Black">
-            <StackPanel>
-
-                <CheckBox Margin="10" HorizontalContentAlignment="Stretch">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Text="Example job 1 |" 
-                                   FontSize="14" 
-                                   Grid.Row="0" 
-                                   Grid.Column="0" 
-                                   Margin="10,0,10,5"
-                        />
-                        <TextBlock Text="source/path/as/example" 
-                                   FontSize="10" 
-                                   Grid.Row="1" 
-                                   Grid.Column="0" 
-                                   Margin="10,0"
-                        />
-                        <TextBlock Text="➥ target/path/as/example" 
-                                   FontSize="10" 
-                                   Grid.Row="2" 
-                                   Grid.Column="0" 
-                                   Margin="10,0"
-                        />
-
-                        <TextBlock Text="Last execution : 03/05/2025, 15h48" 
-                                   FontSize="10"
-                                   FontStyle="Italic"
-                                   Grid.Row="0" 
-                                   Grid.Column="2" 
-                                   Margin="10,5"
-                        />
-
-                        <Button Name="edit_button"
-                                Content="🖋"
-                                Width="30"
-                                Height="40"
-                                Grid.Row="0"
-                                Grid.Column="3"
-                                Grid.RowSpan="3"
-                                Margin="10,0,0,0"
-                                HorizontalAlignment="Left"
-                        />
-                        <Button Name="delete_button"
-                                Content="🗑"
-                                Width="30"
-                                Height="40"
-                                Grid.Row="0"
-                                Grid.Column="3"
-                                Grid.RowSpan="3"
-                                Margin="45,0,10,0"
-                                HorizontalAlignment="Right"
-                        />
-
-
-                    </Grid>
-                </CheckBox>
-
-            </StackPanel>
-        </ScrollViewer>
-        -->
 
 
         <!-- Partie FOOT -->

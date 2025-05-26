@@ -3,7 +3,8 @@ namespace Core.Model
 
     public interface IJobs
     {
-		int Id { get; }
+        bool IsSelected { get; set; }
+        int Id { get; }
 		string Name { get; set; }
 		string dirSource { get; set; }
 		string dirTarget { get; set; }
