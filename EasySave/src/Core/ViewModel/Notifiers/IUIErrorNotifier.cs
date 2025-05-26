@@ -10,5 +10,6 @@ namespace Core.ViewModel.Notifiers
     {
         void ShowError(string message);
         void ShowSuccess(string message);
+        bool ShowWarning(string message);
     }
 }

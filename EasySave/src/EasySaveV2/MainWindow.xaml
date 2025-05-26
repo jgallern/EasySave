@@ -115,7 +115,7 @@
 />
                 <DataGridTemplateColumn Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{Binding DataContext.[name], RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Text="{Binding [name], ElementName=MainWindow}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -126,7 +126,7 @@
 
                 <DataGridTemplateColumn Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{Binding DataContext.[differential], RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Text="{Binding [differential], ElementName=MainWindow}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -138,7 +138,7 @@
 
                 <DataGridTemplateColumn Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{Binding DataContext.[encryption], RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Text="{Binding [encryption], ElementName=MainWindow}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -149,7 +149,7 @@
 
                 <DataGridTemplateColumn Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{Binding DataContext.[source], RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Text="{Binding [source], ElementName=MainWindow}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -160,7 +160,7 @@
 
                 <DataGridTemplateColumn Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{Binding DataContext.[target], RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Text="{Binding [target], ElementName=MainWindow}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -171,7 +171,7 @@
 
                 <DataGridTemplateColumn Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{Binding DataContext.[creation_date], RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Text="{Binding [creation_date], ElementName=MainWindow}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -182,7 +182,7 @@
 
                 <DataGridTemplateColumn Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{Binding DataContext.[modification_date], RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Text="{Binding [modification_date], ElementName=MainWindow}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -194,7 +194,7 @@
                 
                 <DataGridTemplateColumn Width="*" IsReadOnly="True">
                     <DataGridTemplateColumn.Header>
-                        <TextBlock Text="{Binding DataContext.[statement], RelativeSource={RelativeSource AncestorType=Window}}" />
+                        <TextBlock Text="{Binding [statement], ElementName=MainWindow}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using Core.Model;
 using Core.ViewModel.Notifiers;
+using Core.Model.Managers;
 
 namespace Core.ViewModel
 {
@@ -94,25 +95,13 @@ namespace Core.ViewModel
             
             foreach (var job in selectedJobs)
             {
-                _notifier.ShowSuccess($"Job {job.Id}");
                 job.Statement = Statement.Waiting;
             }
-            foreach (var job in selectedJobs)
-            {
-                try
-                {
-                    job.Run();
-                    job.Statement = Statement.Done;
-                }
-                catch (Exception ex)
-                {
-                    _notifier.ShowError(ex.ToString());
-                }
-            }
+            RunJobManager.ExecuteSelectedJobs(selectedJobs, _notifier);
         }
 
 
-        public IEnumerable<BackUpJob> GetSelectedJobs()
+        public List<BackUpJob> GetSelectedJobs()
         {
             List<BackUpJob> selectedJobs = JobsList.Where(job => job.IsSelected).ToList();
             _notifier.ShowSuccess($"Jobs sélectionnés : {string.Join(", ", selectedJobs.Select(j => j.Id))}");
@@ -167,16 +156,20 @@ namespace Core.ViewModel
 
         private void DeleteJob(BackUpJob selectedJob)
         {
-            try
+            
+            if (_notifier.ShowWarning($"{this["delete_job"]}{selectedJob.Id}. {selectedJob.Name}"))
             {
-                selectedJob.DeleteJob();
-                JobsList.Remove(selectedJob);
-                //RefreshJobs();
-            }
-            catch (Exception ex)
-            {
-
-            }
+                try
+                {
+                    selectedJob.DeleteJob();
+                    JobsList.Remove(selectedJob);
+                    //RefreshJobs();
+                }
+                catch (Exception ex)
+                {
+                    _notifier.ShowError(ex.Message);
+                }
+            }            
 
         }
 

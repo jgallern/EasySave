@@ -18,5 +18,10 @@ namespace EasySaveV2.Notifiers
         {
             MessageBox.Show(message, "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+        public bool ShowWarning(string message)
+        {
+            MessageBoxResult result = MessageBox.Show(message, "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+            return result == MessageBoxResult.OK;
+        }
     }
 }
