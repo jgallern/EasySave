@@ -27,9 +27,14 @@ namespace Core.Model
             string message;
 			try
 			{
-                CryptoManager.SetKey(AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey"));
-				// verifie if the subdirectories exists and create them if necessary
-				if (!Directory.Exists(this.dirTarget)) 
+				string xorKey = AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
+				if (xorKey == null | xorKey == "")
+				{
+					throw new Exception("la clé de Xor de la config est nulle");
+				}
+                CryptoManager.SetKey(xorKey);
+                // verifie if the subdirectories exists and create them if necessary
+                if (!Directory.Exists(this.dirTarget)) 
 				{
 					Directory.CreateDirectory(this.dirTarget);
 				}
@@ -43,8 +48,8 @@ namespace Core.Model
 				{
 					Stopwatch watch = Stopwatch.StartNew();
 					string fileTarget = fileSource.Replace(dirSource, dirTarget);
-					string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
-					String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
+					string fileExtensionsToEncrypt = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
+					String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypt.Split(",");
                     bool shouldEncrypt = false;
                     if (encryption)
                     {
@@ -58,19 +63,17 @@ namespace Core.Model
 
 						try
 						{
-							CryptoManager.EncryptFile(fileSource);
+							fileTarget += ".xor";
+							fileTarget = fileTarget.Replace("\\", "/");
+							CryptoManager.EncryptFileToTarget(fileSource, fileTarget);
 						}
 						catch (Exception ex)
 						{
+							Console.WriteLine(ex);
 							encryptionTime = -1;
 						}
 						EncryptTimer.Stop();
 						encryptionTime = EncryptTimer.Elapsed.Milliseconds;
-
-						string newFileName = fileSource + ".xor";
-						fileTarget += ".xor";
-						File.Copy(newFileName, fileTarget, true);
-						File.Delete(newFileName);
 					}
 					else {
 						File.Copy(fileSource, fileTarget, true);

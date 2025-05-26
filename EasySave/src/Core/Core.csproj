@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <Reference Include="CryptoSoft">
-      <HintPath>..\..\..\CryptoSoft\bin\Debug\net8.0\CryptoSoft.dll</HintPath>
+      <HintPath>Libs\CryptoSoft.dll</HintPath>
     </Reference>
   </ItemGroup>
     <ItemGroup>

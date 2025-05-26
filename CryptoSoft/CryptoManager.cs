@@ -89,6 +89,29 @@ public static class CryptoManager
         
     }
 
+    /// <summary>
+    /// Chiffre un fichier avec la clé configurée et le transfert vers le path cible donné en argument
+    /// </summary>
+    public static void EncryptFileToTarget(string filePath, string fileTarget)
+    {
+        try
+        {
+            byte[] keyBytes = GetKey();
+
+            byte[] dataBytes = File.ReadAllBytes(filePath);
+
+            for (int i = 0; i < dataBytes.Length; i++)
+            {
+                dataBytes[i] ^= keyBytes[i % keyBytes.Length];
+            }
+            File.WriteAllBytes(fileTarget, dataBytes);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Erreur lors du chiffrement du fichier", ex);
+        }
+    }
+
     public static bool CompareFile(string fileSource, string fileTarget)
     {
         try
