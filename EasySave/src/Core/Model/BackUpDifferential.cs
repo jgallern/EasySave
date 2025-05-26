@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Core.Model.Managers;
 using System.IO;
 
 namespace Core.Model
@@ -64,10 +65,42 @@ namespace Core.Model
                     if (shouldCopy)
                     {
                         Stopwatch watch = Stopwatch.StartNew();
-                        File.Copy(sourceFile, targetFile, true);
+                        string fileTarget = sourceFile.Replace(dirSource, dirTarget);
+                        string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
+                        String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
+                        bool shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => sourceFile.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
+
+                        double encryptionTime = 0;
+                        if (shouldEncrypt)
+                        {
+                            CryptoManager.SetKey("12");
+                            Stopwatch EncryptTimer = Stopwatch.StartNew();
+
+                            try
+                            {
+                                CryptoManager.EncryptFile(sourceFile);
+                            }
+                            catch (Exception ex)
+                            {
+                                encryptionTime = -1;
+                            }
+                            EncryptTimer.Stop();
+                            encryptionTime = EncryptTimer.Elapsed.Milliseconds;
+
+                            string newFileName = sourceFile + ".xor";
+                            fileTarget += ".xor";
+                            File.Copy(newFileName, fileTarget, true);
+                            File.Delete(newFileName);
+                        }
+                        else
+                        {
+                            File.Copy(sourceFile, fileTarget, true);
+                        }
                         watch.Stop();
-                        WriteDailyLog(sourceFile, targetFile, watch.ElapsedMilliseconds.ToString());
+                        double elapsedMs = watch.ElapsedMilliseconds;
+                        WriteDailyLog(sourceFile, fileTarget, elapsedMs, encryptionTime);
                     }
+
                 }
                 jobTimer.Stop();
                 message = "Job Succeed!";
@@ -80,10 +113,10 @@ namespace Core.Model
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
                 throw new Exception(message, ex);
             }
-            
+
         }
 
-        private void WriteDailyLog(string sourceFile, string targetFile, string transfertTime)
+        private void WriteDailyLog(string sourceFile, string targetFile, double transfertTime, double encryptionTime)
         {
             FileInfo fileInfo = new FileInfo(sourceFile);
             Dictionary<string, object> logEntry = new Dictionary<string, object>
@@ -93,7 +126,8 @@ namespace Core.Model
                 { "TargetPath", targetFile },
                 { "FileSize", fileInfo.Length },
                 { "FileTransferTime", transfertTime},
-                { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") }
+                { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") },
+                {"encryptionTime", encryptionTime }
             };
             _log.AddLogInfo(LogType.Daily, logEntry);
         }
