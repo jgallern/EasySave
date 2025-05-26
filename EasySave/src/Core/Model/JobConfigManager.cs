@@ -104,10 +104,6 @@ namespace Core.Model
             {
                 id++;
             }
-            if (id > 6)
-            {
-                id = 0;
-            }
             return id;
         }
 
