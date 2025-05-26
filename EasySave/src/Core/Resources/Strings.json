@@ -5,6 +5,8 @@
     "show_logs": "Show Logs",
     "select_all": "Select all",
     "reset": "Reset",
+    "create_job": "Create a Job",
+    "start": "Start",
 
     //Grid header
     "name": "Name",

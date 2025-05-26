@@ -333,7 +333,7 @@
 
 
             <Button Name="create_button"
-                    Content="Create Job" 
+                    Content="{Binding [create_job]}" 
                     Command="{Binding CreateJobCommand}"
                     Width="100" 
                     Height="30" 
@@ -344,7 +344,7 @@
             
 
             <Button Name="start_button"
-                    Content="START" 
+                    Content="{Binding [start]}" 
                     Command="{Binding ExecuteSelectedJobsCommand}"
                     Width="100" 
                     Height="30" 

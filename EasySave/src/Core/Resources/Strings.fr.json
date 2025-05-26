@@ -5,6 +5,8 @@
     "show_logs": "Afficher les Logs",
     "select_all": "Tout sélectioner",
     "reset": "Réinitialiser",
+    "create_job": "Créer un Job",
+    "start": "Démarrer",
 
     //Grid header
     "name": "Nom",
