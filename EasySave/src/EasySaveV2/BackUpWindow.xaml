@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EasySaveV2"
         mc:Ignorable="d"
-        Title="Create/Edit jobs" Height="310" Width="450" Background="#EAEAEA">
+        Title="Create/Edit jobs" Height="350" Width="450" Background="#EAEAEA">
 
     <Window.Resources>
         <Style x:Key="ValidationTextBoxStyle" TargetType="Border">
@@ -144,17 +144,27 @@
 
         <Button Content="{Binding [cancel]}" 
                 Command="{Binding CancelCommand}"
-                Width="80"
-                Height="20"
+                Foreground="#707070"
+                FontWeight="DemiBold"
+                Width="110"
+                Height="25"
+                Background="White"
+                BorderBrush="#707070"
+                BorderThickness="1.5"
                 Grid.Row="8"
-                Margin="0,10,100,10"
+                Margin="0,10,130,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
         />
         <Button Content="{Binding ValidateLabel}" 
                 Command="{Binding ValidateCommand}"
-                Width="80"
-                Height="20"
+                Foreground="White"
+                FontWeight="DemiBold"
+                Width="110"
+                Height="25"
+                Background="#0D99FF"
+                BorderBrush="#64BDFF"
+                BorderThickness="1.5"
                 Grid.Row="8"
                 Margin="0,10,10,10"
                 HorizontalAlignment="Right"
