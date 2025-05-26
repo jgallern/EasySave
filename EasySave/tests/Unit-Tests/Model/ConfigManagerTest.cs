@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Model;
+using Core.Model.Managers;
 using System.IO;
 
 namespace Unit_Tests
