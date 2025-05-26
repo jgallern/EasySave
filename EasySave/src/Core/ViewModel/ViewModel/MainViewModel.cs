@@ -41,6 +41,22 @@ namespace Core.ViewModel
         public ICommand DeleteJobCommand { get; }
         public ICommand ExecuteJobsCommand { get; }
 
+        private bool _areAllSelected;
+        public bool AreAllSelected
+        {
+            get => _areAllSelected;
+            set
+            {
+                if (_areAllSelected != value)
+                {
+                    _areAllSelected = value;
+                    OnPropertyChanged(nameof(AreAllSelected));
+                    foreach (var job in JobsList)
+                        job.isSelected = value;
+                }
+            }
+        }
+
         public MainViewModel(ILocalizer localizer, INavigationService navigation)
         {
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));

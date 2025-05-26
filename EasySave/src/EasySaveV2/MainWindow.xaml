@@ -91,9 +91,22 @@
                   CanUserDeleteRows="True"
                   SelectionMode="Single"
                   Margin="10,0">
+            
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Select">
+                <DataGridTemplateColumn CanUserResize="False" Width="30">
+                    
+
+                    <DataGridTemplateColumn.Header>
+
+                        <CheckBox IsChecked="{Binding SelectAll, Mode=TwoWay}" 
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Focusable="False"
+                                  ClickMode="Press" />
+                    </DataGridTemplateColumn.Header>
+                    
+                    
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding IsActive, Mode=TwoWay}"
