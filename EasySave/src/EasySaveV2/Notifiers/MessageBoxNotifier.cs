@@ -14,5 +14,9 @@ namespace EasySaveV2.Notifiers
         {
             MessageBox.Show(message, "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        public void ShowSuccess(string message)
+        {
+            MessageBox.Show(message, "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }

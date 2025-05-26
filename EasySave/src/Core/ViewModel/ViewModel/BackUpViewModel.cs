@@ -9,6 +9,7 @@ using Core.ViewModel.Services;
 using Core.ViewModel.Commands;
 using Microsoft.Extensions.Options;
 using Core.Model;
+using Core.ViewModel.Notifiers;
 
 namespace Core.ViewModel
 {
@@ -17,6 +18,8 @@ namespace Core.ViewModel
         private readonly ILocalizer _localizer;
 
         private readonly INavigationService _navigation;
+
+        private readonly IUIErrorNotifier _notifier;
 
         private IFileDialogService _fileDialogService;
 
@@ -127,8 +130,9 @@ namespace Core.ViewModel
             set => SetProperty(ref _isDifferential, value);
         }
 
-        public BackUpViewModel(ILocalizer localizer, INavigationService navigation)
+        public BackUpViewModel(ILocalizer localizer, INavigationService navigation, IUIErrorNotifier notifier)
         {
+            _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             _navigation = navigation ?? throw new ArgumentNullException(nameof(localizer));
             BrowseSourceCommand = new RelayCommand(BrowseSource);
@@ -185,16 +189,24 @@ namespace Core.ViewModel
         {
             if (IsValid())
             {
-                if (_job == null) return;
+                try
+                {
+                    if (_job == null) return;
 
-                _job.Name = Name;
-                _job.dirSource = dirSource;
-                _job.dirTarget = dirTarget;
-                _job.Encryption = Encryption;
-                _job.Differential = Differential;
+                    _job.Name = Name;
+                    _job.dirSource = dirSource;
+                    _job.dirTarget = dirTarget;
+                    _job.Encryption = Encryption;
+                    _job.Differential = Differential;
 
-                _job.AlterJob();
-                Cancel();
+                    _job.AlterJob();
+                    _notifier.ShowSuccess(this["successfully_modify"]);
+                    Cancel();
+                }
+                catch (Exception ex)
+                {
+                    _notifier.ShowError(ex.ToString());
+                }
             }
         }
 
@@ -203,9 +215,18 @@ namespace Core.ViewModel
         {
             if (IsValid())
             {
-                _job = new BackUpJob(Name, dirSource, dirTarget, Differential, Encryption);
-                _job.CreateJob();
-                Cancel();
+                try
+                {
+                    _job = new BackUpJob(Name, dirSource, dirTarget, Differential, Encryption);
+                    _job.CreateJob();
+                    _notifier.ShowSuccess(this["job_created"]);
+                    Cancel();
+                }
+                catch (Exception ex)
+                {
+                    _notifier.ShowError(ex.ToString());
+                }
+                
             }
         }
 
