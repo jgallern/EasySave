@@ -85,8 +85,8 @@ namespace Core.Model
 			try
 			{
 				IBackUpType backupType = Differential ?
-				new BackUpDifferential(Name, dirSource, dirTarget) :
-				new BackUpFull(Name, dirSource, dirTarget);
+				new BackUpDifferential(Name, dirSource, dirTarget, Encryption) :
+				new BackUpFull(Name, dirSource, dirTarget, Encryption);
 
 				backupType.Execute();
 			}
