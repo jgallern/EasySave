@@ -10,6 +10,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Core.ViewModel.Notifiers;
+using EasySaveV2.Notifiers;
 
 namespace EasySaveV2
 {
@@ -22,8 +24,9 @@ namespace EasySaveV2
         {
             InitializeComponent();
             ILocalizer localizer = new Localizer(); // instancie ton implémentation
+            IUIErrorNotifier notifier = new MessageBoxNotifier();
             INavigationService navigation = new NavigationService();
-            MainViewModel SettingsVM = new MainViewModel(localizer, navigation);
+            MainViewModel SettingsVM = new MainViewModel(localizer, navigation, notifier);
             DataContext = SettingsVM;
         }
     }

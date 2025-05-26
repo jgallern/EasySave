@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.IO;
 
-namespace Core.Model
+namespace Core.Model.Managers
 {
     public class JobConfigManager
     {

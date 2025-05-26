@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Core.Model;
+using Core.ViewModel.Notifiers;
 
 namespace Core.ViewModel
 {
@@ -17,6 +18,7 @@ namespace Core.ViewModel
         private ViewModelBase _currentViewModel;
         private readonly ILocalizer _localizer;
         private readonly INavigationService _navigationService;
+        private readonly IUIErrorNotifier _notifier;
 
         public ViewModelBase CurrentViewModel
         {
@@ -36,6 +38,7 @@ namespace Core.ViewModel
 
         private IManageBackUpServices _backUpServices;
         public ICommand SettingsCommand { get; }
+        public ICommand ShowLogsCommand { get; }
         public ICommand CreateJobCommand { get; }
         public ICommand ModifyJobCommand { get; }
         public ICommand DeleteJobCommand { get; }
@@ -57,15 +60,17 @@ namespace Core.ViewModel
             }
         }
 
-        public MainViewModel(ILocalizer localizer, INavigationService navigation)
+        public MainViewModel(ILocalizer localizer, INavigationService navigation, IUIErrorNotifier notifier)
         {
+            _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
             _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             _navigationService = navigation;
             CurrentLanguage = _localizer.GetCurrentLanguage();
             AvailableLanguages = _localizer.GetAvailableLanguages();
             JobsList = new ObservableCollection<BackUpJob>(BackUpJob.GetAllJobsFromConfig());
-            
+
             //ExecuteSelectedJobsCommand = new RelayCommand(_ => ExecuteSelectedJobs());
+            ShowLogsCommand = new RelayCommand(_ => ShowLogs());
             SettingsCommand = new RelayCommand(_ => Settings());
             CreateJobCommand = new RelayCommand(_ => CreateJob());
             ModifyJobCommand = new RelayCommand(job =>
@@ -104,9 +109,23 @@ namespace Core.ViewModel
             _navigationService.NavigateToSettings();
             _navigationService.CloseMenu();
         }
+
+        private void ShowLogs()
+        {
+            try
+            {
+                ILogger logger = Logger.Instance;
+                logger.OpenLogs();
+            }
+            catch (Exception ex) 
+            {
+                _notifier.ShowError(ex.ToString());
+            }
+        }
+
         private void CreateJob()
         {
-            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService)
+            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService, _notifier)
             {
                 IsEditMode = false,
             };
@@ -117,7 +136,7 @@ namespace Core.ViewModel
 
         private void AlterJob(BackUpJob selectedJob)
         {
-            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService)
+            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService, _notifier)
             {
                 IsEditMode = true
             };
@@ -129,9 +148,17 @@ namespace Core.ViewModel
 
         private void DeleteJob(BackUpJob selectedJob)
         {
-            selectedJob.DeleteJob();
-            JobsList.Remove(selectedJob);
-            //RefreshJobs();
+            try
+            {
+                selectedJob.DeleteJob();
+                JobsList.Remove(selectedJob);
+                //RefreshJobs();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
         }
 
         private void RefreshJobs()

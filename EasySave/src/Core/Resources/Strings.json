@@ -2,8 +2,21 @@
     //Main View
     "easysave": "Welcome to EasySave!",
     "settings": "Settings",
+    "show_logs": "Show Logs",
     "select_all": "Select all",
     "reset": "Reset",
+
+    //Grid header
+    "name": "Name",
+    "differential": "Diferential",
+    "encryption": "Encryption",
+    "source": "Source",
+    "target": "Target",
+    "creation_date": "Creation",
+    "modification_date": "Last Modification",
+    "statement": "Statement",
+
+
 
     //Settings View
     "encryption_extensions": "Encryption Extensions",
@@ -18,7 +31,8 @@
 
     //BackUp Management View
     "create": "Create",
-
+    "successfully_created": "Job successfully created",
+    "successfully_modify": "Job successfully modified",
 
 
     //--------------------- V1 ------------------------

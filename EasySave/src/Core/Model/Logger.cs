@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.IO;
+using System.Diagnostics;
 
 namespace Core.Model{
     public enum LogType
@@ -63,6 +64,17 @@ namespace Core.Model{
             };
             string json = JsonSerializer.Serialize(logEntry, new JsonSerializerOptions { WriteIndented = true });
             File.AppendAllText(path, json);
+        }
+
+        public void OpenLogs()
+        {
+            ProcessStartInfo logs = new ProcessStartInfo()
+            {
+                FileName = _logpath,
+                Verb = "open",
+                UseShellExecute = true
+            };
+            Process.Start(logs);
         }
     }
 }

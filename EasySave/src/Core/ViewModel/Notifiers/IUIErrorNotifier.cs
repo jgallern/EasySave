@@ -9,5 +9,6 @@ namespace Core.ViewModel.Notifiers
     public interface IUIErrorNotifier
     {
         void ShowError(string message);
+        void ShowSuccess(string message);
     }
 }

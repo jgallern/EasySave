@@ -2,8 +2,20 @@
     //Main View
     "easysave": "Bienvenue sur EasySave!",
     "settings": "Réglages",
+    "show_logs": "Afficher les Logs",
     "select_all": "Tout sélectioner",
     "reset": "Réinitialiser",
+
+    //Grid header
+    "name": "Nom",
+    "differential": "Différenciel",
+    "encryption": "encryptage",
+    "source": "Source",
+    "target": "Destination",
+    "creation_date": "Création",
+    "modification_date": "Dernière modification",
+    "statement": "Etat",
+
 
     //Settings View
     "encryption_extensions": "Extensions à Encrypter",
@@ -18,7 +30,8 @@
 
     //BackUp Management View
     "create": "Créer",
-
+    "successfully_created": "Job créé avec succes",
+    "successfully_modify": "Job modifié avec succes",
 
 
     //--------------------- V1 ------------------------
