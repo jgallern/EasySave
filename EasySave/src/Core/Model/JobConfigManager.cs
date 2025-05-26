@@ -115,10 +115,7 @@ namespace Core.Model
             {
                 for (int i = 0; i < jobs.Count(); i++)
                 {
-                    foreach (BackUpJob job in jobs)
-                    {
-                        job.Id = i + 1;
-                    }
+                    jobs[i].Id = i + 1;
                 }
                 SaveJobs(jobs);
             }
