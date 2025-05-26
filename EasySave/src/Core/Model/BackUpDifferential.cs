@@ -27,7 +27,13 @@ namespace Core.Model
             string message;
             try
             {
-                CryptoManager.SetKey(AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey"));
+				string xorKey = AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
+				if (xorKey == null | xorKey == "")
+				{
+					throw new Exception("la clé de Xor de la config est nulle");
+				}
+                CryptoManager.SetKey(xorKey);
+
                 if (!Directory.Exists(this.dirTarget))
                 {
                     Directory.CreateDirectory(this.dirTarget);
@@ -84,7 +90,8 @@ namespace Core.Model
 
                             try
                             {
-                                CryptoManager.EncryptFile(sourceFile);
+                                fileTarget += ".xor";
+                                CryptoManager.EncryptFileToTarget(sourceFile, fileTarget);
                             }
                             catch (Exception ex)
                             {
@@ -92,11 +99,6 @@ namespace Core.Model
                             }
                             EncryptTimer.Stop();
                             encryptionTime = EncryptTimer.Elapsed.Milliseconds;
-
-                            string newFileName = sourceFile + ".xor";
-                            fileTarget += ".xor";
-                            File.Copy(newFileName, fileTarget, true);
-                            File.Delete(newFileName);
                         }
                         else
                         {

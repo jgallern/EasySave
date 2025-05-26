@@ -64,7 +64,6 @@ namespace Core.Model
 						try
 						{
 							fileTarget += ".xor";
-							fileTarget = fileTarget.Replace("\\", "/");
 							CryptoManager.EncryptFileToTarget(fileSource, fileTarget);
 						}
 						catch (Exception ex)
