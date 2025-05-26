@@ -10,13 +10,15 @@ namespace Core.Model
 		public string Name { get; }
 		public string dirSource { get; }
 		public string dirTarget {  get; }
+		public bool encryption { get; }
 		private ILogger _log;
-		public BackUpFull(string Name, string dirSource, string dirTarget)
+		public BackUpFull(string Name, string dirSource, string dirTarget, bool encryption)
 		{
 			this._log = Logger.Instance;
 			this.Name = Name;
 			this.dirSource = dirSource;
 			this.dirTarget = dirTarget;
+			this.encryption = encryption;
 		}
 		
 		public void Execute()
@@ -25,6 +27,7 @@ namespace Core.Model
             string message;
 			try
 			{
+                CryptoManager.SetKey(AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey"));
 				// verifie if the subdirectories exists and create them if necessary
 				if (!Directory.Exists(this.dirTarget)) 
 				{
@@ -42,12 +45,15 @@ namespace Core.Model
 					string fileTarget = fileSource.Replace(dirSource, dirTarget);
 					string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
 					String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
-					bool shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => fileSource.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
+                    bool shouldEncrypt = false;
+                    if (encryption)
+                    {
+                        shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => fileSource.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
+                    }
 
                     double encryptionTime = 0;
                     if (shouldEncrypt)
 					{
-						CryptoManager.SetKey("12");
 						Stopwatch EncryptTimer = Stopwatch.StartNew();
 
 						try

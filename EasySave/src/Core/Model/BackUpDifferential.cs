@@ -9,14 +9,16 @@ namespace Core.Model
 		public string Name { get; }
 		public string dirSource{ get; }
 		public string dirTarget {  get; }
+        public bool encryption { get; }
         private ILogger _log;
 
-        public BackUpDifferential(string Name, string dirSource, string dirTarget)
+        public BackUpDifferential(string Name, string dirSource, string dirTarget, bool encryption)
 		{
             this._log = Logger.Instance;
             this.Name = Name;
 			this.dirSource = dirSource;
 			this.dirTarget = dirTarget;
+            this.encryption = encryption;
 		}
 
 		public void Execute()
@@ -25,6 +27,7 @@ namespace Core.Model
             string message;
             try
             {
+                CryptoManager.SetKey(AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey"));
                 if (!Directory.Exists(this.dirTarget))
                 {
                     Directory.CreateDirectory(this.dirTarget);
@@ -68,12 +71,15 @@ namespace Core.Model
                         string fileTarget = sourceFile.Replace(dirSource, dirTarget);
                         string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
                         String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
-                        bool shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => sourceFile.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
+                        bool shouldEncrypt = false;
+                        if (encryption)
+                        {
+                            shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => sourceFile.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
+                        }
 
                         double encryptionTime = 0;
                         if (shouldEncrypt)
                         {
-                            CryptoManager.SetKey("12");
                             Stopwatch EncryptTimer = Stopwatch.StartNew();
 
                             try
