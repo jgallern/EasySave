@@ -1,0 +1,9 @@
+sequenceDiagram
+    User->>+View [ManageBackUpView]: Enter the info of a job to create
+    View [ManageBackUpView]->>+ViewModel [ManageJob]:  ModifyJobCommand(jobinfos) 
+    ViewModel [ManageJob]-->> View [ManageBackUpView]: throw exception if error 
+    ViewModel [ManageJob]->>BackUpJob: CreateJob(jobinfos)
+    BackUpJob -->> ViewModel [ManageJob]: throw exception if error 
+    BackUpJob->>ConfigManager: AddJob(BackUpJob job)
+    ConfigManager -->> BackUpJob : throw exception if error
+    View [ManageBackUpView] ->>User: Confirm execution Exit and run MenuView

@@ -1,0 +1,32 @@
+sequenceDiagram
+  participant User as User
+  participant SettingsView as View (SettingsView)
+  participant SettingsVM as VM (SettingsViewModel)
+  participant RelayCmd as RelayCommand
+  participant Localizer as Service (Localizer)
+  participant AppConfig as TranslationManager
+
+  User ->> SettingsView: Open the language settings
+  SettingsView ->> SettingsVM: Initialisation (injection of VM)
+  SettingsView ->> SettingsVM: Get AvailableLanguages
+  SettingsVM ->> Localizer: GetAvailableLanguages()
+  Localizer -->> SettingsVM: Available languages list
+  SettingsVM -->> SettingsView: Available languages list
+  SettingsView ->> SettingsVM: this["label"]
+  SettingsVM ->> Localizer: Get translation for each label
+  Localizer -->> SettingsVM: "Return the settings menu translated"
+  SettingsVM -->> SettingsView: "Return the settings menu translated"
+  User ->> SettingsView: Touche Up/Down for the language selection
+  User ->> SettingsView: Click on Enter
+  SettingsView ->> SettingsVM: ChangeLanguageCommand.Execute(selectedLang)
+  SettingsVM ->> RelayCmd: Execute(langCode)
+  RelayCmd ->> Localizer: ChangeLanguage(langCode)
+  Localizer ->> AppConfig: ChangeLanguage(langCode)
+  AppConfig ->> AppConfig: _language["language"] = langCode
+  AppConfig ->> AppConfig: SaveAppConfig(newLang)
+  AppConfig ->> AppConfig: LoadTranslations(newLang)
+  Localizer -->> SettingsVM: (Command ended)
+  SettingsVM -->> SettingsView: (LanguageChanged event)
+  SettingsView ->> User: Exit and run MenuView
+
+

@@ -1,10 +1,18 @@
-﻿using System.ComponentModel;
+﻿using Core.Model.Interfaces;
 using Core.Model.Services;
+using Core.ViewModel.Notifiers;
+using Core.ViewModel.Services;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 public abstract class ViewModelBase : INotifyPropertyChanged
 {
-    private readonly ILocalizer _localizer;
+    protected readonly ILocalizer _localizer;
+
+    public ViewModelBase()
+    {
+        _localizer = new Localizer();
+    }
 
     public event PropertyChangedEventHandler PropertyChanged;
 

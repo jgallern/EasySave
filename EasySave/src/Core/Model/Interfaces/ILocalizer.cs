@@ -1,4 +1,4 @@
-﻿namespace Core.Model.Services
+﻿namespace Core.Model.Interfaces
 {
     public interface ILocalizer
     {

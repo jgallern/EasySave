@@ -21,9 +21,8 @@ namespace EasySaveV2
         public SettingsWindow()
         {
             InitializeComponent();
-            ILocalizer localizer = new Localizer();
             INavigationService _navigation = new NavigationService();
-            SettingsViewModel SettingsVM = new SettingsViewModel(localizer, _navigation);
+            SettingsViewModel SettingsVM = new SettingsViewModel(_navigation);
             DataContext = SettingsVM;
         }
     }

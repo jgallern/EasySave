@@ -10,28 +10,14 @@ using System.Windows;
 using System.Windows.Input;
 using Core.Model;
 using Core.ViewModel.Notifiers;
+using Core.Model.Managers;
 
 namespace Core.ViewModel
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        private ViewModelBase _currentViewModel;
-        private readonly ILocalizer _localizer;
         private readonly INavigationService _navigationService;
         private readonly IUIErrorNotifier _notifier;
-
-        public ViewModelBase CurrentViewModel
-        {
-            get => _currentViewModel;
-            set
-            {
-                if (_currentViewModel != value)
-                {
-                    _currentViewModel = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
 
         public ObservableCollection<BackUpJob> JobsList { get; }
@@ -61,12 +47,9 @@ namespace Core.ViewModel
         }
 
 
-        public List<int> SelectedJobs = new List<int>();
-
-        public MainViewModel(ILocalizer localizer, INavigationService navigation, IUIErrorNotifier notifier)
+        public MainViewModel(INavigationService navigation, IUIErrorNotifier notifier)
         {
             _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
-            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             _navigationService = navigation;
             CurrentLanguage = _localizer.GetCurrentLanguage();
             AvailableLanguages = _localizer.GetAvailableLanguages();
@@ -94,25 +77,13 @@ namespace Core.ViewModel
             
             foreach (var job in selectedJobs)
             {
-                _notifier.ShowSuccess($"Job {job.Id}");
                 job.Statement = Statement.Waiting;
             }
-            foreach (var job in selectedJobs)
-            {
-                try
-                {
-                    job.Run();
-                    job.Statement = Statement.Done;
-                }
-                catch (Exception ex)
-                {
-                    _notifier.ShowError(ex.ToString());
-                }
-            }
+            RunJobManager.ExecuteSelectedJobs(selectedJobs, _notifier);
         }
 
 
-        public IEnumerable<BackUpJob> GetSelectedJobs()
+        public List<BackUpJob> GetSelectedJobs()
         {
             List<BackUpJob> selectedJobs = JobsList.Where(job => job.IsSelected).ToList();
             _notifier.ShowSuccess($"Jobs sélectionnés : {string.Join(", ", selectedJobs.Select(j => j.Id))}");
@@ -144,7 +115,7 @@ namespace Core.ViewModel
 
         private void CreateJob()
         {
-            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService, _notifier)
+            BackUpViewModel viewModel = new BackUpViewModel(_navigationService, _notifier)
             {
                 IsEditMode = false,
             };
@@ -155,7 +126,7 @@ namespace Core.ViewModel
 
         private void AlterJob(BackUpJob selectedJob)
         {
-            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService, _notifier)
+            BackUpViewModel viewModel = new BackUpViewModel(_navigationService, _notifier)
             {
                 IsEditMode = true
             };
@@ -167,16 +138,20 @@ namespace Core.ViewModel
 
         private void DeleteJob(BackUpJob selectedJob)
         {
-            try
+            
+            if (_notifier.ShowWarning($"{this["delete_job"]}{selectedJob.Id}. {selectedJob.Name}"))
             {
-                selectedJob.DeleteJob();
-                JobsList.Remove(selectedJob);
-                //RefreshJobs();
-            }
-            catch (Exception ex)
-            {
-
-            }
+                try
+                {
+                    selectedJob.DeleteJob();
+                    JobsList.Remove(selectedJob);
+                    //RefreshJobs();
+                }
+                catch (Exception ex)
+                {
+                    _notifier.ShowError(ex.Message);
+                }
+            }            
 
         }
 
@@ -211,7 +186,6 @@ namespace Core.ViewModel
                 OnPropertyChanged("Item[]"); // Pour rafraîchir les bindings indexeurs
             }
         }
-        public string this[string key] => _localizer[key];
 
     }
 }

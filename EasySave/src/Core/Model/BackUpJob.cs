@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 using System.Diagnostics;
+using System.Threading;
 
 
 namespace Core.Model
@@ -97,7 +98,18 @@ namespace Core.Model
             this.Differential= false;
 		}
 
-        public void Run()
+        public async Task Run()
+        {
+            await Task.Run(() =>
+            {
+                RunJobInThread(); // si exception ici, elle sera capturée par l'await
+            });
+
+        }
+
+
+        //Currently use to continue using the user interface 
+        public void RunJobInThread()
         {
             var runningProcesses = Process.GetProcesses();
             string blockedProcesses = AppConfigManager.Instance.GetAppConfigParameter("SoftwarePackages");
@@ -105,26 +117,30 @@ namespace Core.Model
                 .Split(",", StringSplitOptions.RemoveEmptyEntries)
                 .Select(p => p.Trim())
                 .ToList();
-
-            foreach (var proc in runningProcesses){
+            foreach (var proc in runningProcesses)
+            {
                 if (blockedProcessesList.Contains(proc.ProcessName, StringComparer.OrdinalIgnoreCase))
                 {
                     this.Statement = Statement.Canceled;
+                    AlterJob();
                     throw new Exception($"Un processus bloquant est actif : {proc.ProcessName}. Exécution du job annulée.");
                 }
             }
+            this.Statement = Statement.Running;
+            AlterJob();
             try
-			{
-                this.Statement = Statement.Running;
+            {
                 IBackUpType backupType = Differential ?
-				new BackUpDifferential(Name, dirSource, dirTarget, Encryption) :
-				new BackUpFull(Name, dirSource, dirTarget, Encryption);
+                new BackUpDifferential(Name, dirSource, dirTarget, Encryption) :
+                new BackUpFull(Name, dirSource, dirTarget, Encryption);
                 backupType.Execute();
                 this.Statement = Statement.Done;
+                AlterJob();
             }
-			catch (Exception ex)
-			{
+            catch (Exception ex)
+            {
                 this.Statement = Statement.Error;
+                AlterJob();
                 throw new Exception(ex.Message, ex);
             }
         }
@@ -147,7 +163,6 @@ namespace Core.Model
 		public void AlterJob()
 		{
 			this.ModificationDate = DateTime.Now;
-            this.Statement = Statement.NoStatement;
             JobConfigManager.Instance.UpdateJob(Id,this);	
 		}
 

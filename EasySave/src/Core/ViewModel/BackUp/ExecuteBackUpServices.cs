@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Core.Model.Services;
+using Core.Model.Interfaces;
 
 namespace Core.ViewModel
 {

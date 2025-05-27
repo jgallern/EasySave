@@ -1,70 +1,39 @@
 {
-    //Main View
-    "easysave": "Welcome to EasySave!",
-    "settings": "Settings",
-    "show_logs": "Show Logs",
-    "select_all": "Select all",
-    "reset": "Reset",
-    "create_job": "Create a Job",
-    "start": "Start",
+  //Main View
+  "easysave": "Welcome to EasySave!",
+  "settings": "Settings",
+  "show_logs": "Show Logs",
+  "select_all": "Select all",
+  "reset": "Reset",
+  "create_job": "Create a Job",
+  "start": "Start",
 
-    //Grid header
-    "name": "Name",
-    "differential": "Diferential",
-    "encryption": "Encryption",
-    "source": "Source",
-    "target": "Target",
-    "creation_date": "Creation",
-    "modification_date": "Last Modification",
-    "statement": "Statement",
-
-
-
-    //Settings View
-    "encryption_extensions": "Encryption Extensions",
-    "encryption_extensions_detail": "There are the files extensions that use CryptoSoft to be encrypted in the destination of the backup, these extensions are encrypted in all the backups in which you have the encryption activated",
-    "software_packages": "Software Packages",
-    "software_packages_detail": "There are the packages that bloc the backup execution, if you have once open, please close it during the backup",
-    "encryption_key": "Encryption Key",
-    "exit": "Exit",
-    "modify": "Modify",
-    "cancel": "Cancel",
-    "validate": "Validate",
-
-    //BackUp Management View
-    "create": "Create",
-    "successfully_created": "Job successfully created",
-    "successfully_modify": "Job successfully modified",
+  //Grid header
+  "name": "Name",
+  "differential": "Diferential",
+  "encryption": "Encryption",
+  "source": "Source",
+  "target": "Target",
+  "creation_date": "Creation",
+  "modification_date": "Last Modification",
+  "statement": "Statement",
 
 
-    //--------------------- V1 ------------------------
-    // Run Job View
-    "run_jobs_menu": "Run BackUp Jobs",
-    "continue": "Continue",
-    "select_language": "Language: (Use Tab to change language)",
-    "welcome_message": "Welcome! You can execute these diferent functionalities: ",
-    "manage_jobs": "Manage Jobs",
-    "execute_backup": "Run Backup",
-    //_________________________
-    "job_exec_title": "==== BackUp Execution ====\n\n",
-    "job_available": "Jobs available:",
-    "enter_jobs": "Enter the jobs you want to execute (ou Escape to go back to the menu)\ne.g:\n     '1-4': execute all jobs from 1 to 4\n      '1,2,5': execute the jobs in this list\n      '2': execute the job '2'\n      '*': execute all jobs\n  >",
-    "run_succeed": "Successfully run BackUp",
-    "execution_error": "An error occured during the execution of the backup",
-    "log_repo": "You can find the Log files into: ",
-    "no_input": "❌ Please enter something.",
-    "invalid_run_input": "❌ Invalid input. Only digits, ',', '-', and '*' are allowed.",
-    "invalid_job_num": "❌ Invalid job number:",
-    "invalid_input": "❌ Invalid input:",
-    "invalid_range": "❌ Invalid range format.",
-    "start_supp_end": "❌ Invalid range: start > end.",
-    "invalid_input_list": "❌ Invalid input in list:",
-    "invalid_num_list": "❌ Invalid job number in list:",
-    "no_job_config": "No jobs to execute.",
-    // Manage job
-    "manage_job_menu": "Jobs management page",
-    "delete_job": "- Delete a job",
-    "add_job": "+ Add a new job",
-    "arrow_instruction": "Use arrows to navigate, Enter to validate, Escape to exit.",
-    "confirm_update": "Job updated! Press any key to return..."
+
+  //Settings View
+  "encryption_extensions": "Encryption Extensions",
+  "encryption_extensions_detail": "Packages with the extensions defined below will be encrypted using CryptoSoft in every backup in which the encryption feature has been activated.",
+  "software_packages": "Software Packages",
+  "software_packages_detail": "Processes or packages with the extensions defined below will prevent the backup process. Make sure to close them in order to proceed with the backup.",
+  "encryption_key": "Encryption Key",
+  "exit": "Exit",
+  "modify": "Modify",
+  "cancel": "Cancel",
+  "validate": "Validate",
+
+  //BackUp Management View
+  "create": "Create",
+  "successfully_created": "Job successfully created",
+  "successfully_modify": "Job successfully modified",
+  "delete_job": "Are you sure to delete the job: "
 }

@@ -15,7 +15,7 @@ namespace Core.Model
         string LastFileBackUp { get; set; }
         string? LastError { get; }
 
-        void Run();
+        Task Run();
         void CreateJob();
         void DeleteJob();
         void AlterJob();
