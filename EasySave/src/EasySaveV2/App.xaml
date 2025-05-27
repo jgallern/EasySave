@@ -1,0 +1,12 @@
+﻿<Application x:Class="EasySaveV2.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:EasySaveV2"
+             xmlns:converters="clr-namespace:EasySaveV2.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <converters:InverseBooleanToVisibilityConverter x:Key="InvBoolToVis"/>
+        <converters:InverseBooleanConverter x:Key="InvBool"/>
+    </Application.Resources>
+</Application>

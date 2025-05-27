@@ -1,0 +1,39 @@
+{
+  //Main View
+  "easysave": "Welcome to EasySave!",
+  "settings": "Settings",
+  "show_logs": "Show Logs",
+  "select_all": "Select all",
+  "reset": "Reset",
+  "create_job": "Create a Job",
+  "start": "Start",
+
+  //Grid header
+  "name": "Name",
+  "differential": "Diferential",
+  "encryption": "Encryption",
+  "source": "Source",
+  "target": "Target",
+  "creation_date": "Creation",
+  "modification_date": "Last Modification",
+  "statement": "Statement",
+
+
+
+  //Settings View
+  "encryption_extensions": "Encryption Extensions",
+  "encryption_extensions_detail": "Packages with the extensions defined below will be encrypted using CryptoSoft in every backup in which the encryption feature has been activated.",
+  "software_packages": "Software Packages",
+  "software_packages_detail": "Processes or packages with the extensions defined below will prevent the backup process. Make sure to close them in order to proceed with the backup.",
+  "encryption_key": "Encryption Key",
+  "exit": "Exit",
+  "modify": "Modify",
+  "cancel": "Cancel",
+  "validate": "Validate",
+
+  //BackUp Management View
+  "create": "Create",
+  "successfully_created": "Job successfully created",
+  "successfully_modify": "Job successfully modified",
+  "delete_job": "Are you sure to delete the job: "
+}
