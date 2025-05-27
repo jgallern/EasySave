@@ -1,4 +1,5 @@
-﻿using Core.Model.Services;
+﻿using Core.Model.Interfaces;
+using Core.Model.Services;
 using Core.ViewModel.Notifiers;
 using Core.ViewModel.Services;
 using System.ComponentModel;
