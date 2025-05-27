@@ -25,7 +25,7 @@
   "software_packages": "Logiciels bloquants",
   "software_packages_detail": "Les processus ou les paquets comportant les extensions définies ci-dessous empêcheront le processus de sauvegarde. Veillez à les fermer pour procéder à la sauvegarde.",
   "encryption_key": "Clé d'encryptage",
-  "exit": "Sauver & quitter",
+  "exit": "Quitter",
   "modify": "Modifier",
   "cancel": "Annuler",
   "validate": "Valider",

@@ -10,7 +10,7 @@ namespace Core.ViewModel
 {
     public class SettingsViewModel : ViewModelBase
     {
-        private readonly ILocalizer _localizer;
+        //private readonly ILocalizer _localizer;
         private readonly INavigationService _navigationService;
 
         private readonly RelayCommand _changeSettingsCommand;
@@ -18,10 +18,10 @@ namespace Core.ViewModel
 
         public ICommand ExitCommand { get; }
 
-        public SettingsViewModel(ILocalizer localizer, INavigationService navigationService)
+        public SettingsViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
+            //_localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
 
             // Initialisation des valeurs
             EditedExtensions = _localizer.GetEncryptionExtensions();
