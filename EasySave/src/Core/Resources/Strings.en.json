@@ -25,7 +25,7 @@
   "software_packages": "Restraining Software/Packages",
   "software_packages_detail": "Processes or packages with the extensions defined below will prevent the backup process. Make sure to close them in order to proceed with the backup.",
   "encryption_key": "Encryption Key",
-  "exit": "Save & exit",
+  "exit": "Exit",
   "modify": "Edit",
   "cancel": "Discard",
   "validate": "Confirm",

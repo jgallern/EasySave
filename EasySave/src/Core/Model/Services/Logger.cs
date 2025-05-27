@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.IO;
 using System.Diagnostics;
 
-namespace Core.Model{
+namespace Core.Model.Services{
     public enum LogType
     {
         Daily,

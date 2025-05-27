@@ -14,25 +14,10 @@ using Core.Model.Managers;
 
 namespace Core.ViewModel
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        private ViewModelBase _currentViewModel;
-        private readonly ILocalizer _localizer;
         private readonly INavigationService _navigationService;
         private readonly IUIErrorNotifier _notifier;
-
-        public ViewModelBase CurrentViewModel
-        {
-            get => _currentViewModel;
-            set
-            {
-                if (_currentViewModel != value)
-                {
-                    _currentViewModel = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
 
         public ObservableCollection<BackUpJob> JobsList { get; }
@@ -62,12 +47,9 @@ namespace Core.ViewModel
         }
 
 
-        public List<int> SelectedJobs = new List<int>();
-
-        public MainViewModel(ILocalizer localizer, INavigationService navigation, IUIErrorNotifier notifier)
+        public MainViewModel(INavigationService navigation, IUIErrorNotifier notifier)
         {
             _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
-            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
             _navigationService = navigation;
             CurrentLanguage = _localizer.GetCurrentLanguage();
             AvailableLanguages = _localizer.GetAvailableLanguages();
@@ -133,7 +115,7 @@ namespace Core.ViewModel
 
         private void CreateJob()
         {
-            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService, _notifier)
+            BackUpViewModel viewModel = new BackUpViewModel(_navigationService, _notifier)
             {
                 IsEditMode = false,
             };
@@ -144,7 +126,7 @@ namespace Core.ViewModel
 
         private void AlterJob(BackUpJob selectedJob)
         {
-            BackUpViewModel viewModel = new BackUpViewModel(_localizer, _navigationService, _notifier)
+            BackUpViewModel viewModel = new BackUpViewModel(_navigationService, _notifier)
             {
                 IsEditMode = true
             };
@@ -204,7 +186,6 @@ namespace Core.ViewModel
                 OnPropertyChanged("Item[]"); // Pour rafraîchir les bindings indexeurs
             }
         }
-        public string this[string key] => _localizer[key];
 
     }
 }

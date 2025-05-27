@@ -23,10 +23,9 @@ namespace EasySaveV2
         public MainWindow()
         {
             InitializeComponent();
-            ILocalizer localizer = new Localizer(); // instancie ton implémentation
             IUIErrorNotifier notifier = new MessageBoxNotifier();
             INavigationService navigation = new NavigationService();
-            MainViewModel SettingsVM = new MainViewModel(localizer, navigation, notifier);
+            MainViewModel SettingsVM = new MainViewModel(navigation, notifier);
             DataContext = SettingsVM;
         }
     }

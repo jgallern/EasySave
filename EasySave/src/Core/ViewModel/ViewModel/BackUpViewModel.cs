@@ -15,27 +15,11 @@ namespace Core.ViewModel
 {
     public class BackUpViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        private readonly ILocalizer _localizer;
-
         private readonly INavigationService _navigation;
 
         private readonly IUIErrorNotifier _notifier;
 
         private IFileDialogService _fileDialogService;
-
-        private ViewModelBase _currentViewModel;
-        public ViewModelBase CurrentViewModel
-        {
-            get => _currentViewModel;
-            set
-            {
-                if (_currentViewModel != value)
-                {
-                    _currentViewModel = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
 
         public ICommand ModifyCommand { get; }
@@ -130,11 +114,10 @@ namespace Core.ViewModel
             set => SetProperty(ref _isDifferential, value);
         }
 
-        public BackUpViewModel(ILocalizer localizer, INavigationService navigation, IUIErrorNotifier notifier)
+        public BackUpViewModel(INavigationService navigation, IUIErrorNotifier notifier)
         {
             _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
-            _localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
-            _navigation = navigation ?? throw new ArgumentNullException(nameof(localizer));
+            _navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
             BrowseSourceCommand = new RelayCommand(BrowseSource);
             BrowseTargetCommand = new RelayCommand(BrowseTarget);
             ValidateCommand = new RelayCommand(_ => Validate());
