@@ -104,8 +104,7 @@ namespace Core.ViewModel
         {
             try
             {
-                ILogger logger = Logger.Instance;
-                logger.OpenLogs();
+                Logger.OpenLogs();
             }
             catch (Exception ex) 
             {
