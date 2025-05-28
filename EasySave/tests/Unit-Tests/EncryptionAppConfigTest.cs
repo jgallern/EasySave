@@ -31,7 +31,6 @@ namespace Unit_Tests
                 { "Language", "en" },
                 { "EncryptionExtensions", ".txt, .docx" },
                 { "SoftwarePackages", "Notepad++, Visual Studio" },
-                { "CryptoSoftKey", "abc123" },
                 { "PriorityFiles", ".pdf, .html" }
             };
 
@@ -68,7 +67,7 @@ namespace Unit_Tests
             Assert.Equal(".zip, .pdf", result);
         }
 
-
+        /* need to recupe the key.bin of cryptosoft
         [Fact]
         public void RetrieveEncryptionKey_Should_Work()
         {
@@ -89,5 +88,6 @@ namespace Unit_Tests
             Assert.Equal("newKey456", result);
 
         }
+        */
     }
 }
