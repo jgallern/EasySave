@@ -56,14 +56,23 @@ namespace Core.Model.Services{
 
         public void AddLogInfo(LogType logType, Dictionary<string, object> logEntry)
         {
-            string path = logType switch
+            try
             {
-                LogType.Daily => GetDailyLogPath(),
-                LogType.Status => GetStatusLogPath(),
-                _ => throw new ArgumentOutOfRangeException(nameof(logType), "Invalid log type")
-            };
-            string json = JsonSerializer.Serialize(logEntry, new JsonSerializerOptions { WriteIndented = true });
-            File.AppendAllText(path, json);
+
+                string path = logType switch
+                {
+                    LogType.Daily => GetDailyLogPath(),
+                    LogType.Status => GetStatusLogPath(),
+                    _ => throw new ArgumentOutOfRangeException(nameof(logType), "Invalid log type")
+                };
+                string json = JsonSerializer.Serialize(logEntry, new JsonSerializerOptions { WriteIndented = true });
+                File.AppendAllText(path, json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
         }
 
         public void OpenLogs()

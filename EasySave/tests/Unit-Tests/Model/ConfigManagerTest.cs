@@ -20,10 +20,17 @@ namespace Unit_Tests
             // Crée un appconfig.json de test
             string _appConfigPath = Path.Combine(_tempEnvPath, "appconfig.json");
 
-            BackUpJob bcktest = new BackUpJob("test1", "c:/users/jg/test", "c:/users/jg/test1", false, true);    
-            //bcktest.CreateJob();
+            BackUpJob bcktest = new BackUpJob("test1", "c:/users/jg/test", "c:/users/jg/test1", true, true);
+            try
+            {
+                bcktest.CreateJob();
+            }
+            catch {
+                bcktest.Id = JobConfigManager.Instance.FindJobId(bcktest);
+            }
 
-            bcktest.Run();
+            AppConfigManager.Instance.ChangeAppConfigParameter("CryptoSoftKey", "123421");
+            _ = bcktest.Run();
         }
     }
 }
