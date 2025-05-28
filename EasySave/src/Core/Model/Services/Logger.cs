@@ -58,7 +58,7 @@ namespace Core.Model.Services{
 
         public void AddLogInfo(LogType logType, Dictionary<string, object> logEntry)
         {
-            try
+            string path = logType switch
             {
                 LogType.Daily => GetDailyLogPath(),
                 LogType.Status => GetStatusLogPath(),

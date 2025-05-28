@@ -44,10 +44,13 @@ namespace Core.Model.Managers
         {
             try
             {
-                string json = File.ReadAllText(filePath);
-                if (string.IsNullOrWhiteSpace(json)) return new List<BackUpJob>();
-                List<BackUpJob> jobs = JsonConvert.DeserializeObject<List<BackUpJob>>(json) ?? new List<BackUpJob>();
-                return jobs;
+                lock (_lockWriteConfig)
+                {
+                    string json = File.ReadAllText(filePath);
+                    if (string.IsNullOrWhiteSpace(json)) return new List<BackUpJob>();
+                    List<BackUpJob> jobs = JsonConvert.DeserializeObject<List<BackUpJob>>(json) ?? new List<BackUpJob>();
+                    return jobs;
+                }
             }
             catch (Exception ex)
             {
