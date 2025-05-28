@@ -29,7 +29,6 @@ namespace Core.Model
             string message;
             try
             {
-                SetXorKey();
                 CheckAndCreateDirectories();
 
                 var test = Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories);
@@ -152,16 +151,6 @@ namespace Core.Model
             {
                 Directory.CreateDirectory(dirPath.Replace(dirSource, dirTarget));
             }
-        }
-
-        public void SetXorKey()
-        {
-            string xorKey = AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
-            if (xorKey == null | xorKey == "")
-            {
-                throw new Exception("la clé de Xor de la config est nulle");
-            }
-            CryptoManager.SetKey(xorKey);
         }
 
         private void WriteDailyLog(string sourceFile, string targetFile, double transfertTime, double encryptionTime)

@@ -1,5 +1,6 @@
 ﻿using Core.Model.Interfaces;
 using Core.Model.Managers;
+using System.Globalization;
 
 namespace Core.Model.Services
 {
@@ -22,6 +23,21 @@ namespace Core.Model.Services
         public List<string> GetAvailableLanguages()
         {
             return ResourceManager.Instance.GetAvailableLanguages();
+        }
+
+
+        // ----------------------------- Priority Files methods ---------------------------
+        public string ChangePriorityFiles(string priorityFiles)
+        {
+            List<string> priorityFilesList = priorityFiles.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(e => e.Trim()).Where(e => !string.IsNullOrWhiteSpace(e)).ToList();
+            string files = string.Join(", ", priorityFilesList);
+            AppConfigManager.Instance.ChangeAppConfigParameter("PriorityFiles", files);
+            return files;
+        }
+
+        public string GetPriorityFiles()
+        {
+            return AppConfigManager.Instance.GetAppConfigParameter("PriorityFiles");
         }
 
 
@@ -56,12 +72,12 @@ namespace Core.Model.Services
         // ----------------------------- Encryption Key methods ---------------------------
         public string ChangeEncryptionKey(string encryptionKey)
         {
-            AppConfigManager.Instance.ChangeAppConfigParameter("CryptoSoftKey", encryptionKey);
-            return encryptionKey;
+            CryptoManager.SetKey(encryptionKey);
+            return CryptoManager.GetKeyString();
         }
         public string GetEncryptionKey()
         {
-            return AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
+            return CryptoManager.GetKeyString();
         }
     }
 }

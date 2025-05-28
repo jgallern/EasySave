@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.IO;
+using System.Data;
 
 namespace Core.Model.Managers
 {
@@ -9,6 +10,7 @@ namespace Core.Model.Managers
     {
         private static JobConfigManager? _instance;
         private static readonly object _lock = new object();
+        private static readonly object _lockWriteConfig = new object();
 
         private readonly string filePath;
 
@@ -57,8 +59,19 @@ namespace Core.Model.Managers
 
         private void SaveJobs(List<BackUpJob> jobs)
         {
-            string json = JsonConvert.SerializeObject(jobs, Formatting.Indented);
-            File.WriteAllText(filePath, json);
+
+            lock (_lockWriteConfig)
+            {
+                try
+                {
+                    string json = JsonConvert.SerializeObject(jobs, Formatting.Indented);
+                    File.WriteAllText(filePath, json);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
         }
 
         public List<BackUpJob> GetAllJobs() => LoadJobs();
