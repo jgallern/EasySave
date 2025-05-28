@@ -75,11 +75,12 @@ namespace Core.Model.Services{
 
         }
 
-        public void OpenLogs()
+        public static void OpenLogs()
         {
+            string log_path = GetLogDirectory();
             ProcessStartInfo logs = new ProcessStartInfo()
             {
-                FileName = _logpath,
+                FileName = log_path,
                 Verb = "open",
                 UseShellExecute = true
             };
