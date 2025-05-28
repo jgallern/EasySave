@@ -23,10 +23,7 @@ namespace Unit_Tests
 
             // S'assure que le dossier existe
             Directory.CreateDirectory(_tempEnvPath);
-        }
 
-        private void CreateRealAppConfig()
-        {
             _appConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "appconfig.json");
 
             Dictionary<string, string> config = new()
@@ -43,11 +40,7 @@ namespace Unit_Tests
             _localizer = new Localizer(); // Ne change pas
         }
 
-        private void Cleanup()
-        {
-            if (File.Exists(_appConfigPath))
-                File.Delete(_appConfigPath);
-        }
+
         public void Dispose()
         {
             // Nettoyage après les tests
@@ -58,51 +51,37 @@ namespace Unit_Tests
         [Fact]
         public void RetrieveEncryptionExtensions_Should_Work()
         {
-            CreateRealAppConfig();
-            _appConfigPath = Path.Combine(_tempEnvPath, $"appconfig_{Guid.NewGuid()}.json");
 
             string result = _localizer.GetEncryptionExtensions();
 
             // Assert
             Assert.Equal(".zip, .pdf", result);
-            Cleanup();
         }
 
         [Fact]
         public void ChangeAndRetrieveEncryptionExtensions_Should_Work()
         {
-            CreateRealAppConfig();
-            _appConfigPath = Path.Combine(_tempEnvPath, $"appconfig_{Guid.NewGuid()}.json");
-
             string newExtensions = ".zip, .pdf,,";
             string result = _localizer.ChangeEncryptionExtensions(newExtensions);
 
             // Assert
             Assert.Equal(".zip, .pdf", result);
-            Cleanup();
         }
 
 
         [Fact]
         public void RetrieveEncryptionKey_Should_Work()
         {
-            CreateRealAppConfig();
-            _appConfigPath = Path.Combine(_tempEnvPath, $"appconfig_{Guid.NewGuid()}.json");
-
             string result = _localizer.GetEncryptionKey();
 
             // Assert
             Assert.Equal("newKey456", result);
-            Cleanup();
         }
 
 
         [Fact]
         public void ChangeAndRetrieveEncryptionKey_Should_Work()
         {
-            CreateRealAppConfig();
-            _appConfigPath = Path.Combine(_tempEnvPath, $"appconfig_{Guid.NewGuid()}.json");
-
             string newKey = "newKey456";
             string result = _localizer.ChangeEncryptionKey(newKey);
 

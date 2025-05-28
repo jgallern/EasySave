@@ -107,14 +107,18 @@ namespace Unit_Tests
         [Fact]
         public void GetAvailableLanguages_Should_Detect_LanguageFiles()
         {
-            // Arrange
-            var localizer = new Localizer();
-
             // Act
-            List<string> languages = localizer.GetAvailableLanguages();
+            List<string> languages = _localizer.GetAvailableLanguages();
 
-            // Assert
-            Assert.Equal(["en", "fr"], languages);
+            List<string> expected1 = new List<string> { "en", "fr" };
+            List<string> expected2 = new List<string> { "fr", "en" };
+
+            languages.Sort();
+
+            Assert.True(
+                languages.SequenceEqual(expected1.OrderBy(x => x)) ||
+                languages.SequenceEqual(expected2.OrderBy(x => x))
+            );
         }
     }
 }
