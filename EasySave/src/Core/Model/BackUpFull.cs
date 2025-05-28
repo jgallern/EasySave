@@ -28,37 +28,16 @@ namespace Core.Model
             string message;
 			try
 			{
-				string xorKey = AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
-				if (xorKey == null | xorKey == "")
-				{
-					throw new Exception("la clé de Xor de la config est nulle");
-				}
-                CryptoManager.SetKey(xorKey);
-                // verifie if the subdirectories exists and create them if necessary
-                if (!Directory.Exists(this.dirTarget)) 
-				{
-					Directory.CreateDirectory(this.dirTarget);
-				}
-				foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
-				{
-					Directory.CreateDirectory(dirPath.Replace(dirSource, dirTarget));
-				}
-
+				SetXorKey();
+				CheckAndCreateDirectories();
 				// Copie all the files to the target dir
 				foreach (string fileSource in Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories))
 				{
 					Stopwatch watch = Stopwatch.StartNew();
 					string fileTarget = fileSource.Replace(dirSource, dirTarget);
-					string fileExtensionsToEncrypt = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
-					String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypt.Split(",");
-                    bool shouldEncrypt = false;
-                    if (encryption)
-                    {
-                        shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => fileSource.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
-                    }
-
                     double encryptionTime = 0;
-                    if (shouldEncrypt)
+
+                    if (shouldEncrypt(fileSource))
 					{
 						Stopwatch EncryptTimer = Stopwatch.StartNew();
 
@@ -93,6 +72,42 @@ namespace Core.Model
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
                 throw new Exception(message, ex);
             }
+        }
+
+		public bool shouldEncrypt(string fileSource)
+        {
+            string fileExtensionsToEncrypt = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
+            String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypt.Split(",");
+
+            bool shouldEncrypt = false;
+            if (encryption)
+            {
+                shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => fileSource.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
+            }
+			return shouldEncrypt;
+        }
+
+        public void CheckAndCreateDirectories()
+		{
+                // verifie if the subdirectories exists and create them if necessary
+                if (!Directory.Exists(this.dirTarget)) 
+				{
+					Directory.CreateDirectory(this.dirTarget);
+				}
+				foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
+				{
+					Directory.CreateDirectory(dirPath.Replace(dirSource, dirTarget));
+				}
+		}
+
+        public void SetXorKey()
+		{
+            string xorKey = AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
+            if (xorKey == null | xorKey == "")
+            {
+                throw new Exception("la clé de Xor de la config est nulle");
+            }
+            CryptoManager.SetKey(xorKey);
         }
 
         public void WriteDailyLog(string fileSource, string fileTarget, double transfertTime, double encryptionTime)
