@@ -12,5 +12,7 @@
         string GetSoftwarePackages();
         string ChangeEncryptionKey(string key);
         string GetEncryptionKey();
+        string ChangePriorityFiles(string PriorityFiles);
+        string GetPriorityFiles();
     }
 }

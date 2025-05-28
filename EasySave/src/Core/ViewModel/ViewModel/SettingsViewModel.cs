@@ -28,6 +28,7 @@ namespace Core.ViewModel
             _navigationService = navigationService;
 
             // Initialisation des valeurs
+            EditedPriorityFiles = _localizer.GetPriorityFiles();
             EditedExtensions = _localizer.GetEncryptionExtensions();
             EditedSoftwarePackages = _localizer.GetSoftwarePackages();
             EditedKey = _localizer.GetEncryptionKey();
@@ -39,6 +40,7 @@ namespace Core.ViewModel
 
             CancelCommand = new RelayCommand(_ =>
             {
+                EditedPriorityFiles = _localizer.GetPriorityFiles();
                 EditedExtensions = _localizer.GetEncryptionExtensions();
                 EditedSoftwarePackages = _localizer.GetSoftwarePackages();
                 EditedKey = _localizer.GetEncryptionKey();
@@ -61,20 +63,16 @@ namespace Core.ViewModel
 
         private void SaveAll()
         {
-            _localizer.ChangeEncryptionExtensions(EditedExtensions);
-            _localizer.ChangeSoftwarePackages(EditedSoftwarePackages);
-            _localizer.ChangeEncryptionKey(EditedKey);
-
-            // Reload the values to be sure that Localizer don't transform the string
-            EditedExtensions = _localizer.GetEncryptionExtensions();
-            EditedSoftwarePackages = _localizer.GetSoftwarePackages();
-            EditedKey = _localizer.GetEncryptionKey();
+            EditedPriorityFiles = _localizer.ChangePriorityFiles(EditedPriorityFiles);
+            EditedExtensions = _localizer.ChangeEncryptionExtensions(EditedExtensions);
+            EditedSoftwarePackages = _localizer.ChangeSoftwarePackages(EditedSoftwarePackages);
+            EditedKey = _localizer.ChangeEncryptionKey(EditedKey);
 
             IsEditing = false;  // will trigger the RaiseCanExecuteChanged
         }
 
 
-        // État édition
+        // État édition ou création
         private bool _isEditing;
         public bool IsEditing
         {
@@ -88,6 +86,15 @@ namespace Core.ViewModel
             }
 
         }
+
+        // Texte éditable pour les fichiers prioritaires
+        private string _editedPriorityFiles;
+        public string EditedPriorityFiles
+        {
+            get => _editedPriorityFiles;
+            set { _editedPriorityFiles = value; OnPropertyChanged(); }
+        }
+
 
         // Texte éditable pour les extensions
         private string _editedExtensions;
@@ -105,6 +112,7 @@ namespace Core.ViewModel
             set { _editedSoftwarePackages = value; OnPropertyChanged(); }
         }
 
+        // Texte éditable pour la clé d'encryptage
         private string _editedKey;
         public string EditedKey
         {
