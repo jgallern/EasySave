@@ -58,7 +58,7 @@ namespace Core.Model.Services{
 
         public void AddLogInfo(LogType logType, Dictionary<string, object> logEntry)
         {
-            string path = logType switch
+            try
             {
                 LogType.Daily => GetDailyLogPath(),
                 LogType.Status => GetStatusLogPath(),
@@ -71,11 +71,12 @@ namespace Core.Model.Services{
             }
         }
 
-        public void OpenLogs()
+        public static void OpenLogs()
         {
+            string log_path = GetLogDirectory();
             ProcessStartInfo logs = new ProcessStartInfo()
             {
-                FileName = _logpath,
+                FileName = log_path,
                 Verb = "open",
                 UseShellExecute = true
             };

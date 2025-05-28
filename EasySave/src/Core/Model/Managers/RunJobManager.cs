@@ -16,6 +16,7 @@ namespace Core.Model.Managers
             {
                 job.IsSelected = false;
             }
+
             //Parallele run for the priority files 
 
             //Await all tasks finished 
@@ -25,13 +26,16 @@ namespace Core.Model.Managers
             {
                 try
                 {
+                    //await job.RunForPrioritizedFiles();
                     await job.Run();
+                    //await job.RunForNonPrioritizedFiles();
                     notifier.ShowSuccess($"Job {job.Id} done!");
                 }
                 catch (Exception ex)
                 {
                     notifier.ShowError($"Job {job.Id} failed: {ex.Message}");
                 }
+
             }).ToList();
 
             await Task.WhenAll(tasks);

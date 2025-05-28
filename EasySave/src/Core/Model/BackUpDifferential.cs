@@ -31,6 +31,7 @@ namespace Core.Model
             {
                 CheckAndCreateDirectories();
 
+                var test = Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories);
                 // Compare et copie les fichiers modifiés ou nouveaux
                 foreach (string sourceFile in Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories))
                 {
@@ -55,7 +56,14 @@ namespace Core.Model
                         }
                         watch.Stop();
                         double elapsedMs = watch.ElapsedMilliseconds;
-                        WriteDailyLog(sourceFile, fileTarget, elapsedMs, encryptionTime);
+                        try
+                        {
+                            WriteDailyLog(sourceFile, fileTarget, elapsedMs, encryptionTime);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                        }
                     }
 
                 }
@@ -89,18 +97,28 @@ namespace Core.Model
             EncryptTimer.Stop();
             return EncryptTimer.Elapsed.Milliseconds;
         }
+
         public bool shouldCopy(string targetFile, string sourceFile)
         {
             bool shouldCopy = false;
 
-            if (!File.Exists(targetFile))
+            if ((!encryption && !File.Exists(targetFile)) | (encryption && !File.Exists(targetFile+".xor")))
             {
                 shouldCopy = true; // Nouveau fichier
             }
             else
             {
-                DateTime sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile);
-                DateTime targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
+                DateTime sourceLastWrite, targetLastWrite;
+                if (!encryption)
+                {
+                    sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile);
+                    targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
+                }
+                else
+                {
+                    sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile+".xor");
+                    targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
+                }
 
                 if (sourceLastWrite > targetLastWrite)
                 {
