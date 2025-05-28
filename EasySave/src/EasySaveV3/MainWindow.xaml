@@ -3,10 +3,250 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:EasySaveV3"
+        xmlns:vm="clr-namespace:Core.ViewModel;assembly=Core"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
 
-    </Grid>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+
+		</Grid.RowDefinitions>
+
+
+		<!-- Partie HEAD avec les boutons, le changement de langue, etc -->
+		<Grid Grid.Row="0" x:Name="HeaderGrid">
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+
+			<TextBlock Text="{Binding [easysave]}" FontSize="24" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1"  Margin="10"/>
+
+
+
+
+			<Button Name="settings_button"
+                    Content="{Binding [settings]}"
+                    Command="{Binding SettingsCommand}"
+                    Width="100"
+                    Height="30"
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Margin="10"
+            />
+			<Button Name="log_button"
+                    Content="{Binding [show_logs]}"
+                    Command="{Binding ShowLogsCommand}"
+                    Width="100"
+                    Height="30"
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Margin="10"
+            />
+			<ComboBox Name="language_selector"
+                      Grid.Row="1"
+                      Grid.Column="4"
+                      Margin="10,0,10,10"
+                      ItemsSource="{Binding AvailableLanguages}"
+                      SelectedItem="{Binding CurrentLanguage, Mode=TwoWay}" Height="19"
+            />
+
+		</Grid>
+
+
+		<!-- Partie MAIN - Datagrid -->
+		<DataGrid Grid.Row="1"
+                  ItemsSource="{Binding JobsList}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="True"
+                  SelectionMode="Single"
+                  Margin="10,0">
+
+
+			<DataGrid.Columns>
+
+				<DataGridTemplateColumn Header="Select" Width="Auto">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+
+				<DataGridTextColumn  Header="Id"
+                        Binding="{Binding Id}"
+                        Width="30"
+                        IsReadOnly="True"
+/>
+				<DataGridTemplateColumn Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.Header>
+						<TextBlock Text="{Binding DataContext[name], RelativeSource={RelativeSource AncestorType=Window}}" />
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Name}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTemplateColumn Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.Header>
+						<TextBlock Text="{Binding DataContext[differential], RelativeSource={RelativeSource AncestorType=Window}}" />
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<CheckBox IsChecked="{Binding Differential}" IsHitTestVisible="False" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+
+				<DataGridTemplateColumn Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.Header>
+						<TextBlock Text="{Binding DataContext[encryption], RelativeSource={RelativeSource AncestorType=Window}}" />
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<CheckBox IsChecked="{Binding Encryption}" IsHitTestVisible="False" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTemplateColumn Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.Header>
+						<TextBlock Text="{Binding DataContext[source], RelativeSource={RelativeSource AncestorType=Window}}" />
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding dirSource}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTemplateColumn Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.Header>
+						<TextBlock Text="{Binding DataContext[target], RelativeSource={RelativeSource AncestorType=Window}}" />
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding dirTarget}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTemplateColumn Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.Header>
+						<TextBlock Text="{Binding DataContext[creation_date], RelativeSource={RelativeSource AncestorType=Window}}" />
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding CreationDate, StringFormat='{}{0:dd/MM/yyyy, HH\\hmm}'}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTemplateColumn Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.Header>
+						<TextBlock Text="{Binding DataContext[modification_date], RelativeSource={RelativeSource AncestorType=Window}}" />
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding ModificationDate, StringFormat='{}{0:dd/MM/yyyy, HH\\hmm}'}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+
+				<DataGridTemplateColumn Width="*" IsReadOnly="True">
+					<DataGridTemplateColumn.Header>
+						<TextBlock Text="{Binding DataContext[statement], RelativeSource={RelativeSource AncestorType=Window}}" />
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Statement}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<!--
+                <DataGridTextColumn Header="Last execution"
+                                    Binding="{Binding LastExecution, StringFormat='{}{0:dd/MM/yyyy, HH\\hmm}'}"
+                                    Width="*"
+                />-->
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="✏"
+                                    Command="{Binding DataContext.ModifyJobCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="🗑"
+                                    Command="{Binding DataContext.DeleteJobCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
+
+			</DataGrid.Columns>
+
+		</DataGrid>
+
+
+
+		<!-- Partie FOOT -->
+		<Grid Grid.Row="2">
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+
+
+			<Button Name="create_button"
+                    Content="{Binding [create_job]}"
+                    Command="{Binding CreateJobCommand}"
+                    Width="100"
+                    Height="30"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="10"
+            />
+
+
+			<Button Name="start_button"
+                    Content="{Binding [start]}"
+                    Command="{Binding ExecuteSelectedJobsCommand}"
+                    Width="100"
+                    Height="30"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="10"
+            />
+
+		</Grid>
+
+	</Grid>
 </Window>
