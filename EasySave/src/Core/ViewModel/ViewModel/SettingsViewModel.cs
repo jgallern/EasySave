@@ -17,11 +17,15 @@ namespace Core.ViewModel
         public ICommand ChangeSettingsCommand => _changeSettingsCommand;
 
         public ICommand ExitCommand { get; }
+        public ICommand EditCommand { get; }
+        public ICommand CancelCommand { get; }
+        public ICommand CloseCommand { get; }
+
+        public event Action RequestClose;
 
         public SettingsViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            //_localizer = localizer ?? throw new ArgumentNullException(nameof(localizer));
 
             // Initialisation des valeurs
             EditedExtensions = _localizer.GetEncryptionExtensions();
@@ -35,7 +39,6 @@ namespace Core.ViewModel
 
             CancelCommand = new RelayCommand(_ =>
             {
-                // Restaure l’état antérieur
                 EditedExtensions = _localizer.GetEncryptionExtensions();
                 EditedSoftwarePackages = _localizer.GetSoftwarePackages();
                 EditedKey = _localizer.GetEncryptionKey();
@@ -127,15 +130,5 @@ namespace Core.ViewModel
 
         // Accès aux traductions par indexeur
         public string this[string key] => _localizer[key];
-
-        // Commandes exposées à la vue
-        public ICommand EditCommand { get; }
-        public ICommand CancelCommand { get; }
-        public ICommand CloseCommand { get; }
-
-        public event Action RequestClose;
-
-
-
     }
 }

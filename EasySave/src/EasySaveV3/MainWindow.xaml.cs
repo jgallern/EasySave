@@ -9,14 +9,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EasySaveV2
+namespace EasySaveV3
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class RunBackUpWindow : Window
+    public partial class MainWindow : Window
     {
-        public RunBackUpWindow()
+        public MainWindow()
         {
             InitializeComponent();
         }
