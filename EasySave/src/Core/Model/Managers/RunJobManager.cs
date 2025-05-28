@@ -11,22 +11,24 @@ namespace Core.Model.Managers
     {
         public static async Task ExecuteSelectedJobs(List<BackUpJob> jobs, IUIErrorNotifier notifier)
         {
-            foreach (var job in jobs)
+            foreach (BackUpJob job in jobs)
             {
                 job.IsSelected = false;
             }
-            foreach (var job in jobs)
+            Parallel.ForEach(jobs, job =>
             {
                 try
                 {
-                    await job.Run();
+                    //await job.RunForPrioritizedFiles();
+                    _ = job.Run();
+                    //await job.RunForNonPrioritizedFiles();
                     notifier.ShowSuccess($"Job {job.Id} done!");
                 }
                 catch (Exception ex)
                 {
                     notifier.ShowError(ex.Message);
                 }
-            }
+            });
 
         }
     }
