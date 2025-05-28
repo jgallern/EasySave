@@ -9,13 +9,19 @@ namespace Core.Model.Managers
 {
     public class RunJobManager
     {
+        public static SemaphoreSlim LargeFileSemaphore = new SemaphoreSlim(2);
         public static async Task ExecuteSelectedJobs(List<BackUpJob> jobs, IUIErrorNotifier notifier)
         {
-            foreach (var job in jobs)
+            foreach (BackUpJob job in jobs)
             {
                 job.IsSelected = false;
             }
-            foreach (var job in jobs)
+            //Parallele run for the priority files 
+
+            //Await all tasks finished 
+
+            // Parallele run for the non priority files 
+            List<Task> tasks = jobs.Select(async job =>
             {
                 try
                 {
@@ -24,9 +30,11 @@ namespace Core.Model.Managers
                 }
                 catch (Exception ex)
                 {
-                    notifier.ShowError(ex.Message);
+                    notifier.ShowError($"Job {job.Id} failed: {ex.Message}");
                 }
-            }
+            }).ToList();
+
+            await Task.WhenAll(tasks);
 
         }
     }

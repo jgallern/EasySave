@@ -2,10 +2,11 @@ using Core.Model.Managers;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 
 namespace Core.Model
@@ -98,12 +99,10 @@ namespace Core.Model
             this.Differential= false;
 		}
 
-        public async Task Run()
+        public Task Run()
         {
-            await Task.Run(() =>
-            {
-                RunJobInThread(); // si exception ici, elle sera capturée par l'await
-            });
+            return Task.Run(() => { RunJobInThread(); });
+            //await Task.WhenAll(tasks);
 
         }
 
@@ -111,29 +110,16 @@ namespace Core.Model
         //Currently use to continue using the user interface 
         public void RunJobInThread()
         {
-            var runningProcesses = Process.GetProcesses();
-            string blockedProcesses = AppConfigManager.Instance.GetAppConfigParameter("SoftwarePackages");
-            List<string> blockedProcessesList = blockedProcesses
-                .Split(",", StringSplitOptions.RemoveEmptyEntries)
-                .Select(p => p.Trim())
-                .ToList();
-            foreach (var proc in runningProcesses)
-            {
-                if (blockedProcessesList.Contains(proc.ProcessName, StringComparer.OrdinalIgnoreCase))
-                {
-                    this.Statement = Statement.Canceled;
-                    AlterJob();
-                    throw new Exception($"Un processus bloquant est actif : {proc.ProcessName}. Exécution du job annulée.");
-                }
-            }
             this.Statement = Statement.Running;
             AlterJob();
             try
             {
+                Thread.Sleep(3000);
                 IBackUpType backupType = Differential ?
                 new BackUpDifferential(Name, dirSource, dirTarget, Encryption) :
                 new BackUpFull(Name, dirSource, dirTarget, Encryption);
                 backupType.Execute();
+                Thread.Sleep(6000);
                 this.Statement = Statement.Done;
                 AlterJob();
             }

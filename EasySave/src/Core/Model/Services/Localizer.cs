@@ -1,5 +1,6 @@
 ﻿using Core.Model.Interfaces;
 using Core.Model.Managers;
+using System.Globalization;
 
 namespace Core.Model.Services
 {
@@ -71,12 +72,12 @@ namespace Core.Model.Services
         // ----------------------------- Encryption Key methods ---------------------------
         public string ChangeEncryptionKey(string encryptionKey)
         {
-            AppConfigManager.Instance.ChangeAppConfigParameter("CryptoSoftKey", encryptionKey);
-            return encryptionKey;
+            CryptoManager.SetKey(encryptionKey);
+            return CryptoManager.GetKeyString();
         }
         public string GetEncryptionKey()
         {
-            return AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
+            return CryptoManager.GetKeyString();
         }
     }
 }
