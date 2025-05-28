@@ -12,7 +12,8 @@ namespace Core.Model
         bool Encryption { get; set; }
         DateTime CreationDate { get; }
         DateTime ModificationDate { get; }
-        string LastFileBackUp { get; set; }
+        Statement Statement { get; set; }
+        DateTime LastExecution { get; set; }
         string? LastError { get; }
 
         Task Run();

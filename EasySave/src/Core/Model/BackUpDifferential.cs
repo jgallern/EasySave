@@ -8,40 +8,36 @@ namespace Core.Model
 {
 	public class BackUpDifferential : IBackUpType
 	{
-		public string Name { get; }
-		public string dirSource{ get; }
-		public string dirTarget {  get; }
-        public bool encryption { get; }
+		public IJobs job { get; set; }
         private ILogger _log;
 
-        public BackUpDifferential(string Name, string dirSource, string dirTarget, bool encryption)
+        public BackUpDifferential(BackUpJob job)
 		{
             this._log = Logger.Instance;
-            this.Name = Name;
-			this.dirSource = dirSource;
-			this.dirTarget = dirTarget;
-            this.encryption = encryption;
+            this.job = job;
 		}
 
 		public void Execute()
 		{
+            job.Statement = Statement.Running;
+            job.LastExecution = DateTime.Now;
+            job.AlterJob();
             Stopwatch jobTimer = Stopwatch.StartNew();
             string message;
             try
             {
                 CheckAndCreateDirectories();
 
-                var test = Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories);
+                var test = Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories);
                 // Compare et copie les fichiers modifiés ou nouveaux
-                foreach (string sourceFile in Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories))
+                foreach (string sourceFile in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
                 {
-                    string targetFile = sourceFile.Replace(dirSource, dirTarget);
-
+                    string targetFile = sourceFile.Replace(job.dirSource, job.dirTarget);
 
                     if (shouldCopy(targetFile, sourceFile))
                     {
                         Stopwatch watch = Stopwatch.StartNew();
-                        string fileTarget = sourceFile.Replace(dirSource, dirTarget);
+                        string fileTarget = sourceFile.Replace(job.dirSource, job.dirTarget);
                         string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
                         String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
                         double encryptionTime = 0;
@@ -70,6 +66,9 @@ namespace Core.Model
                 jobTimer.Stop();
                 message = "Job Succeed!";
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
+                Thread.Sleep(3000);
+                job.Statement = Statement.Done;
+                job.AlterJob();
             }
             catch (Exception ex)
             {
@@ -102,14 +101,14 @@ namespace Core.Model
         {
             bool shouldCopy = false;
 
-            if ((!encryption && !File.Exists(targetFile)) | (encryption && !File.Exists(targetFile+".xor")))
+            if ((!job.Encryption && !File.Exists(targetFile)) | (job.Encryption && !File.Exists(targetFile+".xor")))
             {
                 shouldCopy = true; // Nouveau fichier
             }
             else
             {
                 DateTime sourceLastWrite, targetLastWrite;
-                if (!encryption)
+                if (!job.Encryption)
                 {
                     sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile);
                     targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
@@ -133,7 +132,7 @@ namespace Core.Model
             String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypt.Split(",");
 
             bool shouldEncrypt = false;
-            if (encryption)
+            if (job.Encryption)
             {
                 shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => fileSource.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
             }
@@ -143,13 +142,13 @@ namespace Core.Model
         public void CheckAndCreateDirectories()
         {
             // verifie if the subdirectories exists and create them if necessary
-            if (!Directory.Exists(this.dirTarget))
+            if (!Directory.Exists(job.dirTarget))
             {
-                Directory.CreateDirectory(this.dirTarget);
+                Directory.CreateDirectory(job.dirTarget);
             }
-            foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
+            foreach (string dirPath in Directory.GetDirectories(job.dirSource, "*", SearchOption.AllDirectories))
             {
-                Directory.CreateDirectory(dirPath.Replace(dirSource, dirTarget));
+                Directory.CreateDirectory(dirPath.Replace(job.dirSource, job.dirTarget));
             }
         }
 
@@ -158,7 +157,7 @@ namespace Core.Model
             FileInfo fileInfo = new FileInfo(sourceFile);
             Dictionary<string, object> logEntry = new Dictionary<string, object>
             {
-                { "Name", Name },
+                { "Name", job.Name },
                 { "SourcePath", sourceFile },
                 { "TargetPath", targetFile },
                 { "FileSize", fileInfo.Length },
@@ -173,7 +172,7 @@ namespace Core.Model
         {
             Dictionary<string, object> logJob = new Dictionary<string, object>
                 {
-                    { "Name", Name },
+                    { "Name", job.Name },
                     { "JobTime", jobTimer},
                     { "Result", message },
                     { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") }

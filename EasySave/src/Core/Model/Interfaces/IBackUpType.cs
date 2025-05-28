@@ -2,9 +2,7 @@ namespace Core.Model
 {
 	public interface IBackUpType
 	{
-		string Name { get; }
-		string dirSource{ get; }
-		string dirTarget {  get; }
+		IJobs job { get; set; }
 		void Execute();
 	}
 }

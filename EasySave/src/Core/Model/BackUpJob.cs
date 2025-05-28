@@ -76,8 +76,19 @@ namespace Core.Model
             }
         }
 
-
-        public string LastFileBackUp { get; set; }
+        private DateTime _lastExecution;
+        public DateTime LastExecution
+        {
+            get => _lastExecution;
+            set
+            {
+                if (_lastExecution != value)
+                {
+                    _lastExecution = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public string? LastError { get; private set; }
 
@@ -102,7 +113,6 @@ namespace Core.Model
         public Task Run()
         {
             return Task.Run(() => { RunJobInThread(); });
-            //await Task.WhenAll(tasks);
 
         }
 
@@ -110,18 +120,13 @@ namespace Core.Model
         //Currently use to continue using the user interface 
         public void RunJobInThread()
         {
-            this.Statement = Statement.Running;
-            AlterJob();
             try
             {
-                Thread.Sleep(3000);
+                Thread.Sleep(1000);
                 IBackUpType backupType = Differential ?
-                new BackUpDifferential(Name, dirSource, dirTarget, Encryption) :
-                new BackUpFull(Name, dirSource, dirTarget, Encryption);
+                new BackUpDifferential(this) :
+                new BackUpFull(this);
                 backupType.Execute();
-                Thread.Sleep(6000);
-                this.Statement = Statement.Done;
-                AlterJob();
             }
             catch (Exception ex)
             {
