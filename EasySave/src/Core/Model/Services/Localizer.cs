@@ -25,6 +25,21 @@ namespace Core.Model.Services
         }
 
 
+        // ----------------------------- Priority Files methods ---------------------------
+        public string ChangePriorityFiles(string priorityFiles)
+        {
+            List<string> priorityFilesList = priorityFiles.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(e => e.Trim()).Where(e => !string.IsNullOrWhiteSpace(e)).ToList();
+            string files = string.Join(", ", priorityFilesList);
+            AppConfigManager.Instance.ChangeAppConfigParameter("PriorityFiles", files);
+            return files;
+        }
+
+        public string GetPriorityFiles()
+        {
+            return AppConfigManager.Instance.GetAppConfigParameter("PriorityFiles");
+        }
+
+
         // ----------------------------- Encryption extensions methods ---------------------------
         public string ChangeEncryptionExtensions(string encyptionExtensions)
         {
