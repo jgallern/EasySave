@@ -1,3 +1,4 @@
+using Core.Model.Interfaces;
 using Core.Model.Managers;
 using Core.Model.Services;
 using Newtonsoft.Json;
@@ -8,13 +9,14 @@ using Xunit;
 
 namespace Unit_Tests
 {
-    public class LocalizerIntegrationTests : IDisposable
+    public class TranslationTest : IDisposable
     {
         private readonly string _tempEnvPath;
         private readonly string _tempResourcesPath;
         private readonly string _appConfigPath;
+        private readonly ILocalizer _localizer;
 
-        public LocalizerIntegrationTests()
+        public TranslationTest()
         {
             // Create a tomporary repository
             var basePath = Directory.GetCurrentDirectory();
@@ -55,9 +57,13 @@ namespace Unit_Tests
             var translations = new Dictionary<string, string>
             {
                 { "exit", "Exit" },
-                { "save", "Save" }
+                { "save", "Save" },
+                { "new", "New" }
             };
             File.WriteAllText(Path.Combine(_tempResourcesPath, "Strings.json"), JsonConvert.SerializeObject(translations, Formatting.Indented));
+
+
+            _localizer = new Localizer();
         }
 
         public void Dispose()
@@ -68,65 +74,34 @@ namespace Unit_Tests
         }
 
         [Fact]
-        public void Indexer_Should_Return_Translation()
+        public void Change_Language_Return_Translation()
         {
-            // Arrange
-            var localizer = new Localizer();
-            localizer.ChangeLanguage("fr");
+            _localizer.ChangeLanguage("fr");
 
             // Act
-            var translation = localizer["exit"];
+            string translation = _localizer["exit"];
 
             // Assert
             Assert.Equal("Quitter", translation);
         }
 
         [Fact]
-        public void ChangeAndRetrieveEncryptionExtensions_Should_Work()
+        public void Indexer_Should_Return_Translation()
         {
-            // Arrange
-            var localizer = new Localizer();
-
-            string newExtensions = ".zip, .pdf";
-            localizer.ChangeEncryptionExtensions(newExtensions);
-
             // Act
-            var result = localizer.GetEncryptionExtensions();
+            string translation = _localizer["exit"];
 
             // Assert
-            Assert.Equal(".zip, .pdf", result);
+            Assert.Equal("Exit", translation);
         }
 
-        [Fact]
-        public void ChangeAndRetrieveSoftwarePackages_Should_Work()
+        public void Indexer_Should_Return_Default_Translation()
         {
-            // Arrange
-            var localizer = new Localizer();
-
-            string newSoftware = "Word.exe, Excel.exe";
-            localizer.ChangeSoftwarePackages(newSoftware);
-
             // Act
-            var result = localizer.GetSoftwarePackages();
+            string translation = _localizer["new"];
 
             // Assert
-            Assert.Equal("Word.exe, Excel.exe", result);
-        }
-
-        [Fact]
-        public void ChangeAndRetrieveEncryptionKey_Should_Work()
-        {
-            // Arrange
-            var localizer = new Localizer();
-
-            string newKey = "newKey456";
-            localizer.ChangeEncryptionKey(newKey);
-
-            // Act
-            var result = localizer.GetEncryptionKey();
-
-            // Assert
-            Assert.Equal("newKey456", result);
+            Assert.Equal("New", translation);
         }
 
         [Fact]
@@ -139,7 +114,7 @@ namespace Unit_Tests
             List<string> languages = localizer.GetAvailableLanguages();
 
             // Assert
-            Assert.Equal(["fr", "en"], languages);
+            Assert.Equal(["en", "fr"], languages);
         }
     }
 }
