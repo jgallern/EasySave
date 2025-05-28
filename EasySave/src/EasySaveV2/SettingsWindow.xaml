@@ -74,7 +74,7 @@
                    Margin="20,2,20,2"
         />
         <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,5" Padding="0" Grid.Row="4">
-            <TextBox Text="{Binding EditedExtensions, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding EditedSoftwarePackages, UpdateSourceTrigger=PropertyChanged}"
                      BorderBrush="White"
                      FontSize="16"
                      Margin="7,0,7,0"
@@ -103,7 +103,7 @@
                    Margin="20,2,20,2"
         />
         <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,5" Padding="0" Grid.Row="7">
-            <TextBox Text="{Binding EditedSoftwarePackages, UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding EditedExtensions, UpdateSourceTrigger=PropertyChanged}"
                      BorderBrush="White"
                      FontSize="16"
                      Margin="7,0,7,0"
