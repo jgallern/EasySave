@@ -39,22 +39,9 @@ namespace Core.Model
 
                     if (shouldEncrypt(fileSource))
 					{
-						Stopwatch EncryptTimer = Stopwatch.StartNew();
-
-						try
-						{
-							fileTarget += ".xor";
-							CryptoManager.EncryptFileToTarget(fileSource, fileTarget);
-						}
-						catch (Exception ex)
-						{
-							Console.WriteLine(ex);
-							encryptionTime = -1;
-						}
-						EncryptTimer.Stop();
-						encryptionTime = EncryptTimer.Elapsed.Milliseconds;
-					}
-					else {
+                        encryptionTime = EncryptAndCopy(fileSource, fileTarget);
+                    }
+                    else {
 						File.Copy(fileSource, fileTarget, true);
 					}
 					watch.Stop();
@@ -72,6 +59,23 @@ namespace Core.Model
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
                 throw new Exception(message, ex);
             }
+        }
+
+        public double EncryptAndCopy(string sourceFile, string fileTarget)
+        {
+            Stopwatch EncryptTimer = Stopwatch.StartNew();
+
+            try
+            {
+                fileTarget += ".xor";
+                CryptoManager.EncryptFileToTarget(sourceFile, fileTarget);
+            }
+            catch 
+            {
+                return -1;
+            }
+            EncryptTimer.Stop();
+            return EncryptTimer.Elapsed.Milliseconds;
         }
 
 		public bool shouldEncrypt(string fileSource)

@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Core.Model.Managers;
 using System.IO;
 using Core.Model.Services;
+using System.ComponentModel.Design;
 
 namespace Core.Model
 {
@@ -28,78 +29,26 @@ namespace Core.Model
             string message;
             try
             {
-				string xorKey = AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
-				if (xorKey == null | xorKey == "")
-				{
-					throw new Exception("la clé de Xor de la config est nulle");
-				}
-                CryptoManager.SetKey(xorKey);
-
-                if (!Directory.Exists(this.dirTarget))
-                {
-                    Directory.CreateDirectory(this.dirTarget);
-                }
-
-                // Crée les dossiers manquants dans la cible
-                foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
-                {
-                    string targetDirPath = dirPath.Replace(dirSource, dirTarget);
-                    if (!Directory.Exists(targetDirPath))
-                    {
-                        Directory.CreateDirectory(targetDirPath);
-                    }
-                }
+                SetXorKey();
+                CheckAndCreateDirectories();
 
                 // Compare et copie les fichiers modifiés ou nouveaux
                 foreach (string sourceFile in Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories))
                 {
                     string targetFile = sourceFile.Replace(dirSource, dirTarget);
 
-                    bool shouldCopy = false;
 
-                    if (!File.Exists(targetFile))
-                    {
-                        shouldCopy = true; // Nouveau fichier
-                    }
-                    else
-                    {
-                        DateTime sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile);
-                        DateTime targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
-
-                        if (sourceLastWrite > targetLastWrite)
-                        {
-                            shouldCopy = true; // Modifié
-                        }
-                    }
-
-                    if (shouldCopy)
+                    if (shouldCopy(targetFile, sourceFile))
                     {
                         Stopwatch watch = Stopwatch.StartNew();
                         string fileTarget = sourceFile.Replace(dirSource, dirTarget);
                         string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
                         String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
-                        bool shouldEncrypt = false;
-                        if (encryption)
-                        {
-                            shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => sourceFile.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
-                        }
-
                         double encryptionTime = 0;
-                        if (shouldEncrypt)
-                        {
-                            Stopwatch EncryptTimer = Stopwatch.StartNew();
 
-                            try
-                            {
-                                fileTarget += ".xor";
-                                CryptoManager.EncryptFileToTarget(sourceFile, fileTarget);
-                            }
-                            catch (Exception ex)
-                            {
-                                encryptionTime = -1;
-                            }
-                            EncryptTimer.Stop();
-                            encryptionTime = EncryptTimer.Elapsed.Milliseconds;
+                        if (shouldEncrypt(sourceFile))
+                        {
+                            encryptionTime = EncryptAndCopy(sourceFile, targetFile);
                         }
                         else
                         {
@@ -123,6 +72,78 @@ namespace Core.Model
                 throw new Exception(message, ex);
             }
 
+        }
+
+        public double EncryptAndCopy(string sourceFile, string fileTarget)
+        {
+            Stopwatch EncryptTimer = Stopwatch.StartNew();
+
+            try
+            {
+                fileTarget += ".xor";
+                CryptoManager.EncryptFileToTarget(sourceFile, fileTarget);
+            }
+            catch 
+            {
+                return -1;
+            }
+            EncryptTimer.Stop();
+            return EncryptTimer.Elapsed.Milliseconds;
+        }
+        public bool shouldCopy(string targetFile, string sourceFile)
+        {
+            bool shouldCopy = false;
+
+            if (!File.Exists(targetFile))
+            {
+                shouldCopy = true; // Nouveau fichier
+            }
+            else
+            {
+                DateTime sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile);
+                DateTime targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
+
+                if (sourceLastWrite > targetLastWrite)
+                {
+                    shouldCopy = true; // Modifié
+                }
+            }
+            return shouldCopy;
+        }
+        public bool shouldEncrypt(string fileSource)
+        {
+            string fileExtensionsToEncrypt = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
+            String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypt.Split(",");
+
+            bool shouldEncrypt = false;
+            if (encryption)
+            {
+                shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => fileSource.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
+            }
+            return shouldEncrypt;
+        }
+
+        public void CheckAndCreateDirectories()
+        {
+            // verifie if the subdirectories exists and create them if necessary
+            if (!Directory.Exists(this.dirTarget))
+            {
+                Directory.CreateDirectory(this.dirTarget);
+            }
+            foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
+            {
+                Directory.CreateDirectory(dirPath.Replace(dirSource, dirTarget));
+            }
+        }
+
+        public void SetXorKey()
+        {
+            string xorKey = AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
+            if (xorKey == null | xorKey == "")
+            {
+                throw new Exception("la clé de Xor de la config est nulle");
+            }
+            CryptoManager.SetKey(xorKey);
         }
 
         private void WriteDailyLog(string sourceFile, string targetFile, double transfertTime, double encryptionTime)
