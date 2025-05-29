@@ -24,14 +24,14 @@ namespace Core.Model.Managers
         private static bool _wasPreviouslyBlocked = false;
         private static List<string> _lastBlockingProcesses = new();
 
-        private static CancellationTokenSource _monitoringCts;
-        private static Task _monitoringTask;
+        private static CancellationTokenSource? _monitoringCts;
+        private static Task? _monitoringTask;
 
 
 
 
 
-        public static async Task ExecuteSelectedJobs(List<BackUpJob> jobs, ILocalizer localizer, IUIErrorNotifier notifier)
+        public static void ExecuteSelectedJobs(List<BackUpJob> jobs, ILocalizer localizer, IUIErrorNotifier notifier)
         {
             //Décochez les selectbox
             foreach (BackUpJob job in jobs)
