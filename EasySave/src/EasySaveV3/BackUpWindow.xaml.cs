@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 namespace EasySaveV3
 {
     /// <summary>
-    /// Interaction logic for MenuWindow.xaml
+    /// Interaction logic for BackUpWindow.xaml
     /// </summary>
     public partial class BackUpWindow : Window
     {

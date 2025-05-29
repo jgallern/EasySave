@@ -7,6 +7,8 @@
     "reset": "Reset",
     "create_job": "Create a Job",
     "start": "Start",
+    "job_selected": "Job selected: ",
+    "blocked_process": "Processes currently blocked the backup(s), please close itto continue the backup(s): ",
 
     //Grid header
     "name": "Name",

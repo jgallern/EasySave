@@ -30,6 +30,7 @@ namespace Core.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private static readonly object _lockStatement = new();
 
         private bool _isSelected;
         public bool IsSelected
@@ -65,13 +66,22 @@ namespace Core.Model
         private Statement _statement;
         public Statement Statement
         {
-            get => _statement;
+            get
+            {
+                lock (_lockStatement)
+                {
+                    return _statement;
+                }
+            }
             set
             {
-                if (_statement != value)
+                lock (_lockStatement)
                 {
-                    _statement = value;
-                    OnPropertyChanged();
+                    if (_statement != value)
+                    {
+                        _statement = value;
+                        OnPropertyChanged();
+                    }
                 }
             }
         }
@@ -153,11 +163,16 @@ namespace Core.Model
 
 		public void AlterJob()
 		{
-			this.ModificationDate = DateTime.Now;
-            JobConfigManager.Instance.UpdateJob(Id,this);	
+            ModificationDate = DateTime.Now;
+            JobConfigManager.Instance.UpdateJob(Id, this);
 		}
 
-		public static List<BackUpJob> GetAllJobsFromConfig()
+        public void ChangeStatement()
+        {
+            JobConfigManager.Instance.UpdateJob(Id, this);
+        }
+
+        public static List<BackUpJob> GetAllJobsFromConfig()
 		{
 			return JobConfigManager.Instance.GetAllJobs();
 		}

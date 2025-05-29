@@ -10,6 +10,7 @@ namespace Core.Model
 	{
 		public IJobs job {  get; set; }
 		private ILogger _log;
+
 		public BackUpFull(BackUpJob job)
 		{
 			this._log = Logger.Instance;
@@ -19,17 +20,22 @@ namespace Core.Model
 		public void Execute()
 		{
             job.Statement = Statement.Running;
-            job.AlterJob();
+            job.ChangeStatement();
             Stopwatch jobTimer = Stopwatch.StartNew();
             string message;
 			try
 			{
 				SetXorKey();
 				CheckAndCreateDirectories();
-				// Copie all the files to the target dir
-				foreach (string fileSource in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
+                // Copie all the files to the target dir
+                RunJobManager.PauseEvent.Wait(); // bloque si Reset()
+
+
+                foreach (string fileSource in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
 				{
-					Stopwatch watch = Stopwatch.StartNew();
+                    RunJobManager.PauseEvent.Wait(); // bloque si Reset()
+
+                    Stopwatch watch = Stopwatch.StartNew();
 					string fileTarget = fileSource.Replace(job.dirSource, job.dirTarget);
                     double encryptionTime = 0;
 
@@ -56,6 +62,7 @@ namespace Core.Model
                 throw new Exception(message, ex);
             }
         }
+
 
         public double EncryptAndCopy(string sourceFile, string fileTarget)
         {

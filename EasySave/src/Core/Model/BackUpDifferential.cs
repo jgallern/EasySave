@@ -21,17 +21,22 @@ namespace Core.Model
 		{
             job.Statement = Statement.Running;
             job.LastExecution = DateTime.Now;
-            job.AlterJob();
+            job.ChangeStatement();
             Stopwatch jobTimer = Stopwatch.StartNew();
             string message;
             try
             {
                 CheckAndCreateDirectories();
 
+                RunJobManager.PauseEvent.Wait(); // bloque si Reset()
+
                 var test = Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories);
                 // Compare et copie les fichiers modifiés ou nouveaux
                 foreach (string sourceFile in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
                 {
+                    //Thread.Sleep(2000);
+                    RunJobManager.PauseEvent.Wait(); // bloque si Reset()
+
                     string targetFile = sourceFile.Replace(job.dirSource, job.dirTarget);
 
                     if (shouldCopy(targetFile, sourceFile))
@@ -66,13 +71,15 @@ namespace Core.Model
                 jobTimer.Stop();
                 message = "Job Succeed!";
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
-                Thread.Sleep(3000);
+                //Thread.Sleep(3000);
                 job.Statement = Statement.Done;
-                job.AlterJob();
+                job.ChangeStatement();
             }
             catch (Exception ex)
             {
                 jobTimer.Stop();
+                job.Statement = Statement.Error;
+                job.ChangeStatement();
                 message = "Erreur pendant le backup différentiel : " + ex.Message.ToString();
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
                 throw new Exception(message, ex);

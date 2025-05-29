@@ -74,19 +74,15 @@ namespace Core.ViewModel
         private void ExecuteSelectedJobs()
         {
             var selectedJobs = GetSelectedJobs();
-            
-            foreach (var job in selectedJobs)
-            {
-                job.Statement = Statement.Waiting;
-            }
-            RunJobManager.ExecuteSelectedJobs(selectedJobs, _notifier);
+
+            RunJobManager.ExecuteSelectedJobs(selectedJobs, _localizer, _notifier);
         }
 
 
         public List<BackUpJob> GetSelectedJobs()
         {
             List<BackUpJob> selectedJobs = JobsList.Where(job => job.IsSelected).ToList();
-            _notifier.ShowSuccess($"Jobs sélectionnés : {string.Join(", ", selectedJobs.Select(j => j.Id))}");
+            _notifier.ShowSuccess($"{this["job_selected"]} {string.Join(", ", selectedJobs.Select(j => j.Id))}");
 
             return selectedJobs;
 
@@ -154,14 +150,6 @@ namespace Core.ViewModel
 
         }
 
-        private void RefreshJobs()
-        {
-            JobsList.Clear();
-            foreach (var job in BackUpJob.GetAllJobsFromConfig())
-            {
-                JobsList.Add(job);
-            }
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

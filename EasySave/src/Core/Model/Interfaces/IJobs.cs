@@ -20,5 +20,6 @@ namespace Core.Model
         void CreateJob();
         void DeleteJob();
         void AlterJob();
+        void ChangeStatement();
     }
 }
