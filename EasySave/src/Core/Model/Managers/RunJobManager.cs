@@ -14,8 +14,6 @@ namespace Core.Model.Managers
     {
         public static SemaphoreSlim LargeFileSemaphore = new SemaphoreSlim(2);
 
-        private static SemaphoreSlim _executionLock = new SemaphoreSlim(1, 1);
-
         private static object _lockCurrentRunningJob = new object();
 
         public static ManualResetEventSlim PauseEvent = new ManualResetEventSlim(false);
@@ -35,49 +33,40 @@ namespace Core.Model.Managers
 
         public static async Task ExecuteSelectedJobs(List<BackUpJob> jobs, ILocalizer localizer, IUIErrorNotifier notifier)
         {
-            await _executionLock.WaitAsync();
-            try
+            //Décochez les selectbox
+            foreach (BackUpJob job in jobs)
             {
-                List<BackUpJob> jobsToRun;
-                lock (_lockCurrentRunningJob)
-                {
-                    jobsToRun = jobs
-                        .Where(j => !_currentRunningJobs.Any(rj => rj.Id == j.Id))
-                        .ToList();
+                notifier.ShowWarning($"{job.Id}");
+                job.IsSelected = false;
+            }
 
+            List<BackUpJob> jobsToRun;
+            lock (_lockCurrentRunningJob)
+            {
+                jobsToRun = jobs
+                    .Where(j => !_currentRunningJobs.Any(rj => rj.Id == j.Id))
+                    .ToList();
+
+                notifier.ShowWarning($"{jobsToRun}");
+
+                if (jobsToRun.Any())
+                {
                     _currentRunningJobs.AddRange(jobsToRun);
-                    if (jobsToRun.Any())
-                    {
-                        _currentRunningJobs.AddRange(jobsToRun);
-                        StartMonitoring(localizer, notifier); // start the monitoring if new jobs are added 
-                    }
+                    StartMonitoring(localizer, notifier); // start the monitoring if new jobs are added 
                 }
-
-                //Décochez les selectbox
-                foreach (BackUpJob job in jobsToRun)
-                {
-                    job.IsSelected = false;
-                }
-
-                await ExecuteJobs(jobsToRun, localizer, notifier);
-            }
-            finally
-            {
-                _executionLock.Release();
             }
 
+            // Run execution without blocked the new demands
+            _ = Task.Run(() => ExecuteJobs(jobsToRun, localizer, notifier));
         }
 
         private static async Task ExecuteJobs(List<BackUpJob> jobsToRun, ILocalizer localizer, IUIErrorNotifier notifier)
         {
-            // Parallele run for the non priority files 
             List<Task> tasks = jobsToRun.Select(async job =>
             {
                 try
                 {
-                    //await job.RunForPrioritizedFiles();
                     await job.Run();
-                    //await job.RunForNonPrioritizedFiles();
                     job.Statement = Statement.Done;
                     job.AlterJob();
                     notifier.ShowSuccess($"Job {job.Id} done!");
@@ -88,9 +77,14 @@ namespace Core.Model.Managers
                     job.AlterJob();
                     notifier.ShowError($"Job {job.Id} failed: {ex.Message}");
                 }
-                lock (_lockCurrentRunningJob)
+                finally
                 {
-                    _currentRunningJobs.Remove(job);
+                    lock (_lockCurrentRunningJob)
+                    {
+                        BackUpJob toRemove = _currentRunningJobs.FirstOrDefault(j => j.Id == job.Id);
+                        if (toRemove != null)
+                            _currentRunningJobs.Remove(toRemove);
+                    }
                 }
 
             }).ToList();
@@ -146,7 +140,7 @@ namespace Core.Model.Managers
 
                     try
                     {
-                        await Task.Delay(1000, token); // vérifie toutes les 1 seconde avec possibilité d’annuler
+                        await Task.Delay(100, token); // vérifie toutes les 1 seconde avec possibilité d’annuler
                     }
                     catch (TaskCanceledException)
                     {
