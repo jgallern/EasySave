@@ -2,5 +2,6 @@
     "Language": "en",
     "EncryptionExtensions": "",
     "SoftwarePackages": "",
-    "PriorityFiles":  "",
+    "PriorityFiles": "",
+    "MaxFileSize": "0",
 }   

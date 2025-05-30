@@ -22,6 +22,8 @@
 
 
     //Settings View
+    "max_file_size": "Taille max des fichiers en concurrences",
+    "max_file_size_detail": "Ce paramètre est utilisé afin de définir une taille maximale de fichiers pouvant être sauvegarder en simultanés. Les fichiers dépassants cette limite ne peuvent être sauvegarder en meme temps, cependant les autres fichiers moins volumineux peuvent être sauvegardé en parallèle.",
     "priority_files": "Fihiers prioritaires",
     "priority_files_detail": "Vous pouvez définir une liste d'extensions qui vont être transférer en priorité. Le transfert des autres fichiers ne se fera pas tant que l'intégralité des fichiers prioritaires ne sera pas transféré.",
     "encryption_key": "Clé d'encryptage",

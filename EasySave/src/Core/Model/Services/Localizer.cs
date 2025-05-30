@@ -26,6 +26,17 @@ namespace Core.Model.Services
         }
 
 
+        public int ChangeMaxFileSize(int maxFileSize)
+        {
+            string fileSize = maxFileSize.ToString();
+            AppConfigManager.Instance.ChangeAppConfigParameter("MaxFileSize", fileSize);
+            return maxFileSize;
+        }
+        public int GetMaxFileSize()
+        {
+            return int.Parse(AppConfigManager.Instance.GetAppConfigParameter("MaxFileSize"));
+        }
+
         // ----------------------------- Priority Files methods ---------------------------
         public string ChangePriorityFiles(string priorityFiles)
         {

@@ -6,6 +6,8 @@
         void ChangeLanguage(string languageCode);
         string GetCurrentLanguage();
         List<string> GetAvailableLanguages();
+        int ChangeMaxFileSize(int maxFileSize);
+        int GetMaxFileSize();
         string ChangeEncryptionExtensions(string encryptionExtensions);
         string GetEncryptionExtensions();
         string ChangeSoftwarePackages(string softwarePackages);

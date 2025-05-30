@@ -27,6 +27,7 @@ namespace Core.ViewModel
             _navigationService = navigationService;
 
             // Initialisation des valeurs
+            EditedMaxFileSize = _localizer.GetMaxFileSize();
             EditedPriorityFiles = _localizer.GetPriorityFiles();
             EditedExtensions = _localizer.GetEncryptionExtensions();
             EditedSoftwarePackages = _localizer.GetSoftwarePackages();
@@ -39,6 +40,7 @@ namespace Core.ViewModel
 
             CancelCommand = new RelayCommand(_ =>
             {
+                EditedMaxFileSize = _localizer.GetMaxFileSize();
                 EditedPriorityFiles = _localizer.GetPriorityFiles();
                 EditedExtensions = _localizer.GetEncryptionExtensions();
                 EditedSoftwarePackages = _localizer.GetSoftwarePackages();
@@ -62,6 +64,7 @@ namespace Core.ViewModel
 
         private void SaveAll()
         {
+            EditedMaxFileSize = _localizer.ChangeMaxFileSize(EditedMaxFileSize);
             EditedPriorityFiles = _localizer.ChangePriorityFiles(EditedPriorityFiles);
             EditedExtensions = _localizer.ChangeEncryptionExtensions(EditedExtensions);
             EditedSoftwarePackages = _localizer.ChangeSoftwarePackages(EditedSoftwarePackages);
@@ -84,6 +87,14 @@ namespace Core.ViewModel
                 _changeSettingsCommand.RaiseCanExecuteChanged(); //Use to change the execution statement
             }
 
+        }
+
+        // Texte éditable pour la taille max des fichiers en parallèle
+        private int _editedMaxFileSize;
+        public int EditedMaxFileSize
+        {
+            get => _editedMaxFileSize;
+            set { _editedMaxFileSize = value; OnPropertyChanged(); }
         }
 
         // Texte éditable pour les fichiers prioritaires

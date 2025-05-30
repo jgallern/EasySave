@@ -22,6 +22,8 @@
 
 
     // Settings View
+    "max_file_size": "Max concurrency files size",
+    "max_file_size_detail": "This parameter is use to determine the max size of files that can be backup in parallele. The files upper this limit can't also be run at the same time, but other files can be backup in parallele during this time.",
     "priority_files": "Priority Files",
     "priority_files_detail": "You can specify the files extensions that you want to BackUp in priority. These files will be backup in priority and the backup of the other files not start while these files aren't backup.",
     "encryption_key": "Encryption Key",

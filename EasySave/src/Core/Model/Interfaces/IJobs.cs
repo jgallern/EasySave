@@ -27,6 +27,7 @@ namespace Core.Model
         void Pause();
         void Resume();
         void Stop();
+        void Reset();
         void WaitingPause();
         void ChangeStatement();
     }
