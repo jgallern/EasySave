@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Windows;
+using Core.ViewModel.Services;
 
 
 namespace Core.Model
@@ -31,6 +33,10 @@ namespace Core.Model
         }
 
         private static readonly object _lockStatement = new();
+
+        private ManualResetEventSlim _pauseEventJob = new ManualResetEventSlim(true);
+
+        private CancellationTokenSource _ctsJob = new();
 
         private bool _isSelected;
         public bool IsSelected
@@ -86,6 +92,47 @@ namespace Core.Model
             }
         }
 
+        private int _currentFile;
+        public int CurrentFile
+        {
+            get => _currentFile;
+            set
+            {
+                if (_currentFile != value)
+                {
+                    _currentFile = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private int _totalFiles;
+        public int TotalFiles
+        {
+            get => _totalFiles;
+            set
+            {
+                if (_totalFiles != value)
+                {
+                    _totalFiles = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _progress;
+        public string Progress
+        {
+            get => _progress;
+            set
+            {
+                if (_progress != value)
+                {
+                    _progress = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private DateTime _lastExecution;
         public DateTime LastExecution
         {
@@ -101,6 +148,7 @@ namespace Core.Model
         }
 
         public string? LastError { get; private set; }
+
 
 
         public BackUpJob(string Name, string dirSource, string dirTarget, bool Differential, bool Encryption)
@@ -140,17 +188,48 @@ namespace Core.Model
             }
             catch (Exception ex)
             {
-                this.Statement = Statement.Error;
-                AlterJob();
                 throw new Exception(ex.Message, ex);
             }
         }
 
+        public void Pause()
+        {
+            _pauseEventJob.Reset(); // bloque
+            Statement = Statement.Paused;
+            ChangeStatement();
+        }
+
+        public void Resume()
+        {
+            if (Statement == Statement.Paused)
+            {
+                _pauseEventJob.Set(); // débloque
+                Statement = Statement.Running;
+            }
+        }
+
+        public void Stop()
+        {
+            Statement = Statement.Canceled;
+            ChangeStatement();
+            _ctsJob.Cancel();
+        }
+
+        public void WaitingPause()
+        {
+            _pauseEventJob.Wait();
+        }
+
+        public void ChangeStatement()
+        {
+            JobConfigManager.Instance.UpdateJob(Id, this);
+        }
+
         public void CreateJob()
 		{
-            this.CreationDate = DateTime.Now;
-            this.ModificationDate = DateTime.Now;
-            this.Statement = Statement.NoStatement;
+            CreationDate = DateTime.Now;
+            ModificationDate = DateTime.Now;
+            Statement = Statement.NoStatement;
             Id = JobConfigManager.Instance.GetAvailableID();
             JobConfigManager.Instance.AddJob(this);
 		}
@@ -166,11 +245,6 @@ namespace Core.Model
             ModificationDate = DateTime.Now;
             JobConfigManager.Instance.UpdateJob(Id, this);
 		}
-
-        public void ChangeStatement()
-        {
-            JobConfigManager.Instance.UpdateJob(Id, this);
-        }
 
         public static List<BackUpJob> GetAllJobsFromConfig()
 		{

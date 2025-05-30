@@ -1,12 +1,14 @@
 ﻿using Core.Model.Interfaces;
 using Core.Model.Services;
 using Core.ViewModel.Notifiers;
+using Core.ViewModel.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Core.Model.Managers
 {
@@ -16,7 +18,7 @@ namespace Core.Model.Managers
 
         private static object _lockCurrentRunningJob = new object();
 
-        public static ManualResetEventSlim PauseEvent = new ManualResetEventSlim(false);
+        public static ManualResetEventSlim PauseEventProcesses = new ManualResetEventSlim(false);
 
         private static List<BackUpJob> _currentRunningJobs = new();
 
@@ -68,13 +70,13 @@ namespace Core.Model.Managers
                 {
                     await job.Run();
                     job.Statement = Statement.Done;
-                    job.AlterJob();
+                    job.ChangeStatement();
                     notifier.ShowSuccess($"Job {job.Id} done!");
                 }
                 catch (Exception ex)
                 {
                     job.Statement = Statement.Error;
-                    job.AlterJob();
+                    job.ChangeStatement();
                     notifier.ShowError($"Job {job.Id} failed: {ex.Message}");
                 }
                 finally
@@ -112,13 +114,12 @@ namespace Core.Model.Managers
 
                     if (blockingDetected)
                     {
-                        PauseEvent.Reset(); // Pause les threads
+                        //PauseEventProcesses.Reset(); // Pause les threads
                         lock (_lockCurrentRunningJob)
                         {
                             foreach (BackUpJob job in activeJobs)
                             {
-                                job.Statement = Statement.Paused;
-                                job.ChangeStatement();
+                                job.Pause();
                             }
                             if (!_wasPreviouslyBlocked || !_lastBlockingProcesses.SequenceEqual(detectedBlocking))
                             {
@@ -130,11 +131,10 @@ namespace Core.Model.Managers
                     }
                     else
                     {
-                        PauseEvent.Set();   // Reprend les threads
+                        //PauseEventProcesses.Set();   // Reprend les threads
                         foreach (BackUpJob job in activeJobs)
                         {
-                            job.Statement = Statement.Running;
-                            job.ChangeStatement();
+                            job.Resume();
                         }
                     }
 
@@ -171,10 +171,6 @@ namespace Core.Model.Managers
             _monitoringTask = null;
         }
 
-
-
-
-
         public static (bool, List<string>) CheckProcesses()
         {
             var runningProcesses = Process.GetProcesses();
@@ -193,6 +189,26 @@ namespace Core.Model.Managers
             bool blockingDetected = detectedBlocking.Any();
 
             return (blockingDetected, detectedBlocking);
+        }
+
+
+
+        public static void Pause(BackUpJob job)
+        {
+            if (job.Statement == Statement.Running)
+            {
+                job.Pause();
+            }
+        }
+
+        public static void Stop(BackUpJob job)
+        {
+            job.Stop();
+        }
+
+        public static void Resume(BackUpJob job)
+        {
+            job.Resume();
         }
     }
 }

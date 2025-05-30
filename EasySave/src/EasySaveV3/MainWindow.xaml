@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:vm="clr-namespace:Core.ViewModel;assembly=Core"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -74,9 +75,15 @@
                   CanUserDeleteRows="True"
                   SelectionMode="Single"
                   Margin="10,0">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction 
+						Command="{Binding DataContext.MonitoringCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+						CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
 
-
-			<DataGrid.Columns>
+            <DataGrid.Columns>
 
 				<DataGridTemplateColumn Header="Select" Width="Auto">
 					<DataGridTemplateColumn.CellTemplate>
@@ -151,7 +158,18 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 
-				<DataGridTemplateColumn Width="*" IsReadOnly="True">
+                <DataGridTemplateColumn Width="*" IsReadOnly="True">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Progress" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Progress}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTemplateColumn Width="*" IsReadOnly="True">
 					<DataGridTemplateColumn.Header>
 						<TextBlock Text="{Binding DataContext[creation_date], RelativeSource={RelativeSource AncestorType=Window}}" />
 					</DataGridTemplateColumn.Header>

@@ -1,6 +1,8 @@
-﻿using Core.ViewModel;
-using Core.Model.Services;
+﻿using Core.Model.Services;
+using Core.ViewModel;
+using Core.ViewModel.Notifiers;
 using Core.ViewModel.Services;
+using EasySaveV3.Notifiers;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,8 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Core.ViewModel.Notifiers;
-using EasySaveV3.Notifiers;
+using System.Windows.Threading;
 
 namespace EasySaveV3
 {

@@ -1,8 +1,10 @@
-using System.Diagnostics;
 using Core.Model.Managers;
-using System.IO;
 using Core.Model.Services;
+using Core.ViewModel.Services;
 using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.IO;
+using System.Windows;
 
 namespace Core.Model
 {
@@ -11,11 +13,13 @@ namespace Core.Model
 		public IJobs job { get; set; }
         private ILogger _log;
 
+
+
         public BackUpDifferential(BackUpJob job)
 		{
             this._log = Logger.Instance;
             this.job = job;
-		}
+        }
 
 		public void Execute()
 		{
@@ -28,15 +32,17 @@ namespace Core.Model
             {
                 CheckAndCreateDirectories();
 
-                RunJobManager.PauseEvent.Wait(); // bloque si Reset()
+                job.TotalFiles = Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories).Count();
+                job.CurrentFile = 0;
+                job.Progress = $"                {job.CurrentFile}/{job.TotalFiles}";
 
-                var test = Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories);
+                job.WaitingPause(); // bloque si Reset()
+
                 // Compare et copie les fichiers modifiés ou nouveaux
                 foreach (string sourceFile in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
                 {
-                    //Thread.Sleep(2000);
-                    RunJobManager.PauseEvent.Wait(); // bloque si Reset()
-
+                    job.WaitingPause(); // bloque si Reset()
+                    job.Progress = $"{sourceFile}        {++job.CurrentFile}/{job.TotalFiles}";
                     string targetFile = sourceFile.Replace(job.dirSource, job.dirTarget);
 
                     if (shouldCopy(targetFile, sourceFile))
@@ -66,20 +72,17 @@ namespace Core.Model
                             Console.WriteLine(ex.ToString());
                         }
                     }
+                    Thread.Sleep(2000);
 
                 }
                 jobTimer.Stop();
                 message = "Job Succeed!";
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
                 //Thread.Sleep(3000);
-                job.Statement = Statement.Done;
-                job.ChangeStatement();
             }
             catch (Exception ex)
             {
                 jobTimer.Stop();
-                job.Statement = Statement.Error;
-                job.ChangeStatement();
                 message = "Erreur pendant le backup différentiel : " + ex.Message.ToString();
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
                 throw new Exception(message, ex);

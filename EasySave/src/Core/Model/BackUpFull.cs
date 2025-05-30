@@ -1,8 +1,10 @@
-using System.Diagnostics;
-using System.Security.Cryptography;
-using System.IO;
 using Core.Model.Managers;
 using Core.Model.Services;
+using Core.ViewModel.Services;
+using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
+using System.Windows;
 
 namespace Core.Model
 {
@@ -27,13 +29,20 @@ namespace Core.Model
 			{
 				SetXorKey();
 				CheckAndCreateDirectories();
-                // Copie all the files to the target dir
-                RunJobManager.PauseEvent.Wait(); // bloque si Reset()
+
+                job.TotalFiles = Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories).Count();
+                job.CurrentFile = 0;
+                job.Progress = $"                {job.CurrentFile}/{job.TotalFiles}";
+
+                job.WaitingPause(); // bloque si Reset()
 
 
                 foreach (string fileSource in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
 				{
-                    RunJobManager.PauseEvent.Wait(); // bloque si Reset()
+
+                    job.WaitingPause(); // bloque si Reset()
+
+                    job.Progress = $"{fileSource}        {++job.CurrentFile}/{job.TotalFiles}";
 
                     Stopwatch watch = Stopwatch.StartNew();
 					string fileTarget = fileSource.Replace(job.dirSource, job.dirTarget);

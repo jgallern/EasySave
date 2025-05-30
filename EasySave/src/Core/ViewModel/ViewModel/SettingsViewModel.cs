@@ -19,7 +19,6 @@ namespace Core.ViewModel
         public ICommand ExitCommand { get; }
         public ICommand EditCommand { get; }
         public ICommand CancelCommand { get; }
-        public ICommand CloseCommand { get; }
 
         public event Action RequestClose;
 

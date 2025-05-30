@@ -3,6 +3,7 @@ using Core.ViewModel.Services;
 using System.Windows.Input;
 using System.Windows;
 using EasySaveV3;
+using Core.Model;
 
 namespace Core.ViewModel.Services
 {
@@ -26,11 +27,19 @@ namespace Core.ViewModel.Services
             backupWindow.Show();
         }
 
-        public void CloseSettings()
+        public void NavigateToMonitoring(MonitoringViewModel vm)
+        {
+            Window monitoringWindow = new MonitoringWindow(vm);
+            monitoringWindow.Show();
+        }
+
+
+
+        public void CloseMenu()
         {
             foreach (Window window in System.Windows.Application.Current.Windows)
             {
-                if (window is SettingsWindow)
+                if (window is MainWindow)
                 {
                     window.Close();
                     break;
@@ -38,11 +47,11 @@ namespace Core.ViewModel.Services
             }
         }
 
-        public void CloseMenu()
+        public void CloseSettings()
         {
             foreach (Window window in System.Windows.Application.Current.Windows)
             {
-                if (window is MainWindow)
+                if (window is SettingsWindow)
                 {
                     window.Close();
                     break;
@@ -61,5 +70,18 @@ namespace Core.ViewModel.Services
                 }
             }
         }
+
+        public void CloseMonitoring()
+        {
+            foreach (Window window in System.Windows.Application.Current.Windows)
+            {
+                if (window is MonitoringWindow)
+                {
+                    window.Close();
+                    break;
+                }
+            }
+        }
+
     }
 }

@@ -13,6 +13,10 @@ namespace Core.Model
         DateTime CreationDate { get; }
         DateTime ModificationDate { get; }
         Statement Statement { get; set; }
+        string Progress { get; set; }
+        int CurrentFile { get; set; }
+        int TotalFiles { get; set; }
+
         DateTime LastExecution { get; set; }
         string? LastError { get; }
 
@@ -20,6 +24,10 @@ namespace Core.Model
         void CreateJob();
         void DeleteJob();
         void AlterJob();
+        void Pause();
+        void Resume();
+        void Stop();
+        void WaitingPause();
         void ChangeStatement();
     }
 }
