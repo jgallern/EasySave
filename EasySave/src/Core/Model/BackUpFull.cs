@@ -4,6 +4,7 @@ using Core.ViewModel.Services;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Windows;
 
 namespace Core.Model
@@ -19,7 +20,7 @@ namespace Core.Model
 			this.job = job;
 		}
 		
-		public void Execute()
+		public void Execute(CancellationToken cancellationToken)
 		{
             job.Statement = Statement.Running;
             job.ChangeStatement();
@@ -39,6 +40,12 @@ namespace Core.Model
 
                 foreach (string fileSource in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
 				{
+                    //Verify if we cancel 
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
 
                     job.WaitingPause(); // bloque si Reset()
 

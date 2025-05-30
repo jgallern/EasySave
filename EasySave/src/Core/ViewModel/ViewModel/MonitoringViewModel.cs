@@ -14,6 +14,7 @@ using Core.ViewModel.Commands;
 using Microsoft.Extensions.Options;
 using Core.Model;
 using Core.ViewModel.Notifiers;
+using Core.Model.Managers;
 
 namespace Core.ViewModel
 {
@@ -89,7 +90,6 @@ namespace Core.ViewModel
             RunCommand = new RelayCommand(_ => Run());
             PauseCommand = new RelayCommand(_ => Pause());
             CancelCommand = new RelayCommand(_ => Cancel());
-            ExitCommand = new RelayCommand(_ => Exit());
         }
 
         public void LoadFromExistingJob(BackUpJob job) // Copie de l'objet ? Objectif récupérer l'objet entrain d'etre modifier dans le thread
@@ -97,25 +97,21 @@ namespace Core.ViewModel
             Job = job;
         }
 
-        private void Exit()
-        {
-            _navigation.CloseMonitoring();
-        }
-
 
         public void Run()
         {
-            _job.Run();
+            Job.ManualEventPause = false;
+            RunJobManager.RunJob(Job, _localizer, _notifier);
         }
 
         public void Pause()
         {
-            _job.Pause();
+            RunJobManager.Pause(Job);
         }
 
         public void Cancel()
         {
-            _job.Stop();
+            RunJobManager.Stop(Job);
         }
     }
 }

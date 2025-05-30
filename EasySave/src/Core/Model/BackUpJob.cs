@@ -63,6 +63,9 @@ namespace Core.Model
 
 		public bool Differential{ get; set; }
 
+        public bool ProcessEventPause { get; set; }
+        public bool ManualEventPause { get; set; }
+
         public bool Encryption { get; set; }
 
         public DateTime CreationDate { get; set; }
@@ -170,7 +173,7 @@ namespace Core.Model
 
         public Task Run()
         {
-            return Task.Run(() => { RunJobInThread(); });
+            return Task.Run(() => RunJobInThread(), _ctsJob.Token);
 
         }
 
@@ -184,7 +187,7 @@ namespace Core.Model
                 IBackUpType backupType = Differential ?
                 new BackUpDifferential(this) :
                 new BackUpFull(this);
-                backupType.Execute();
+                backupType.Execute(_ctsJob.Token);
             }
             catch (Exception ex)
             {
@@ -194,17 +197,36 @@ namespace Core.Model
 
         public void Pause()
         {
-            _pauseEventJob.Reset(); // bloque
-            Statement = Statement.Paused;
-            ChangeStatement();
+            if (ManualEventPause || ProcessEventPause)
+            {
+                _pauseEventJob.Reset(); // bloque
+                Statement = Statement.Paused;
+                ChangeStatement();
+            }
         }
 
         public void Resume()
         {
-            if (Statement == Statement.Paused)
+            if (!ManualEventPause && !ProcessEventPause)
+            { 
+                if (Statement == Statement.Paused)
+                {   
+                    _pauseEventJob.Set(); // débloque
+                    Statement = Statement.Running;
+                    ChangeStatement();
+                }
+                else if (Statement == Statement.Waiting || Statement == Statement.Running)
+                {
+                    return;
+                }
+            }
+        }
+
+        public void Reset()
+        {
+            if (!ManualEventPause && !ProcessEventPause)
             {
-                _pauseEventJob.Set(); // débloque
-                Statement = Statement.Running;
+                _ctsJob = new CancellationTokenSource();
             }
         }
 

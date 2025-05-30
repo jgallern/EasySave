@@ -21,7 +21,7 @@ namespace Core.Model
             this.job = job;
         }
 
-		public void Execute()
+		public void Execute(CancellationToken cancellationToken)
 		{
             job.Statement = Statement.Running;
             job.LastExecution = DateTime.Now;
@@ -41,6 +41,14 @@ namespace Core.Model
                 // Compare et copie les fichiers modifiés ou nouveaux
                 foreach (string sourceFile in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
                 {
+                    //Verify if we cancel 
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    //Verify if we paused
                     job.WaitingPause(); // bloque si Reset()
                     job.Progress = $"{sourceFile}        {++job.CurrentFile}/{job.TotalFiles}";
                     string targetFile = sourceFile.Replace(job.dirSource, job.dirTarget);

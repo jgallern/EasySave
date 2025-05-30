@@ -38,7 +38,6 @@ namespace Core.Model.Managers
             //Décochez les selectbox
             foreach (BackUpJob job in jobs)
             {
-                notifier.ShowWarning($"{job.Id}");
                 job.IsSelected = false;
             }
 
@@ -48,8 +47,6 @@ namespace Core.Model.Managers
                 jobsToRun = jobs
                     .Where(j => !_currentRunningJobs.Any(rj => rj.Id == j.Id))
                     .ToList();
-
-                notifier.ShowWarning($"{jobsToRun}");
 
                 if (jobsToRun.Any())
                 {
@@ -75,9 +72,12 @@ namespace Core.Model.Managers
                 }
                 catch (Exception ex)
                 {
-                    job.Statement = Statement.Error;
-                    job.ChangeStatement();
-                    notifier.ShowError($"Job {job.Id} failed: {ex.Message}");
+                    if (job.Statement != Statement.Canceled)
+                    {
+                        job.Statement = Statement.Error;
+                        job.ChangeStatement();
+                        notifier.ShowError($"Job {job.Id} failed: {ex.Message}");
+                    }
                 }
                 finally
                 {
@@ -119,6 +119,7 @@ namespace Core.Model.Managers
                         {
                             foreach (BackUpJob job in activeJobs)
                             {
+                                job.ProcessEventPause = true;
                                 job.Pause();
                             }
                             if (!_wasPreviouslyBlocked || !_lastBlockingProcesses.SequenceEqual(detectedBlocking))
@@ -134,6 +135,7 @@ namespace Core.Model.Managers
                         //PauseEventProcesses.Set();   // Reprend les threads
                         foreach (BackUpJob job in activeJobs)
                         {
+                            job.ProcessEventPause = false;
                             job.Resume();
                         }
                     }
@@ -197,6 +199,7 @@ namespace Core.Model.Managers
         {
             if (job.Statement == Statement.Running)
             {
+                job.ManualEventPause = true;
                 job.Pause();
             }
         }
@@ -206,9 +209,22 @@ namespace Core.Model.Managers
             job.Stop();
         }
 
-        public static void Resume(BackUpJob job)
+        public static void RunJob(BackUpJob job, ILocalizer localizer, IUIErrorNotifier notifier)
         {
-            job.Resume();
+            if (job.Statement == Statement.Error || job.Statement == Statement.Canceled || job.Statement == Statement.Done)
+            {
+                job.ManualEventPause = false;
+                job.Reset();
+                List<BackUpJob> jobList = new List<BackUpJob>();
+                jobList.Add(job);
+                ExecuteSelectedJobs(jobList, localizer, notifier);
+
+            }
+            else
+            {
+                job.ManualEventPause = false;
+                job.Resume();
+            }
         }
     }
 }

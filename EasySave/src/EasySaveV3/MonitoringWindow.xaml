@@ -35,21 +35,6 @@
         </TextBlock>
 
 
-        <Button Content="Exit" 
-                Command="{Binding ExitCommand}"
-                Foreground="White"
-                FontWeight="DemiBold"
-                Width="auto"
-                Height="auto"
-                BorderThickness="1.5"
-                Grid.Row="0"
-                Grid.Column="2"
-                Margin="0,20,20,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-        />
-
-
         <TextBlock
             FontSize="16"
             FontWeight="Normal"
