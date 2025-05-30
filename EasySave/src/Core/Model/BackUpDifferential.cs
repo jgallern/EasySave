@@ -3,6 +3,7 @@ using Core.Model.Services;
 using Core.ViewModel.Services;
 using System.ComponentModel.Design;
 using System.Diagnostics;
+using Core.Model.Interfaces;
 using System.IO;
 using System.Windows;
 
@@ -12,6 +13,7 @@ namespace Core.Model
 	{
 		public IJobs job { get; set; }
         private ILogger _log;
+        private ILocalizer _localizer = new Localizer();
 
 
 
@@ -21,7 +23,7 @@ namespace Core.Model
             this.job = job;
         }
 
-		public void Execute(CancellationToken cancellationToken)
+		public async Task ExecuteAsync(CancellationToken cancellationToken)
 		{
             job.Statement = Statement.Running;
             job.LastExecution = DateTime.Now;
@@ -31,6 +33,8 @@ namespace Core.Model
             try
             {
                 CheckAndCreateDirectories();
+                int maxSizeInKo = _localizer.GetMaxFileSize();
+                long maxSizeInBytes = maxSizeInKo * 1024;
 
                 job.TotalFiles = Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories).Count();
                 job.CurrentFile = 0;
@@ -55,32 +59,24 @@ namespace Core.Model
 
                     if (shouldCopy(targetFile, sourceFile))
                     {
-                        Stopwatch watch = Stopwatch.StartNew();
-                        string fileTarget = sourceFile.Replace(job.dirSource, job.dirTarget);
-                        string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
-                        String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
-                        double encryptionTime = 0;
-
-                        if (shouldEncrypt(sourceFile))
+                        FileInfo fileInfo = new FileInfo(sourceFile);
+                        if (fileInfo.Length > maxSizeInBytes)
                         {
-                            encryptionTime = EncryptAndCopy(sourceFile, targetFile);
+                            await RunJobManager.LargeFileSemaphore.WaitAsync();
+
+                            try
+                            {
+                                Thread.Sleep(3000);
+                                BackUpFile(sourceFile, targetFile);
+                            }
+                            finally
+                            {
+                                RunJobManager.LargeFileSemaphore.Release();
+                            }
                         }
                         else
-                        {
-                            File.Copy(sourceFile, fileTarget, true);
-                        }
-                        watch.Stop();
-                        double elapsedMs = watch.ElapsedMilliseconds;
-                        try
-                        {
-                            WriteDailyLog(sourceFile, fileTarget, elapsedMs, encryptionTime);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.ToString());
-                        }
+                            BackUpFile(sourceFile, targetFile);
                     }
-                    Thread.Sleep(2000);
 
                 }
                 jobTimer.Stop();
@@ -115,6 +111,34 @@ namespace Core.Model
             return EncryptTimer.Elapsed.Milliseconds;
         }
 
+
+        public void BackUpFile(string sourceFile, string targetFile)
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+            string fileTarget = sourceFile.Replace(job.dirSource, job.dirTarget);
+            string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
+            String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
+            double encryptionTime = 0;
+
+            if (shouldEncrypt(sourceFile))
+            {
+                encryptionTime = EncryptAndCopy(sourceFile, targetFile);
+            }
+            else
+            {
+                File.Copy(sourceFile, fileTarget, true);
+            }
+            watch.Stop();
+            double elapsedMs = watch.ElapsedMilliseconds;
+            try
+            {
+                WriteDailyLog(sourceFile, fileTarget, elapsedMs, encryptionTime);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
         public bool shouldCopy(string targetFile, string sourceFile)
         {
             bool shouldCopy = false;

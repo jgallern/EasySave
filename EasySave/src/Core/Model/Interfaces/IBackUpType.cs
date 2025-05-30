@@ -3,6 +3,6 @@ namespace Core.Model
 	public interface IBackUpType
 	{
 		IJobs job { get; set; }
-		void Execute(CancellationToken cancellationToken);
+		Task ExecuteAsync(CancellationToken cancellationToken);
 	}
 }

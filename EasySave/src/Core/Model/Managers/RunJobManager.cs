@@ -14,7 +14,7 @@ namespace Core.Model.Managers
 {
     public class RunJobManager
     {
-        public static SemaphoreSlim LargeFileSemaphore = new SemaphoreSlim(2);
+        public static SemaphoreSlim LargeFileSemaphore = new SemaphoreSlim(1,1);
 
         private static object _lockCurrentRunningJob = new object();
 

@@ -2,10 +2,12 @@ using Core.Model.Managers;
 using Core.Model.Services;
 using Core.ViewModel.Services;
 using System.Diagnostics;
+using Core.Model.Interfaces;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Windows;
+using System.ComponentModel.Design;
 
 namespace Core.Model
 {
@@ -13,14 +15,15 @@ namespace Core.Model
 	{
 		public IJobs job {  get; set; }
 		private ILogger _log;
+        private ILocalizer _localizer = new Localizer();
 
-		public BackUpFull(BackUpJob job)
+        public BackUpFull(BackUpJob job)
 		{
 			this._log = Logger.Instance;
 			this.job = job;
 		}
 		
-		public void Execute(CancellationToken cancellationToken)
+		public async Task ExecuteAsync(CancellationToken cancellationToken)
 		{
             job.Statement = Statement.Running;
             job.ChangeStatement();
@@ -28,8 +31,10 @@ namespace Core.Model
             string message;
 			try
 			{
-				SetXorKey();
 				CheckAndCreateDirectories();
+
+                int maxSizeInKo = _localizer.GetMaxFileSize();
+                long maxSizeInBytes = maxSizeInKo * 1024;
 
                 job.TotalFiles = Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories).Count();
                 job.CurrentFile = 0;
@@ -51,20 +56,26 @@ namespace Core.Model
 
                     job.Progress = $"{fileSource}        {++job.CurrentFile}/{job.TotalFiles}";
 
-                    Stopwatch watch = Stopwatch.StartNew();
-					string fileTarget = fileSource.Replace(job.dirSource, job.dirTarget);
-                    double encryptionTime = 0;
+                    string fileTarget = fileSource.Replace(job.dirSource, job.dirTarget);
 
-                    if (shouldEncrypt(fileSource))
-					{
-                        encryptionTime = EncryptAndCopy(fileSource, fileTarget);
+                    FileInfo fileInfo = new FileInfo(fileSource);
+                    if (fileInfo.Length > maxSizeInBytes)
+                    {
+                        await RunJobManager.LargeFileSemaphore.WaitAsync();
+
+                        try
+                        {
+                            Thread.Sleep(3000);
+                            BackUpFile(fileSource, fileTarget);
+                        }
+                        finally
+                        {
+                            RunJobManager.LargeFileSemaphore.Release();
+                        }
                     }
-                    else {
-						File.Copy(fileSource, fileTarget, true);
-					}
-					watch.Stop();
-					double elapsedMs = watch.ElapsedMilliseconds;
-                    WriteDailyLog(fileSource, fileTarget, elapsedMs, encryptionTime);
+                    else
+                        BackUpFile(fileSource, fileTarget);
+
                 }
                 jobTimer.Stop();
 				message = "Job Succeed!";
@@ -79,6 +90,23 @@ namespace Core.Model
             }
         }
 
+        public void BackUpFile(string fileSource, string fileTarget)
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+            double encryptionTime = 0;
+
+            if (shouldEncrypt(fileSource))
+            {
+                encryptionTime = EncryptAndCopy(fileSource, fileTarget);
+            }
+            else
+            {
+                File.Copy(fileSource, fileTarget, true);
+            }
+            watch.Stop();
+            double elapsedMs = watch.ElapsedMilliseconds;
+            WriteDailyLog(fileSource, fileTarget, elapsedMs, encryptionTime);
+        }
 
         public double EncryptAndCopy(string sourceFile, string fileTarget)
         {

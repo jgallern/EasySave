@@ -179,7 +179,7 @@ namespace Core.Model
 
 
         //Currently use to continue using the user interface 
-        public void RunJobInThread()
+        public async Task RunJobInThread()
         {
             try
             {
@@ -187,7 +187,7 @@ namespace Core.Model
                 IBackUpType backupType = Differential ?
                 new BackUpDifferential(this) :
                 new BackUpFull(this);
-                backupType.Execute(_ctsJob.Token);
+                await backupType.ExecuteAsync(_ctsJob.Token);
             }
             catch (Exception ex)
             {
