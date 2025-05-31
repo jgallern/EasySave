@@ -42,43 +42,9 @@ namespace Core.Model
 
                 job.WaitingPause(); // bloque si Reset()
 
-                // Compare et copie les fichiers modifiés ou nouveaux
-                foreach (string sourceFile in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
-                {
-                    //Verify if we cancel 
-                    cancellationToken.ThrowIfCancellationRequested();
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
-                    //Verify if we paused
-                    job.WaitingPause(); // bloque si Reset()
-                    job.Progress = $"{sourceFile}        {++job.CurrentFile}/{job.TotalFiles}";
-                    string targetFile = sourceFile.Replace(job.dirSource, job.dirTarget);
-
-                    if (shouldCopy(targetFile, sourceFile))
-                    {
-                        FileInfo fileInfo = new FileInfo(sourceFile);
-                        if (fileInfo.Length > maxSizeInBytes)
-                        {
-                            await RunJobManager.LargeFileSemaphore.WaitAsync();
-
-                            try
-                            {
-                                Thread.Sleep(3000);
-                                BackUpFile(sourceFile, targetFile);
-                            }
-                            finally
-                            {
-                                RunJobManager.LargeFileSemaphore.Release();
-                            }
-                        }
-                        else
-                            BackUpFile(sourceFile, targetFile);
-                    }
-
-                }
+                // run the backup for prio files, then for non prio
+                RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
+                RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInBytes);
                 jobTimer.Stop();
                 message = "Job Succeed!";
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
@@ -111,13 +77,89 @@ namespace Core.Model
             return EncryptTimer.Elapsed.Milliseconds;
         }
 
+        public async void RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
+        {
+            foreach (string sourceFile in lstFichier)
+            {
+                //Verify if we cancel 
+                cancellationToken.ThrowIfCancellationRequested();
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    //Verify if we paused
+                    job.WaitingPause(); // bloque si Reset()
+                    job.Progress = $"{sourceFile}        {++job.CurrentFile}/{job.TotalFiles}";
+                    string targetFile = sourceFile.Replace(job.dirSource, job.dirTarget);
+
+                    if (shouldCopy(targetFile, sourceFile))
+                    {
+                        FileInfo fileInfo = new FileInfo(sourceFile);
+                        if (fileInfo.Length > maxSizeInBytes)
+                        {
+                            await RunJobManager.LargeFileSemaphore.WaitAsync();
+
+                            try
+                            {
+                                Thread.Sleep(3000);
+                                BackUpFile(sourceFile, targetFile);
+                            }
+                            finally
+                            {
+                                RunJobManager.LargeFileSemaphore.Release();
+                            }
+                        }
+                        else
+                            BackUpFile(sourceFile, targetFile);
+                    }
+
+                }
+
+        }
+
+        public static IEnumerable<string> GetFichiersPrio(string dossierSource)
+        {
+            string fileExtensionPrio = AppConfigManager.Instance.GetAppConfigParameter("PriorityFiles");
+            string[] LstExtensionPrio = fileExtensionPrio.Split(",");
+
+
+            List<string> extensionsFiltrees = LstExtensionPrio
+                .Where((string ext) => !string.IsNullOrWhiteSpace(ext))
+                .Select((string ext) => ext.Trim().TrimStart('.').ToLower())
+                .ToList();
+
+            IEnumerable<string> fichiersFiltres = Directory
+                .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
+                .Where((string file) =>
+                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+
+            return fichiersFiltres;
+        }
+        public static IEnumerable<string> GetFichiersNonPrio(string dossierSource)
+        {
+            string fileExtensionPrio = AppConfigManager.Instance.GetAppConfigParameter("PriorityFiles");
+            string[] LstExtensionPrio = fileExtensionPrio.Split(",");
+
+
+            List<string> extensionsFiltrees = LstExtensionPrio
+                .Where((string ext) => !string.IsNullOrWhiteSpace(ext))
+                .Select((string ext) => ext.Trim().TrimStart('.').ToLower())
+                .ToList();
+
+            IEnumerable<string> fichiersFiltres = Directory
+                .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
+                .Where((string file) =>
+                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+
+            return fichiersFiltres;
+        }
+
 
         public void BackUpFile(string sourceFile, string targetFile)
         {
             Stopwatch watch = Stopwatch.StartNew();
             string fileTarget = sourceFile.Replace(job.dirSource, job.dirTarget);
-            string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
-            String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
             double encryptionTime = 0;
 
             if (shouldEncrypt(sourceFile))
