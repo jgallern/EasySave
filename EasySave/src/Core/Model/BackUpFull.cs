@@ -42,41 +42,9 @@ namespace Core.Model
 
                 job.WaitingPause(); // bloque si Reset()
 
-
-                foreach (string fileSource in Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories))
-				{
-                    //Verify if we cancel 
-                    cancellationToken.ThrowIfCancellationRequested();
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
-                    job.WaitingPause(); // bloque si Reset()
-
-                    job.Progress = $"{fileSource}        {++job.CurrentFile}/{job.TotalFiles}";
-
-                    string fileTarget = fileSource.Replace(job.dirSource, job.dirTarget);
-
-                    FileInfo fileInfo = new FileInfo(fileSource);
-                    if (fileInfo.Length > maxSizeInBytes)
-                    {
-                        await RunJobManager.LargeFileSemaphore.WaitAsync();
-
-                        try
-                        {
-                            Thread.Sleep(3000);
-                            BackUpFile(fileSource, fileTarget);
-                        }
-                        finally
-                        {
-                            RunJobManager.LargeFileSemaphore.Release();
-                        }
-                    }
-                    else
-                        BackUpFile(fileSource, fileTarget);
-
-                }
+                RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
+                RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInKo);
+                
                 jobTimer.Stop();
 				message = "Job Succeed!";
 				WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
@@ -107,6 +75,80 @@ namespace Core.Model
             double elapsedMs = watch.ElapsedMilliseconds;
             WriteDailyLog(fileSource, fileTarget, elapsedMs, encryptionTime);
         }
+
+        public async void RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
+        {
+            foreach (string sourceFile in lstFichier)
+            {
+                    //Verify if we cancel 
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    job.WaitingPause(); // bloque si Reset()
+
+                    job.Progress = $"{sourceFile}        {++job.CurrentFile}/{job.TotalFiles}";
+
+                    string fileTarget = sourceFile.Replace(job.dirSource, job.dirTarget);
+
+                    FileInfo fileInfo = new FileInfo(sourceFile);
+                    if (fileInfo.Length > maxSizeInBytes)
+                    {
+                        await RunJobManager.LargeFileSemaphore.WaitAsync();
+
+                        try
+                        {
+                            Thread.Sleep(3000);
+                            BackUpFile(sourceFile, fileTarget);
+                        }
+                        finally
+                        {
+                            RunJobManager.LargeFileSemaphore.Release();
+                        }
+                    }
+                    else
+                        BackUpFile(sourceFile, fileTarget);
+            }
+        }
+        public static IEnumerable<string> GetFichiersPrio(string dossierSource)
+        {
+            string fileExtensionPrio = AppConfigManager.Instance.GetAppConfigParameter("PriorityFiles");
+            string[] LstExtensionPrio = fileExtensionPrio.Split(",");
+
+
+            List<string> extensionsFiltrees = LstExtensionPrio
+                .Where((string ext) => !string.IsNullOrWhiteSpace(ext))
+                .Select((string ext) => ext.Trim().TrimStart('.').ToLower())
+                .ToList();
+
+            IEnumerable<string> fichiersFiltres = Directory
+                .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
+                .Where((string file) =>
+                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+
+            return fichiersFiltres;
+        }
+        public static IEnumerable<string> GetFichiersNonPrio(string dossierSource)
+        {
+            string fileExtensionPrio = AppConfigManager.Instance.GetAppConfigParameter("PriorityFiles");
+            string[] LstExtensionPrio = fileExtensionPrio.Split(",");
+
+
+            List<string> extensionsFiltrees = LstExtensionPrio
+                .Where((string ext) => !string.IsNullOrWhiteSpace(ext))
+                .Select((string ext) => ext.Trim().TrimStart('.').ToLower())
+                .ToList();
+
+            IEnumerable<string> fichiersFiltres = Directory
+                .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
+                .Where((string file) =>
+                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+
+            return fichiersFiltres;
+        }
+
 
         public double EncryptAndCopy(string sourceFile, string fileTarget)
         {
