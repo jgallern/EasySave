@@ -58,7 +58,7 @@ public static class CryptoManager
         }
         catch
         {
-            throw new Exception();
+            return "";
         }
     }
 
