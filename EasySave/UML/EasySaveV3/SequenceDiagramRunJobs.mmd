@@ -1,0 +1,11 @@
+sequenceDiagram
+    User->>+View [ExecuteBackUpView]: Enter the IDs of the jobs to execute : Run(JobList)
+    View [ExecuteBackUpView]->>+ViewModel [RunJob]:  RunJobCommand(JobList) 
+    ViewModel [RunJob]-->> View [ExecuteBackUpView]: throw exception if error 
+    ViewModel [RunJob]->>BackUpJob: Run()
+    BackUpJob -->> ViewModel [RunJob]: throw exception if error 
+    BackUpJob->>IBackUpType: Execute()
+    IBackUpType -->> BackUpJob : throw exception if error 
+    IBackUpType ->> ILogger : AddLoginInfo(LogType logType, Dictionary logEntry)
+    ILogger -->> IBackUpType: throw exception if error 
+    View [ExecuteBackUpView] ->>User: Confirm execution Exit and run MenuView
