@@ -12,6 +12,5 @@ namespace Core.Model{
         public string GetStatusLogPath();
 
         public void AddLogInfo(LogType logType, Dictionary<string, object> logEntry);
-        public void OpenLogs();
     }
 }

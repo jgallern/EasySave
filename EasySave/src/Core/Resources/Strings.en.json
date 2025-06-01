@@ -1,39 +1,45 @@
 {
-  //Main App View
-  "easysave": "Welcome to EasySave!",
-  "settings": "Settings",
-  "show_logs": "Show Logs",
-  "select_all": "Select all",
-  "reset": "Reset",
-  "create_job": "Create a Job",
-  "start": "Start",
+    //Main App View
+    "easysave": "Welcome to EasySave!",
+    "settings": "Settings",
+    "show_logs": "Show Logs",
+    "select_all": "Select all",
+    "reset": "Reset",
+    "create_job": "Create a Job",
+    "start": "Start",
+    "job_selected": "Job selected: ",
+    "blocked_process": "Processes currently blocked the backup(s), please close itto continue the backup(s): ",
 
-  //Grid header
-  "name": "Name",
-  "differential": "Diferential",
-  "encryption": "Encryption",
-  "source": "Source",
-  "target": "Target",
-  "creation_date": "Creation",
-  "modification_date": "Last Modification",
-  "statement": "Statement",
+    //Grid header
+    "name": "Name",
+    "differential": "Diferential",
+    "encryption": "Encryption",
+    "source": "Source",
+    "target": "Target",
+    "creation_date": "Creation",
+    "modification_date": "Last Modification",
+    "statement": "Statement",
 
 
-  // Settings View 
-  "encryption_extensions": "Extensions to encrypt",
-  "encryption_extensions_detail": "Packages with the extensions defined below will be encrypted using CryptoSoft in every backup in which the encryption feature has been activated.",
-  "software_packages": "Restraining Software/Packages",
-  "software_packages_detail": "Processes or packages with the extensions defined below will prevent the backup process. Make sure to close them in order to proceed with the backup.",
-  "encryption_key": "Encryption Key",
-  "exit": "Exit",
-  "modify": "Edit",
-  "cancel": "Discard",
-  "validate": "Confirm",
+    // Settings View
+    "max_file_size": "Max concurrency files size",
+    "max_file_size_detail": "This parameter is use to determine the max size (in Ko) of files that can be backup in parallele. The files upper this limit can't also be run at the same time, but other files can be backup in parallele during this time.",
+    "priority_files": "Priority Files",
+    "priority_files_detail": "You can specify the files extensions that you want to BackUp in priority. These files will be backup in priority and the backup of the other files not start while these files aren't backup.",
+    "encryption_key": "Encryption Key",
+    "encryption_extensions": "Extensions to encrypt",
+    "encryption_extensions_detail": "Packages with the extensions defined below will be encrypted using CryptoSoft in every backup in which the encryption feature has been activated.",
+    "software_packages": "Restraining Software/Packages",
+    "software_packages_detail": "Processes or packages with the extensions defined below will prevent the backup process. Make sure to close them in order to proceed with the backup.",
+    "exit": "Exit",
+    "modify": "Edit",
+    "cancel": "Discard",
+    "validate": "Confirm",
 
-  //BackUp Management View
-  "create": "Create",
-  "successfully_created": "Job successfully created",
-  "successfully_modify": "Job successfully modified",
+    //BackUp Management View
+    "create": "Create",
+    "successfully_created": "Job successfully created",
+    "successfully_modify": "Job successfully modified"
 
 
 }

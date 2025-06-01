@@ -11,7 +11,7 @@ namespace Core.Model.Managers
     {
         private static AppConfigManager _instance;
         private static readonly object _lock = new object();
-
+        private static readonly object _lockWriteConfig = new object();
         private readonly string _resourcesPath;
         private readonly string _appConfigPath;
         private Dictionary<string, string> _config = new();
@@ -31,17 +31,6 @@ namespace Core.Model.Managers
                     return _instance ??= new AppConfigManager();
                 }
             }
-        }
-
-        //OLD
-
-        public List<string> GetEncryptionExtensions()
-        {
-            if (_config.TryGetValue("EncryptionExtensions", out string extensionsString))
-            {
-                return extensionsString.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(e => e.Trim()).ToList();
-            }
-            return null;
         }
 
         // ------- new methods -----------
@@ -79,8 +68,11 @@ namespace Core.Model.Managers
 
         public void SaveAppConfig()
         {
-            string json = JsonConvert.SerializeObject(_config, Formatting.Indented);
-            File.WriteAllText(_appConfigPath, json);
+            lock (_lockWriteConfig)
+            {
+                string json = JsonConvert.SerializeObject(_config, Formatting.Indented);
+                File.WriteAllText(_appConfigPath, json);
+            }
         }
     }
 }

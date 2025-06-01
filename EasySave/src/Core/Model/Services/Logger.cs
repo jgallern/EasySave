@@ -13,6 +13,8 @@ namespace Core.Model.Services{
     {
         private static Logger _instance;
         private static readonly object _lock = new object();
+
+        private static readonly object _lockWriteLog = new object();
         public readonly string _logpath;
 
         private Logger()
@@ -62,15 +64,19 @@ namespace Core.Model.Services{
                 LogType.Status => GetStatusLogPath(),
                 _ => throw new ArgumentOutOfRangeException(nameof(logType), "Invalid log type")
             };
-            string json = JsonSerializer.Serialize(logEntry, new JsonSerializerOptions { WriteIndented = true });
-            File.AppendAllText(path, json);
+            lock (_lockWriteLog)
+            {
+                string json = JsonSerializer.Serialize(logEntry, new JsonSerializerOptions { WriteIndented = true });
+                File.AppendAllText(path, json);
+            }
         }
 
-        public void OpenLogs()
+        public static void OpenLogs()
         {
+            string log_path = GetLogDirectory();
             ProcessStartInfo logs = new ProcessStartInfo()
             {
-                FileName = _logpath,
+                FileName = log_path,
                 Verb = "open",
                 UseShellExecute = true
             };

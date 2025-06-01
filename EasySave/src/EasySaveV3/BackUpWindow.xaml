@@ -1,0 +1,175 @@
+﻿<Window x:Class="EasySaveV3.BackUpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EasySaveV3"
+        mc:Ignorable="d"
+        Title="Create/Edit jobs" Height="350" Width="450" Background="#EAEAEA">
+
+    <Window.Resources>
+        <Style x:Key="ValidationTextBoxStyle" TargetType="Border">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsNameInvalid, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SourceTextBoxStyle" TargetType="Border">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDirSourceInvalid, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TargetTextBoxStyle" TargetType="Border">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsDirTargetInvalid, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="{Binding [name]}"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   Margin="30,20,20,0"
+        />
+        <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,0" Padding="0" Grid.Row="1" Style="{StaticResource ValidationTextBoxStyle}">
+            <TextBox Text="{Binding Name}"
+                     BorderBrush="White"
+                 FontSize="16"
+                 Margin="7,0,7,0"
+                 Grid.Row="1"
+                 Grid.Column="0"
+            />
+
+        </Border>
+
+        <TextBlock Text="{Binding [source]}"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Grid.Row="2"
+                   Grid.Column="0"
+                   Margin="30,10,20,0"
+        />
+        <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,0" Padding="0" Grid.Row="3" Style="{StaticResource SourceTextBoxStyle}">
+            <TextBox Text="{Binding dirSource}"
+                     BorderBrush="White"
+                     FontSize="16"
+                     Margin="7,0,7,0"
+                     Grid.Row="3"
+                     Grid.Column="0"
+                     
+            />
+        </Border>
+        <Button Content="📂"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Height="20"
+                Width="20"
+                Command="{Binding BrowseSourceCommand}"
+                Grid.Row="3"
+                HorizontalAlignment="Right"
+                Margin="23,0"
+        />
+
+        <TextBlock Text="{Binding [target]}"
+                   FontSize="16"
+                   FontWeight="DemiBold"
+                   Grid.Row="4"
+                   Grid.Column="0"
+                   Margin="30,10,20,0"
+        />
+        <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray" Background="White" Margin="20,0" Padding="0" Grid.Row="5" Style="{StaticResource TargetTextBoxStyle}">
+            <TextBox Text="{Binding dirTarget}"
+                     BorderBrush="White"
+                     FontSize="16"
+                     Margin="7,0,7,0"
+                     Grid.Row="5"
+                     Grid.Column="0"
+            />
+        </Border>
+        <Button Content="📂"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Height="20"
+                Width="20"
+                Command="{Binding BrowseTargetCommand}"
+                Grid.Row="5"
+                HorizontalAlignment="Right"
+                Margin="23,0"
+        />
+
+        <CheckBox Content="{Binding [differential]}"
+                  HorizontalAlignment="Left" 
+                  IsChecked="{Binding Differential}" 
+                  VerticalAlignment="Top" 
+                  Margin="30,20,10,0"
+                  Grid.Row="6"
+        />
+        <CheckBox Content="{Binding [encryption]}"
+                  HorizontalAlignment="Left" 
+                  IsChecked="{Binding Encryption}" 
+                  VerticalAlignment="Top" 
+                  Margin="30,10,30,10"
+                  Grid.Row="7"
+        />
+
+        <Button Content="{Binding [cancel]}" 
+                Command="{Binding CancelCommand}"
+                Foreground="#707070"
+                FontWeight="DemiBold"
+                Width="110"
+                Height="25"
+                Background="White"
+                BorderBrush="#707070"
+                BorderThickness="1.5"
+                Grid.Row="8"
+                Margin="0,10,130,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+        />
+        <Button Content="{Binding ValidateLabel}" 
+                Command="{Binding ValidateCommand}"
+                Foreground="White"
+                FontWeight="DemiBold"
+                Width="110"
+                Height="25"
+                Background="#0D99FF"
+                BorderBrush="#64BDFF"
+                BorderThickness="1.5"
+                Grid.Row="8"
+                Margin="0,10,10,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+        />
+
+    </Grid>
+</Window>

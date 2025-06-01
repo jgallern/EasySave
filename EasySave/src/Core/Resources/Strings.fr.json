@@ -1,38 +1,44 @@
 {
-  //Main View
-  "easysave": "Bienvenue sur EasySave!",
-  "settings": "Paramètres",
-  "show_logs": "Logs",
-  "select_all": "Tout sélectioner",
-  "reset": "Réinitialiser",
-  "create_job": "Créer un Job",
-  "start": "Démarrer",
+    //Main View
+    "easysave": "Bienvenue sur EasySave!",
+    "settings": "Paramètres",
+    "show_logs": "Logs",
+    "select_all": "Tout sélectioner",
+    "reset": "Réinitialiser",
+    "create_job": "Créer un Job",
+    "start": "Démarrer",
+    "job_selected": "Job sélectionnées: ",
+    "blocked_process": "Des processus en cours bloquent le(s) backup(s), veuillez les fermés pour pouvoir continuer les backup(s): ",
 
-  //Grid header
-  "name": "Nom",
-  "differential": "Différentiel",
-  "encryption": "Encryptage",
-  "source": "Source",
-  "target": "Destination",
-  "creation_date": "Création",
-  "modification_date": "Dernière modif.",
-  "statement": "Etat",
+    //Grid header
+    "name": "Nom",
+    "differential": "Différentiel",
+    "encryption": "Encryptage",
+    "source": "Source",
+    "target": "Destination",
+    "creation_date": "Création",
+    "modification_date": "Dernière modif.",
+    "statement": "Etat",
 
 
-  //Settings View
-  "encryption_extensions": "Extensions à encrypter",
-  "encryption_extensions_detail": "Les paquets avec les extensions définies ci-dessous seront encryptés à l'aide de CryptoSoft dans chaque sauvegarde dans laquelle la fonctionnalité de cryptage aura été activée.",
-  "software_packages": "Logiciels bloquants",
-  "software_packages_detail": "Les processus ou les paquets comportant les extensions définies ci-dessous empêcheront le processus de sauvegarde. Veillez à les fermer pour procéder à la sauvegarde.",
-  "encryption_key": "Clé d'encryptage",
-  "exit": "Quitter",
-  "modify": "Modifier",
-  "cancel": "Annuler",
-  "validate": "Valider",
+    //Settings View
+    "max_file_size": "Taille max des fichiers en concurrences",
+    "max_file_size_detail": "Ce paramètre est utilisé afin de définir une taille maximale de fichiers (en Ko) pouvant être sauvegarder en simultanés. Les fichiers dépassants cette limite ne peuvent être sauvegarder en meme temps, cependant les autres fichiers moins volumineux peuvent être sauvegardé en parallèle.",
+    "priority_files": "Fihiers prioritaires",
+    "priority_files_detail": "Vous pouvez définir une liste d'extensions qui vont être transférer en priorité. Le transfert des autres fichiers ne se fera pas tant que l'intégralité des fichiers prioritaires ne sera pas transféré.",
+    "encryption_key": "Clé d'encryptage",
+    "encryption_extensions": "Extensions à encrypter",
+    "encryption_extensions_detail": "Les paquets avec les extensions définies ci-dessous seront encryptés à l'aide de CryptoSoft dans chaque sauvegarde dans laquelle la fonctionnalité de cryptage aura été activée.",
+    "software_packages": "Logiciels bloquants",
+    "software_packages_detail": "Les processus ou les paquets comportant les extensions définies ci-dessous empêcheront le processus de sauvegarde. Veillez à les fermer pour procéder à la sauvegarde.",
+    "exit": "Quitter",
+    "modify": "Modifier",
+    "cancel": "Annuler",
+    "validate": "Valider",
 
-  //BackUp Management View
-  "create": "Créer",
-  "successfully_created": "Job créé avec succes",
-  "successfully_modify": "Job modifié avec succes",
-  "delete_job": "Êtes-vous sûre de vouloir supprimer ce job ? "
+    //BackUp Management View
+    "create": "Créer",
+    "successfully_created": "Job créé avec succes",
+    "successfully_modify": "Job modifié avec succes",
+    "delete_job": "Êtes-vous sûre de vouloir supprimer ce job ? "
 }

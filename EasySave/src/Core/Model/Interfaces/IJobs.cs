@@ -12,12 +12,23 @@ namespace Core.Model
         bool Encryption { get; set; }
         DateTime CreationDate { get; }
         DateTime ModificationDate { get; }
-        string LastFileBackUp { get; set; }
+        Statement Statement { get; set; }
+        string Progress { get; set; }
+        int CurrentFile { get; set; }
+        int TotalFiles { get; set; }
+
+        DateTime LastExecution { get; set; }
         string? LastError { get; }
 
         Task Run();
         void CreateJob();
         void DeleteJob();
         void AlterJob();
+        void Pause();
+        void Resume();
+        void Stop();
+        void Reset();
+        void WaitingPause();
+        void ChangeStatement();
     }
 }

@@ -2,10 +2,13 @@ using Core.Model.Managers;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Windows;
+using Core.ViewModel.Services;
 
 
 namespace Core.Model
@@ -29,6 +32,11 @@ namespace Core.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private static readonly object _lockStatement = new();
+
+        private ManualResetEventSlim _pauseEventJob = new ManualResetEventSlim(true);
+
+        private CancellationTokenSource _ctsJob = new();
 
         private bool _isSelected;
         public bool IsSelected
@@ -55,6 +63,9 @@ namespace Core.Model
 
 		public bool Differential{ get; set; }
 
+        public bool ProcessEventPause { get; set; }
+        public bool ManualEventPause { get; set; }
+
         public bool Encryption { get; set; }
 
         public DateTime CreationDate { get; set; }
@@ -64,21 +75,83 @@ namespace Core.Model
         private Statement _statement;
         public Statement Statement
         {
-            get => _statement;
+            get
+            {
+                lock (_lockStatement)
+                {
+                    return _statement;
+                }
+            }
             set
             {
-                if (_statement != value)
+                lock (_lockStatement)
                 {
-                    _statement = value;
+                    if (_statement != value)
+                    {
+                        _statement = value;
+                        OnPropertyChanged();
+                    }
+                }
+            }
+        }
+
+        private int _currentFile;
+        public int CurrentFile
+        {
+            get => _currentFile;
+            set
+            {
+                if (_currentFile != value)
+                {
+                    _currentFile = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private int _totalFiles;
+        public int TotalFiles
+        {
+            get => _totalFiles;
+            set
+            {
+                if (_totalFiles != value)
+                {
+                    _totalFiles = value;
                     OnPropertyChanged();
                 }
             }
         }
 
+        private string _progress;
+        public string Progress
+        {
+            get => _progress;
+            set
+            {
+                if (_progress != value)
+                {
+                    _progress = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        public string LastFileBackUp { get; set; }
+        private DateTime _lastExecution;
+        public DateTime LastExecution
+        {
+            get => _lastExecution;
+            set
+            {
+                if (_lastExecution != value)
+                {
+                    _lastExecution = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public string? LastError { get; private set; }
+
 
 
         public BackUpJob(string Name, string dirSource, string dirTarget, bool Differential, bool Encryption)
@@ -98,58 +171,87 @@ namespace Core.Model
             this.Differential= false;
 		}
 
-        public async Task Run()
+        public Task Run()
         {
-            await Task.Run(() =>
-            {
-                RunJobInThread(); // si exception ici, elle sera capturée par l'await
-            });
+            return Task.Run(() => RunJobInThread(), _ctsJob.Token);
 
         }
 
 
         //Currently use to continue using the user interface 
-        public void RunJobInThread()
+        public async Task RunJobInThread()
         {
-            var runningProcesses = Process.GetProcesses();
-            string blockedProcesses = AppConfigManager.Instance.GetAppConfigParameter("SoftwarePackages");
-            List<string> blockedProcessesList = blockedProcesses
-                .Split(",", StringSplitOptions.RemoveEmptyEntries)
-                .Select(p => p.Trim())
-                .ToList();
-            foreach (var proc in runningProcesses)
-            {
-                if (blockedProcessesList.Contains(proc.ProcessName, StringComparer.OrdinalIgnoreCase))
-                {
-                    this.Statement = Statement.Canceled;
-                    AlterJob();
-                    throw new Exception($"Un processus bloquant est actif : {proc.ProcessName}. Exécution du job annulée.");
-                }
-            }
-            this.Statement = Statement.Running;
-            AlterJob();
             try
             {
+                Thread.Sleep(1000);
                 IBackUpType backupType = Differential ?
-                new BackUpDifferential(Name, dirSource, dirTarget, Encryption) :
-                new BackUpFull(Name, dirSource, dirTarget, Encryption);
-                backupType.Execute();
-                this.Statement = Statement.Done;
-                AlterJob();
+                new BackUpDifferential(this) :
+                new BackUpFull(this);
+                await backupType.ExecuteAsync(_ctsJob.Token);
             }
             catch (Exception ex)
             {
-                this.Statement = Statement.Error;
-                AlterJob();
                 throw new Exception(ex.Message, ex);
             }
         }
 
+        public void Pause()
+        {
+            if (ManualEventPause || ProcessEventPause)
+            {
+                _pauseEventJob.Reset(); // bloque
+                Statement = Statement.Paused;
+                ChangeStatement();
+            }
+        }
+
+        public void Resume()
+        {
+            if (!ManualEventPause && !ProcessEventPause)
+            { 
+                if (Statement == Statement.Paused)
+                {   
+                    _pauseEventJob.Set(); // débloque
+                    Statement = Statement.Running;
+                    ChangeStatement();
+                }
+                else if (Statement == Statement.Waiting || Statement == Statement.Running)
+                {
+                    return;
+                }
+            }
+        }
+
+        public void Reset()
+        {
+            if (!ManualEventPause && !ProcessEventPause)
+            {
+                _ctsJob = new CancellationTokenSource();
+            }
+        }
+
+        public void Stop()
+        {
+            Statement = Statement.Canceled;
+            ChangeStatement();
+            _ctsJob.Cancel();
+        }
+
+        public void WaitingPause()
+        {
+            _pauseEventJob.Wait();
+        }
+
+        public void ChangeStatement()
+        {
+            JobConfigManager.Instance.UpdateJob(Id, this);
+        }
+
         public void CreateJob()
 		{
-            this.CreationDate = DateTime.Now;
-            this.ModificationDate = DateTime.Now;
-            this.Statement = Statement.NoStatement;
+            CreationDate = DateTime.Now;
+            ModificationDate = DateTime.Now;
+            Statement = Statement.NoStatement;
             Id = JobConfigManager.Instance.GetAvailableID();
             JobConfigManager.Instance.AddJob(this);
 		}
@@ -162,11 +264,11 @@ namespace Core.Model
 
 		public void AlterJob()
 		{
-			this.ModificationDate = DateTime.Now;
-            JobConfigManager.Instance.UpdateJob(Id,this);	
+            ModificationDate = DateTime.Now;
+            JobConfigManager.Instance.UpdateJob(Id, this);
 		}
 
-		public static List<BackUpJob> GetAllJobsFromConfig()
+        public static List<BackUpJob> GetAllJobsFromConfig()
 		{
 			return JobConfigManager.Instance.GetAllJobs();
 		}

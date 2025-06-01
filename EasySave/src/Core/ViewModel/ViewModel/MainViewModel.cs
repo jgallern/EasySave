@@ -1,6 +1,9 @@
-﻿using Core.Model.Services;
+﻿using Core.Model;
+using Core.Model.Managers;
+using Core.Model.Services;
 using Core.ViewModel;
 using Core.ViewModel.Commands;
+using Core.ViewModel.Notifiers;
 using Core.ViewModel.Services;
 using System;
 using System.Collections.ObjectModel;
@@ -8,9 +11,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using Core.Model;
-using Core.ViewModel.Notifiers;
-using Core.Model.Managers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Core.ViewModel
 {
@@ -28,6 +29,7 @@ namespace Core.ViewModel
         public ICommand ModifyJobCommand { get; }
         public ICommand DeleteJobCommand { get; }
         public ICommand ExecuteSelectedJobsCommand { get; }
+        public ICommand MonitoringCommand { get; }
 
 
         private bool _areAllSelected;
@@ -45,7 +47,6 @@ namespace Core.ViewModel
                 }
             }
         }
-
 
         public MainViewModel(INavigationService navigation, IUIErrorNotifier notifier)
         {
@@ -69,24 +70,34 @@ namespace Core.ViewModel
                 if (job is BackUpJob backupJob)
                     DeleteJob(backupJob);
             });
+            MonitoringCommand = new RelayCommand(job =>
+            { 
+                if (job is BackUpJob backupJob) 
+                    MonitoringJob(backupJob);
+            });
+        }
+
+        private void MonitoringJob(BackUpJob job)
+        {
+            if (job == null)
+                return;
+            MonitoringViewModel viewModel = new MonitoringViewModel(_navigationService, _notifier);
+            viewModel.LoadFromExistingJob(job);
+            _navigationService.NavigateToMonitoring(viewModel);
         }
 
         private void ExecuteSelectedJobs()
         {
             var selectedJobs = GetSelectedJobs();
-            
-            foreach (var job in selectedJobs)
-            {
-                job.Statement = Statement.Waiting;
-            }
-            RunJobManager.ExecuteSelectedJobs(selectedJobs, _notifier);
+
+            RunJobManager.ExecuteSelectedJobs(selectedJobs, _localizer, _notifier);
         }
 
 
         public List<BackUpJob> GetSelectedJobs()
         {
             List<BackUpJob> selectedJobs = JobsList.Where(job => job.IsSelected).ToList();
-            _notifier.ShowSuccess($"Jobs sélectionnés : {string.Join(", ", selectedJobs.Select(j => j.Id))}");
+            _notifier.ShowSuccess($"{this["job_selected"]} {string.Join(", ", selectedJobs.Select(j => j.Id))}");
 
             return selectedJobs;
 
@@ -104,8 +115,7 @@ namespace Core.ViewModel
         {
             try
             {
-                ILogger logger = Logger.Instance;
-                logger.OpenLogs();
+                Logger.OpenLogs();
             }
             catch (Exception ex) 
             {
@@ -155,20 +165,13 @@ namespace Core.ViewModel
 
         }
 
-        private void RefreshJobs()
-        {
-            JobsList.Clear();
-            foreach (var job in BackUpJob.GetAllJobsFromConfig())
-            {
-                JobsList.Add(job);
-            }
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
 
         //Si on met la combobox de selection de language dans le menu principal
         public IReadOnlyList<string> AvailableLanguages { get; }

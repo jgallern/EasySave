@@ -1,119 +1,54 @@
-using System.Diagnostics;
 using Core.Model.Managers;
-using System.IO;
 using Core.Model.Services;
+using Core.ViewModel.Services;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using Core.Model.Interfaces;
+using System.IO;
+using System.Windows;
 
 namespace Core.Model
 {
 	public class BackUpDifferential : IBackUpType
 	{
-		public string Name { get; }
-		public string dirSource{ get; }
-		public string dirTarget {  get; }
-        public bool encryption { get; }
+		public IJobs job { get; set; }
         private ILogger _log;
+        private ILocalizer _localizer = new Localizer();
 
-        public BackUpDifferential(string Name, string dirSource, string dirTarget, bool encryption)
+
+
+        public BackUpDifferential(BackUpJob job)
 		{
             this._log = Logger.Instance;
-            this.Name = Name;
-			this.dirSource = dirSource;
-			this.dirTarget = dirTarget;
-            this.encryption = encryption;
-		}
+            this.job = job;
+        }
 
-		public void Execute()
+		public async Task ExecuteAsync(CancellationToken cancellationToken)
 		{
+            job.Statement = Statement.Running;
+            job.LastExecution = DateTime.Now;
+            job.ChangeStatement();
             Stopwatch jobTimer = Stopwatch.StartNew();
             string message;
             try
             {
-				string xorKey = AppConfigManager.Instance.GetAppConfigParameter("CryptoSoftKey");
-				if (xorKey == null | xorKey == "")
-				{
-					throw new Exception("la clé de Xor de la config est nulle");
-				}
-                CryptoManager.SetKey(xorKey);
+                CheckAndCreateDirectories();
+                int maxSizeInKo = _localizer.GetMaxFileSize();
+                long maxSizeInBytes = maxSizeInKo * 1024;
 
-                if (!Directory.Exists(this.dirTarget))
-                {
-                    Directory.CreateDirectory(this.dirTarget);
-                }
+                job.TotalFiles = Directory.GetFiles(job.dirSource, "*.*", SearchOption.AllDirectories).Count();
+                job.CurrentFile = 0;
+                job.Progress = $"                {job.CurrentFile}/{job.TotalFiles}";
 
-                // Crée les dossiers manquants dans la cible
-                foreach (string dirPath in Directory.GetDirectories(dirSource, "*", SearchOption.AllDirectories))
-                {
-                    string targetDirPath = dirPath.Replace(dirSource, dirTarget);
-                    if (!Directory.Exists(targetDirPath))
-                    {
-                        Directory.CreateDirectory(targetDirPath);
-                    }
-                }
+                job.WaitingPause(); // bloque si Reset()
 
-                // Compare et copie les fichiers modifiés ou nouveaux
-                foreach (string sourceFile in Directory.GetFiles(dirSource, "*.*", SearchOption.AllDirectories))
-                {
-                    string targetFile = sourceFile.Replace(dirSource, dirTarget);
-
-                    bool shouldCopy = false;
-
-                    if (!File.Exists(targetFile))
-                    {
-                        shouldCopy = true; // Nouveau fichier
-                    }
-                    else
-                    {
-                        DateTime sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile);
-                        DateTime targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
-
-                        if (sourceLastWrite > targetLastWrite)
-                        {
-                            shouldCopy = true; // Modifié
-                        }
-                    }
-
-                    if (shouldCopy)
-                    {
-                        Stopwatch watch = Stopwatch.StartNew();
-                        string fileTarget = sourceFile.Replace(dirSource, dirTarget);
-                        string fileExtensionsToEncrypty = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
-                        String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypty.Split(",");
-                        bool shouldEncrypt = false;
-                        if (encryption)
-                        {
-                            shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => sourceFile.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
-                        }
-
-                        double encryptionTime = 0;
-                        if (shouldEncrypt)
-                        {
-                            Stopwatch EncryptTimer = Stopwatch.StartNew();
-
-                            try
-                            {
-                                fileTarget += ".xor";
-                                CryptoManager.EncryptFileToTarget(sourceFile, fileTarget);
-                            }
-                            catch (Exception ex)
-                            {
-                                encryptionTime = -1;
-                            }
-                            EncryptTimer.Stop();
-                            encryptionTime = EncryptTimer.Elapsed.Milliseconds;
-                        }
-                        else
-                        {
-                            File.Copy(sourceFile, fileTarget, true);
-                        }
-                        watch.Stop();
-                        double elapsedMs = watch.ElapsedMilliseconds;
-                        WriteDailyLog(sourceFile, fileTarget, elapsedMs, encryptionTime);
-                    }
-
-                }
+                // run the backup for prio files, then for non prio
+                RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
+                RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInBytes);
                 jobTimer.Stop();
                 message = "Job Succeed!";
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
+                //Thread.Sleep(3000);
             }
             catch (Exception ex)
             {
@@ -125,12 +60,188 @@ namespace Core.Model
 
         }
 
+        public double EncryptAndCopy(string sourceFile, string fileTarget)
+        {
+            Stopwatch EncryptTimer = Stopwatch.StartNew();
+
+            try
+            {
+                fileTarget += ".xor";
+                CryptoManager.EncryptFileToTarget(sourceFile, fileTarget);
+            }
+            catch 
+            {
+                return -1;
+            }
+            EncryptTimer.Stop();
+            return EncryptTimer.Elapsed.Milliseconds;
+        }
+
+        public async void RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
+        {
+            foreach (string sourceFile in lstFichier)
+            {
+                //Verify if we cancel 
+                cancellationToken.ThrowIfCancellationRequested();
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    //Verify if we paused
+                    job.WaitingPause(); // bloque si Reset()
+                    job.Progress = $"{sourceFile}        {++job.CurrentFile}/{job.TotalFiles}";
+                    string targetFile = sourceFile.Replace(job.dirSource, job.dirTarget);
+
+                    if (shouldCopy(targetFile, sourceFile))
+                    {
+                        FileInfo fileInfo = new FileInfo(sourceFile);
+                        if (fileInfo.Length > maxSizeInBytes)
+                        {
+                            await RunJobManager.LargeFileSemaphore.WaitAsync();
+
+                            try
+                            {
+                                Thread.Sleep(3000);
+                                BackUpFile(sourceFile, targetFile);
+                            }
+                            finally
+                            {
+                                RunJobManager.LargeFileSemaphore.Release();
+                            }
+                        }
+                        else
+                            BackUpFile(sourceFile, targetFile);
+                    }
+
+                }
+
+        }
+
+        public static IEnumerable<string> GetFichiersPrio(string dossierSource)
+        {
+            string fileExtensionPrio = AppConfigManager.Instance.GetAppConfigParameter("PriorityFiles");
+            string[] LstExtensionPrio = fileExtensionPrio.Split(",");
+
+
+            List<string> extensionsFiltrees = LstExtensionPrio
+                .Where((string ext) => !string.IsNullOrWhiteSpace(ext))
+                .Select((string ext) => ext.Trim().TrimStart('.').ToLower())
+                .ToList();
+
+            IEnumerable<string> fichiersFiltres = Directory
+                .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
+                .Where((string file) =>
+                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+
+            return fichiersFiltres;
+        }
+        public static IEnumerable<string> GetFichiersNonPrio(string dossierSource)
+        {
+            string fileExtensionPrio = AppConfigManager.Instance.GetAppConfigParameter("PriorityFiles");
+            string[] LstExtensionPrio = fileExtensionPrio.Split(",");
+
+
+            List<string> extensionsFiltrees = LstExtensionPrio
+                .Where((string ext) => !string.IsNullOrWhiteSpace(ext))
+                .Select((string ext) => ext.Trim().TrimStart('.').ToLower())
+                .ToList();
+
+            IEnumerable<string> fichiersFiltres = Directory
+                .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
+                .Where((string file) =>
+                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+
+            return fichiersFiltres;
+        }
+
+
+        public void BackUpFile(string sourceFile, string targetFile)
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+            string fileTarget = sourceFile.Replace(job.dirSource, job.dirTarget);
+            double encryptionTime = 0;
+
+            if (shouldEncrypt(sourceFile))
+            {
+                encryptionTime = EncryptAndCopy(sourceFile, targetFile);
+            }
+            else
+            {
+                File.Copy(sourceFile, fileTarget, true);
+            }
+            watch.Stop();
+            double elapsedMs = watch.ElapsedMilliseconds;
+            try
+            {
+                WriteDailyLog(sourceFile, fileTarget, elapsedMs, encryptionTime);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        public bool shouldCopy(string targetFile, string sourceFile)
+        {
+            bool shouldCopy = false;
+
+            if ((!job.Encryption && !File.Exists(targetFile)) | (job.Encryption && !File.Exists(targetFile+".xor")))
+            {
+                shouldCopy = true; // Nouveau fichier
+            }
+            else
+            {
+                DateTime sourceLastWrite, targetLastWrite;
+                if (!job.Encryption)
+                {
+                    sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile);
+                    targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
+                }
+                else
+                {
+                    sourceLastWrite = File.GetLastWriteTimeUtc(sourceFile+".xor");
+                    targetLastWrite = File.GetLastWriteTimeUtc(targetFile);
+                }
+
+                if (sourceLastWrite > targetLastWrite)
+                {
+                    shouldCopy = true; // Modifié
+                }
+            }
+            return shouldCopy;
+        }
+        public bool shouldEncrypt(string fileSource)
+        {
+            string fileExtensionsToEncrypt = AppConfigManager.Instance.GetAppConfigParameter("EncryptionExtensions");
+            String[] LstFileExtensionsToEncrypt = fileExtensionsToEncrypt.Split(",");
+
+            bool shouldEncrypt = false;
+            if (job.Encryption)
+            {
+                shouldEncrypt = LstFileExtensionsToEncrypt.Any(ext => fileSource.EndsWith(ext.Trim(), StringComparison.OrdinalIgnoreCase));
+            }
+            return shouldEncrypt;
+        }
+
+        public void CheckAndCreateDirectories()
+        {
+            // verifie if the subdirectories exists and create them if necessary
+            if (!Directory.Exists(job.dirTarget))
+            {
+                Directory.CreateDirectory(job.dirTarget);
+            }
+            foreach (string dirPath in Directory.GetDirectories(job.dirSource, "*", SearchOption.AllDirectories))
+            {
+                Directory.CreateDirectory(dirPath.Replace(job.dirSource, job.dirTarget));
+            }
+        }
+
         private void WriteDailyLog(string sourceFile, string targetFile, double transfertTime, double encryptionTime)
         {
             FileInfo fileInfo = new FileInfo(sourceFile);
             Dictionary<string, object> logEntry = new Dictionary<string, object>
             {
-                { "Name", Name },
+                { "Name", job.Name },
                 { "SourcePath", sourceFile },
                 { "TargetPath", targetFile },
                 { "FileSize", fileInfo.Length },
@@ -145,7 +256,7 @@ namespace Core.Model
         {
             Dictionary<string, object> logJob = new Dictionary<string, object>
                 {
-                    { "Name", Name },
+                    { "Name", job.Name },
                     { "JobTime", jobTimer},
                     { "Result", message },
                     { "TimeStamp", DateTime.Now.ToString("M/d/yyyy HH:mm:ss") }
