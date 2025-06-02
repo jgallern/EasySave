@@ -232,9 +232,12 @@ namespace Core.Model
 
         public void Stop()
         {
-            Statement = Statement.Canceled;
-            ChangeStatement();
-            _ctsJob.Cancel();
+            if (!ManualEventPause && !ProcessEventPause)
+            {
+                Statement = Statement.Canceled;
+                ChangeStatement();
+                _ctsJob.Cancel();
+            }
         }
 
         public void WaitingPause()
