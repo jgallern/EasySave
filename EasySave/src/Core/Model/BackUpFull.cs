@@ -141,6 +141,11 @@ namespace Core.Model
                 .Select((string ext) => ext.Trim().TrimStart('.').ToLower())
                 .ToList();
 
+            if (!extensionsFiltrees.Any())
+            {
+                return Directory.GetFiles(dossierSource, "*.*", SearchOption.AllDirectories);
+            }
+
             IEnumerable<string> fichiersFiltres = Directory
                 .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
                 .Where((string file) =>
