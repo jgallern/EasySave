@@ -78,8 +78,10 @@ namespace Core.Model
 
         public async Task RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
         {
-            foreach (string sourceFile in lstFichier)
+            try
             {
+                foreach (string sourceFile in lstFichier)
+                {
                     //Verify if we cancel 
                     cancellationToken.ThrowIfCancellationRequested();
                     if (cancellationToken.IsCancellationRequested)
@@ -94,22 +96,27 @@ namespace Core.Model
                     string fileTarget = sourceFile.Replace(job.dirSource, job.dirTarget);
 
                     FileInfo fileInfo = new FileInfo(sourceFile);
-                if (fileInfo.Length > maxSizeInBytes)
-                {
-                    await RunJobManager.LargeFileSemaphore.WaitAsync();
+                    if (fileInfo.Length > maxSizeInBytes)
+                    {
+                        await RunJobManager.LargeFileSemaphore.WaitAsync();
 
-                    try
-                    {
-                        //Thread.Sleep(3000);
+                        try
+                        {
+                            //Thread.Sleep(3000);
+                            BackUpFile(sourceFile, fileTarget);
+                        }
+                        finally
+                        {
+                            RunJobManager.LargeFileSemaphore.Release();
+                        }
+                    }
+                    else
                         BackUpFile(sourceFile, fileTarget);
-                    }
-                    finally
-                    {
-                        RunJobManager.LargeFileSemaphore.Release();
-                    }
                 }
-                else
-                    BackUpFile(sourceFile, fileTarget);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
         public static IEnumerable<string> GetFichiersPrio(string dossierSource)

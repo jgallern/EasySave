@@ -79,10 +79,12 @@ namespace Core.Model
 
         public async Task RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
         {
-            foreach (string sourceFile in lstFichier)
+            try
             {
-                //Verify if we cancel 
-                cancellationToken.ThrowIfCancellationRequested();
+                foreach (string sourceFile in lstFichier)
+                {
+                    //Verify if we cancel 
+                    cancellationToken.ThrowIfCancellationRequested();
                     if (cancellationToken.IsCancellationRequested)
                     {
                         return;
@@ -96,24 +98,29 @@ namespace Core.Model
                     if (shouldCopy(targetFile, sourceFile))
                     {
                         FileInfo fileInfo = new FileInfo(sourceFile);
-                    if (fileInfo.Length > maxSizeInBytes)
-                    {
-                        await RunJobManager.LargeFileSemaphore.WaitAsync();
-
-                        try
+                        if (fileInfo.Length > maxSizeInBytes)
                         {
-                            Thread.Sleep(3000);
+                            await RunJobManager.LargeFileSemaphore.WaitAsync();
+
+                            try
+                            {
+                                Thread.Sleep(3000);
+                                BackUpFile(sourceFile, targetFile);
+                            }
+                            finally
+                            {
+                                RunJobManager.LargeFileSemaphore.Release();
+                            }
+                        }
+                        else
                             BackUpFile(sourceFile, targetFile);
-                        }
-                        finally
-                        {
-                            RunJobManager.LargeFileSemaphore.Release();
-                        }
                     }
-                    else
-                        BackUpFile(sourceFile, targetFile);
-                }
 
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
 
         }
