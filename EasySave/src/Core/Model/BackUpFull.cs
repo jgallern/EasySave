@@ -42,8 +42,8 @@ namespace Core.Model
 
                 job.WaitingPause(); // bloque si Reset()
 
-                RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
-                RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInKo);
+                await RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
+                await RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInKo);
                 
                 jobTimer.Stop();
 				message = "Job Succeed!";
@@ -76,7 +76,7 @@ namespace Core.Model
             WriteDailyLog(fileSource, fileTarget, elapsedMs, encryptionTime);
         }
 
-        public async void RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
+        public async Task RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
         {
             foreach (string sourceFile in lstFichier)
             {
@@ -94,22 +94,22 @@ namespace Core.Model
                     string fileTarget = sourceFile.Replace(job.dirSource, job.dirTarget);
 
                     FileInfo fileInfo = new FileInfo(sourceFile);
-                    if (fileInfo.Length > maxSizeInBytes)
-                    {
-                        await RunJobManager.LargeFileSemaphore.WaitAsync();
+                if (fileInfo.Length > maxSizeInBytes)
+                {
+                    await RunJobManager.LargeFileSemaphore.WaitAsync();
 
-                        try
-                        {
-                            Thread.Sleep(3000);
-                            BackUpFile(sourceFile, fileTarget);
-                        }
-                        finally
-                        {
-                            RunJobManager.LargeFileSemaphore.Release();
-                        }
-                    }
-                    else
+                    try
+                    {
+                        //Thread.Sleep(3000);
                         BackUpFile(sourceFile, fileTarget);
+                    }
+                    finally
+                    {
+                        RunJobManager.LargeFileSemaphore.Release();
+                    }
+                }
+                else
+                    BackUpFile(sourceFile, fileTarget);
             }
         }
         public static IEnumerable<string> GetFichiersPrio(string dossierSource)
@@ -149,7 +149,7 @@ namespace Core.Model
             IEnumerable<string> fichiersFiltres = Directory
                 .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
                 .Where((string file) =>
-                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+                    !extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
 
             return fichiersFiltres;
         }

@@ -43,8 +43,8 @@ namespace Core.Model
                 job.WaitingPause(); // bloque si Reset()
 
                 // run the backup for prio files, then for non prio
-            RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
-                RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInBytes);
+                await RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
+                await RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInBytes);
                 jobTimer.Stop();
                 message = "Job Succeed!";
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
@@ -77,7 +77,7 @@ namespace Core.Model
             return EncryptTimer.Elapsed.Milliseconds;
         }
 
-        public async void RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
+        public async Task RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
         {
             foreach (string sourceFile in lstFichier)
             {
@@ -96,25 +96,25 @@ namespace Core.Model
                     if (shouldCopy(targetFile, sourceFile))
                     {
                         FileInfo fileInfo = new FileInfo(sourceFile);
-                        if (fileInfo.Length > maxSizeInBytes)
+                    if (fileInfo.Length > maxSizeInBytes)
+                    {
+                        await RunJobManager.LargeFileSemaphore.WaitAsync();
+
+                        try
                         {
-                            await RunJobManager.LargeFileSemaphore.WaitAsync();
-
-                            try
-                            {
-                                Thread.Sleep(3000);
-                                BackUpFile(sourceFile, targetFile);
-                            }
-                            finally
-                            {
-                                RunJobManager.LargeFileSemaphore.Release();
-                            }
-                        }
-                        else
+                            Thread.Sleep(3000);
                             BackUpFile(sourceFile, targetFile);
+                        }
+                        finally
+                        {
+                            RunJobManager.LargeFileSemaphore.Release();
+                        }
                     }
-
+                    else
+                        BackUpFile(sourceFile, targetFile);
                 }
+
+            }
 
         }
 
@@ -156,7 +156,7 @@ namespace Core.Model
             IEnumerable<string> fichiersFiltres = Directory
                 .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
                 .Where((string file) =>
-                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+                    !extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
 
             return fichiersFiltres;
         }
