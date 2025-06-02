@@ -42,8 +42,8 @@ namespace Core.Model
 
                 job.WaitingPause(); // bloque si Reset()
 
-                RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
-                RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInKo);
+                await RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
+                await RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInKo);
                 
                 jobTimer.Stop();
 				message = "Job Succeed!";
@@ -76,10 +76,12 @@ namespace Core.Model
             WriteDailyLog(fileSource, fileTarget, elapsedMs, encryptionTime);
         }
 
-        public async void RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
+        public async Task RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
         {
-            foreach (string sourceFile in lstFichier)
+            try
             {
+                foreach (string sourceFile in lstFichier)
+                {
                     //Verify if we cancel 
                     cancellationToken.ThrowIfCancellationRequested();
                     if (cancellationToken.IsCancellationRequested)
@@ -100,7 +102,7 @@ namespace Core.Model
 
                         try
                         {
-                            Thread.Sleep(3000);
+                            //Thread.Sleep(3000);
                             BackUpFile(sourceFile, fileTarget);
                         }
                         finally
@@ -110,6 +112,11 @@ namespace Core.Model
                     }
                     else
                         BackUpFile(sourceFile, fileTarget);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
         public static IEnumerable<string> GetFichiersPrio(string dossierSource)
@@ -141,10 +148,15 @@ namespace Core.Model
                 .Select((string ext) => ext.Trim().TrimStart('.').ToLower())
                 .ToList();
 
+            if (!extensionsFiltrees.Any())
+            {
+                return Directory.GetFiles(dossierSource, "*.*", SearchOption.AllDirectories);
+            }
+
             IEnumerable<string> fichiersFiltres = Directory
                 .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
                 .Where((string file) =>
-                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+                    !extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
 
             return fichiersFiltres;
         }

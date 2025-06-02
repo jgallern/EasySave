@@ -43,8 +43,8 @@ namespace Core.Model
                 job.WaitingPause(); // bloque si Reset()
 
                 // run the backup for prio files, then for non prio
-                RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
-                RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInBytes);
+                await RunBackupForFiles(GetFichiersPrio(job.dirSource), cancellationToken, maxSizeInBytes);
+                await RunBackupForFiles(GetFichiersNonPrio(job.dirSource), cancellationToken, maxSizeInBytes);
                 jobTimer.Stop();
                 message = "Job Succeed!";
                 WriteStatusLog(jobTimer.ElapsedMilliseconds, message);
@@ -77,12 +77,14 @@ namespace Core.Model
             return EncryptTimer.Elapsed.Milliseconds;
         }
 
-        public async void RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
+        public async Task RunBackupForFiles(IEnumerable<string> lstFichier, CancellationToken cancellationToken, long maxSizeInBytes)
         {
-            foreach (string sourceFile in lstFichier)
+            try
             {
-                //Verify if we cancel 
-                cancellationToken.ThrowIfCancellationRequested();
+                foreach (string sourceFile in lstFichier)
+                {
+                    //Verify if we cancel 
+                    cancellationToken.ThrowIfCancellationRequested();
                     if (cancellationToken.IsCancellationRequested)
                     {
                         return;
@@ -115,6 +117,11 @@ namespace Core.Model
                     }
 
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
         }
 
@@ -136,6 +143,7 @@ namespace Core.Model
 
             return fichiersFiltres;
         }
+
         public static IEnumerable<string> GetFichiersNonPrio(string dossierSource)
         {
             string fileExtensionPrio = AppConfigManager.Instance.GetAppConfigParameter("PriorityFiles");
@@ -147,10 +155,15 @@ namespace Core.Model
                 .Select((string ext) => ext.Trim().TrimStart('.').ToLower())
                 .ToList();
 
+            if (!extensionsFiltrees.Any())
+            {
+                return Directory.GetFiles(dossierSource, "*.*", SearchOption.AllDirectories);
+            }
+
             IEnumerable<string> fichiersFiltres = Directory
                 .GetFiles(dossierSource, "*.*", SearchOption.AllDirectories)
                 .Where((string file) =>
-                    extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
+                    !extensionsFiltrees.Contains(Path.GetExtension(file).TrimStart('.').ToLower()));
 
             return fichiersFiltres;
         }
